@@ -1,0 +1,327 @@
+import type { League, GameEvent } from './types';
+
+const LEAGUE_MAP: Record<League, { sport: string; key: string } | null> = {
+  nfl: { sport: 'football', key: 'nfl' },
+  nba: { sport: 'basketball', key: 'nba' },
+  mlb: { sport: 'baseball', key: 'mlb' },
+  nhl: { sport: 'hockey', key: 'nhl' },
+  mls: { sport: 'soccer', key: 'usa.1' },
+  f1: { sport: 'racing', key: 'f1' },
+  ufc: { sport: 'mma', key: 'ufc' },
+  worldcup: { sport: 'soccer', key: 'fifa.world' },
+  olympics: null,
+};
+
+// In-memory cache for scoreboard fetches
+const scoreboardCache: Record<string, { timestamp: number; data: GameEvent[] }> = {};
+const CACHE_TTL = 3 * 60 * 1000; // 3 minutes for scoreboard data
+
+/**
+ * Fetch all events (games) for a given league in a date range (YYYYMMDD-YYYYMMDD).
+ */
+export async function fetchScoreboard(
+  league: League,
+  startDate: string,
+  endDate: string
+): Promise<GameEvent[]> {
+  const cacheKey = `${league}_${startDate}_${endDate}`;
+  const now = Date.now();
+  
+  if (scoreboardCache[cacheKey] && now - scoreboardCache[cacheKey].timestamp < CACHE_TTL) {
+    return scoreboardCache[cacheKey].data;
+  }
+
+  if (league === 'olympics') {
+    const subLeagues: { sport: string; key: string }[] = [
+      { sport: 'basketball', key: 'mens-olympics-basketball' },
+      { sport: 'basketball', key: 'womens-olympics-basketball' },
+      { sport: 'soccer', key: 'fifa.olympics' },
+      { sport: 'soccer', key: 'fifa.w.olympics' },
+    ];
+    
+    try {
+      const results = await Promise.all(
+        subLeagues.map(async ({ sport, key }) => {
+          const url = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${key}/scoreboard?dates=${startDate}-${endDate}&limit=100`;
+          try {
+            const res = await fetch(url);
+            if (!res.ok) return [];
+            const data = await res.json();
+            return data.events || [];
+          } catch (e) {
+            console.error(`Failed to fetch Olympics sub-league ${key}:`, e);
+            return [];
+          }
+        })
+      );
+      
+      const rawEvents = results.flat();
+      const events: GameEvent[] = rawEvents.map((event: any) => {
+        const comp = event.competitions?.[0] || {};
+        const competitors = comp.competitors || [];
+        const home = competitors.find((c: any) => c.homeAway === 'home') || {};
+        const away = competitors.find((c: any) => c.homeAway === 'away') || {};
+
+        const tvBroadcasts = comp.broadcasts?.flatMap((b: any) => b.names || []) || [];
+        const espnLink = event.links?.find((l: any) => l.rel?.includes('desktop'))?.href || event.links?.[0]?.href || 'https://www.espn.com';
+
+        let eventName = event.name;
+        if (event.links?.[0]?.href?.includes('basketball')) {
+          eventName = `[Olympics Basketball] ${event.name}`;
+        } else if (event.links?.[0]?.href?.includes('soccer')) {
+          eventName = `[Olympics Soccer] ${event.name}`;
+        }
+
+        return {
+          id: event.id,
+          date: event.date,
+          name: eventName,
+          shortName: event.shortName || event.name,
+          league,
+          status: {
+            state: event.status?.type?.state || 'pre',
+            completed: event.status?.type?.completed || false,
+            detail: event.status?.type?.detail || '',
+            period: event.status?.period,
+            displayClock: event.status?.displayClock,
+          },
+          homeTeam: {
+            id: `${league}-${home.team?.id || ''}`,
+            displayName: home.team?.displayName || 'Home Team',
+            abbreviation: home.team?.abbreviation || 'HOME',
+            logo: home.team?.logo || home.team?.logos?.[0]?.href || 'https://a.espncdn.com/i/teamlogos/default-team-logo-500.png',
+            color: home.team?.color || '4b5563',
+            score: home.score || '0',
+            winner: home.winner,
+          },
+          awayTeam: {
+            id: `${league}-${away.team?.id || ''}`,
+            displayName: away.team?.displayName || 'Away Team',
+            abbreviation: away.team?.abbreviation || 'AWAY',
+            logo: away.team?.logo || away.team?.logos?.[0]?.href || 'https://a.espncdn.com/i/teamlogos/default-team-logo-500.png',
+            color: away.team?.color || '4b5563',
+            score: away.score || '0',
+            winner: away.winner,
+          },
+          tvBroadcasts,
+          espnLink,
+          venue: comp.venue?.fullName,
+        };
+      });
+
+      // Cache the result
+      scoreboardCache[cacheKey] = {
+        timestamp: now,
+        data: events,
+      };
+
+      return events;
+    } catch (error) {
+      console.error(`Failed to fetch Olympics scoreboards (${startDate}-${endDate}):`, error);
+      return [];
+    }
+  }
+
+  const leagueConfig = LEAGUE_MAP[league];
+  if (!leagueConfig) return [];
+  const { sport, key } = leagueConfig;
+  // Increase limit for MLB and other dense leagues
+  const limit = league === 'mlb' ? 1000 : 500;
+  const url = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${key}/scoreboard?dates=${startDate}-${endDate}&limit=${limit}`;
+
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+    const data = await res.json();
+    
+    const rawEvents = data.events || [];
+    const events: GameEvent[] = [];
+
+    for (const event of rawEvents) {
+      if (league === 'f1') {
+        const competitions = event.competitions || [];
+        for (const comp of competitions) {
+          const sessionType = comp.type?.abbreviation || 'Race';
+          const sessionDate = comp.date || event.date;
+          
+          const tvBroadcasts = comp.broadcasts?.flatMap((b: any) => b.names || []) || [];
+          const espnLink = event.links?.find((l: any) => l.rel?.includes('desktop'))?.href || event.links?.[0]?.href || 'https://www.espn.com';
+          
+          const parsedCompetitors = (comp.competitors || []).map((c: any) => ({
+            id: c.id,
+            name: c.athlete?.displayName || 'Driver',
+            shortName: c.athlete?.shortName || c.athlete?.displayName || 'DRV',
+            position: c.order || 0,
+            winner: c.winner || false,
+            logo: c.athlete?.flag?.href || 'https://a.espncdn.com/i/teamlogos/f1/500/f1.png'
+          })).sort((a: any, b: any) => a.position - b.position);
+
+          const winnerDriver = parsedCompetitors.find((c: any) => c.winner) || parsedCompetitors[0];
+
+          events.push({
+            id: `${event.id}-${sessionType}`,
+            date: sessionDate,
+            name: `${event.name} - ${sessionType}`,
+            shortName: `${event.shortName || event.name} - ${sessionType}`,
+            league,
+            status: {
+              state: comp.status?.type?.state || 'pre',
+              completed: comp.status?.type?.completed || false,
+              detail: comp.status?.type?.detail || comp.status?.type?.description || '',
+              period: comp.status?.period,
+              displayClock: comp.status?.displayClock,
+            },
+            homeTeam: {
+              id: `f1-session`,
+              displayName: sessionType,
+              abbreviation: sessionType,
+              logo: 'https://a.espncdn.com/i/teamlogos/f1/500/f1.png',
+              color: 'e10600',
+              score: winnerDriver ? winnerDriver.shortName : 'F1',
+              winner: false,
+            },
+            awayTeam: {
+              id: `f1-league`,
+              displayName: 'Formula 1',
+              abbreviation: 'F1',
+              logo: 'https://a.espncdn.com/i/teamlogos/f1/500/f1.png',
+              color: 'e10600',
+              score: '',
+              winner: false,
+            },
+            tvBroadcasts,
+            espnLink,
+            venue: event.circuit?.name || comp.venue?.fullName,
+            f1SessionType: sessionType,
+            f1Competitors: parsedCompetitors,
+          });
+        }
+      } else if (league === 'ufc') {
+        const competitions = event.competitions || [];
+        const mainEventComp = competitions[competitions.length - 1]; // Main event is last fight
+        const comp1 = mainEventComp?.competitors?.[0];
+        const comp2 = mainEventComp?.competitors?.[1];
+        
+        const tvBroadcasts = mainEventComp?.broadcasts?.flatMap((b: any) => b.names || []) || [];
+        const espnLink = event.links?.find((l: any) => l.rel?.includes('desktop'))?.href || event.links?.[0]?.href || 'https://www.espn.com';
+        
+        const parsedFights = competitions.map((c: any) => {
+          const f1 = c.competitors?.[0];
+          const f2 = c.competitors?.[1];
+          return {
+            id: c.id,
+            name: `${f1?.athlete?.displayName || 'Fighter'} vs ${f2?.athlete?.displayName || 'Fighter'}`,
+            status: c.status?.type?.detail || c.status?.type?.description || '',
+            competitors: [
+              {
+                id: f1?.id || '',
+                displayName: f1?.athlete?.displayName || 'Fighter',
+                logo: f1?.athlete?.flag?.href || 'https://a.espncdn.com/i/teamlogos/mma/500/ufc.png',
+                winner: f1?.winner,
+                score: f1?.winner ? 'W' : (f1?.winner === false ? 'L' : '')
+              },
+              {
+                id: f2?.id || '',
+                displayName: f2?.athlete?.displayName || 'Fighter',
+                logo: f2?.athlete?.flag?.href || 'https://a.espncdn.com/i/teamlogos/mma/500/ufc.png',
+                winner: f2?.winner,
+                score: f2?.winner ? 'W' : (f2?.winner === false ? 'L' : '')
+              }
+            ]
+          };
+        });
+
+        events.push({
+          id: event.id,
+          date: event.date,
+          name: event.name,
+          shortName: event.shortName || event.name,
+          league,
+          status: {
+            state: event.status?.type?.state || 'pre',
+            completed: event.status?.type?.completed || false,
+            detail: event.status?.type?.detail || '',
+          },
+          homeTeam: {
+            id: comp1 ? `ufc-${comp1.id}` : 'ufc-home',
+            displayName: comp1?.athlete?.displayName || 'Fighter 1',
+            abbreviation: comp1?.athlete?.shortName || comp1?.athlete?.displayName || 'FTR',
+            logo: comp1?.athlete?.flag?.href || 'https://a.espncdn.com/i/teamlogos/mma/500/ufc.png',
+            color: '1e293b',
+            score: comp1?.winner ? 'W' : (comp1?.winner === false ? 'L' : ''),
+            winner: comp1?.winner,
+          },
+          awayTeam: {
+            id: comp2 ? `ufc-${comp2.id}` : 'ufc-away',
+            displayName: comp2?.athlete?.displayName || 'Fighter 2',
+            abbreviation: comp2?.athlete?.shortName || comp2?.athlete?.displayName || 'FTR',
+            logo: comp2?.athlete?.flag?.href || 'https://a.espncdn.com/i/teamlogos/mma/500/ufc.png',
+            color: '1e293b',
+            score: comp2?.winner ? 'W' : (comp2?.winner === false ? 'L' : ''),
+            winner: comp2?.winner,
+          },
+          tvBroadcasts,
+          espnLink,
+          venue: mainEventComp?.venue?.fullName || event.venues?.[0]?.fullName,
+          ufcFights: parsedFights,
+        });
+      } else {
+        const comp = event.competitions?.[0] || {};
+        const competitors = comp.competitors || [];
+        const home = competitors.find((c: any) => c.homeAway === 'home') || {};
+        const away = competitors.find((c: any) => c.homeAway === 'away') || {};
+
+        const tvBroadcasts = comp.broadcasts?.flatMap((b: any) => b.names || []) || [];
+        const espnLink = event.links?.find((l: any) => l.rel?.includes('desktop'))?.href || event.links?.[0]?.href || 'https://www.espn.com';
+
+        events.push({
+          id: event.id,
+          date: event.date,
+          name: event.name,
+          shortName: event.shortName,
+          league,
+          status: {
+            state: event.status?.type?.state || 'pre',
+            completed: event.status?.type?.completed || false,
+            detail: event.status?.type?.detail || '',
+            period: event.status?.period,
+            displayClock: event.status?.displayClock,
+          },
+          homeTeam: {
+            id: `${league}-${home.team?.id || ''}`,
+            displayName: home.team?.displayName || 'Home Team',
+            abbreviation: home.team?.abbreviation || 'HOME',
+            logo: home.team?.logo || home.team?.logos?.[0]?.href || `https://a.espncdn.com/i/teamlogos/${key}/500/${home.team?.abbreviation?.toLowerCase()}.png`,
+            color: home.team?.color || '4b5563',
+            score: home.score || '0',
+            winner: home.winner,
+          },
+          awayTeam: {
+            id: `${league}-${away.team?.id || ''}`,
+            displayName: away.team?.displayName || 'Away Team',
+            abbreviation: away.team?.abbreviation || 'AWAY',
+            logo: away.team?.logo || away.team?.logos?.[0]?.href || `https://a.espncdn.com/i/teamlogos/${key}/500/${away.team?.abbreviation?.toLowerCase()}.png`,
+            color: away.team?.color || '4b5563',
+            score: away.score || '0',
+            winner: away.winner,
+          },
+          tvBroadcasts,
+          espnLink,
+          venue: comp.venue?.fullName,
+        });
+      }
+    }
+
+    // Cache the result
+    scoreboardCache[cacheKey] = {
+      timestamp: now,
+      data: events,
+    };
+
+    return events;
+  } catch (error) {
+    console.error(`Failed to fetch scoreboard for ${league} (${startDate}-${endDate}):`, error);
+    return [];
+  }
+}
+
