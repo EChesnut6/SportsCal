@@ -170,6 +170,12 @@ body {
   z-index: 9;
 }
 
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
 .logo-container {
   display: flex;
   align-items: center;
@@ -1037,6 +1043,10 @@ input:checked + .slider:before {
     align-items: stretch;
   }
   
+  .header-left {
+    justify-content: center;
+  }
+  
   .logo-container {
     justify-content: center;
   }
@@ -1100,4 +1110,151 @@ input:checked + .slider:before {
   border: 1px solid var(--border-glass);
   border-radius: 50%;
 }
+
+/* Favorites Section Styling */
+.favorites-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px dashed var(--border-glass);
+  border-radius: 12px;
+  padding: 12px;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.favorites-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 16px 8px;
+  color: var(--text-muted);
+}
+
+.favorites-empty-state .empty-star-icon {
+  margin-bottom: 8px;
+  color: var(--text-dimmed);
+}
+
+.favorites-empty-state span {
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.fav-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-glass);
+  border-radius: 8px;
+  transition: all var(--transition-fast);
+}
+
+.fav-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--border-glass-hover);
+}
+
+.fav-item-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+}
+
+.fav-item-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
+}
+
+.league-tag-badge {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-glass);
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.league-tag-badge.nfl { border-color: rgba(59, 130, 246, 0.3); color: var(--color-nfl); }
+.league-tag-badge.nba { border-color: rgba(249, 115, 22, 0.3); color: var(--color-nba); }
+.league-tag-badge.mlb { border-color: rgba(16, 185, 129, 0.3); color: var(--color-mlb); }
+.league-tag-badge.nhl { border-color: rgba(168, 85, 247, 0.3); color: var(--color-nhl); }
+.league-tag-badge.mls { border-color: rgba(0, 177, 64, 0.3); color: var(--color-mls); }
+.league-tag-badge.f1 { border-color: rgba(225, 6, 0, 0.3); color: var(--color-f1); }
+.league-tag-badge.ufc { border-color: rgba(239, 68, 68, 0.3); color: var(--color-ufc); }
+.league-tag-badge.worldcup { border-color: rgba(0, 95, 169, 0.3); color: var(--color-worldcup); }
+.league-tag-badge.olympics { border-color: rgba(244, 195, 0, 0.3); color: var(--color-olympics); }
+
+.fav-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Empty Day Cell Hover Resets */
+.day-cell.empty {
+  cursor: default;
+}
+.day-cell.empty:hover {
+  background: var(--bg-card);
+  border-color: var(--border-glass);
+  transform: none;
+  box-shadow: none;
+}
+
+/* Collapsible Hidden Games Section Styling */
+.hidden-games-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.hidden-games-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed var(--border-glass);
+  border-radius: 12px;
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  transition: all var(--transition-fast);
+}
+
+.hidden-games-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--border-glass-hover);
+  color: var(--text-primary);
+}
+
+.hidden-games-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+
 

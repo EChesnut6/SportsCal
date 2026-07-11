@@ -10,7 +10,8 @@ import {
   MapPin, 
   ExternalLink, 
   X,
-  SlidersHorizontal
+  SlidersHorizontal,
+  ChevronDown
 } from 'lucide-react';
 import type { League, GameEvent, FavoritesState, TogglesState } from './types';
 import { fetchScoreboard } from './api';
@@ -209,6 +210,7 @@ export default function App() {
   // Modals state
   const [selectedEvent, setSelectedEvent] = useState<GameEvent | null>(null);
   const [selectedDayEvents, setSelectedDayEvents] = useState<{ date: Date; events: GameEvent[] } | null>(null);
+  const [showHiddenGames, setShowHiddenGames] = useState<boolean>(false);
 
   // Persistence Effects
   useEffect(() => {
@@ -421,6 +423,27 @@ export default function App() {
     return map;
   }, [filteredEvents]);
 
+  // Group all events (including hidden ones) by local calendar cell date
+  const allEventsByDate = useMemo(() => {
+    const map: Record<string, GameEvent[]> = {};
+    
+    events.forEach(event => {
+      const localDate = new Date(event.date);
+      const dateKey = `${localDate.getFullYear()}-${localDate.getMonth()}-${localDate.getDate()}`;
+      if (!map[dateKey]) {
+        map[dateKey] = [];
+      }
+      map[dateKey].push(event);
+    });
+
+    // Sort events by date-time
+    Object.keys(map).forEach(key => {
+      map[key].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    });
+
+    return map;
+  }, [events]);
+
   // Helper to check if a Date matches Today
   const isToday = (date: Date): boolean => {
     const today = new Date();
@@ -483,6 +506,212 @@ export default function App() {
     return anyLeagueOff || anyTeamOff;
   }, [toggles]);
 
+  // Helper to get team details by ID
+  const getTeamById = (teamId: string) => {
+    // 1. Check all leagues in TEAMS_DIRECTORY
+    for (const league in TEAMS_DIRECTORY) {
+      const match = TEAMS_DIRECTORY[league as League].find(t => t.id === teamId);
+      if (match) return match;
+    }
+    // 2. Check ufc/fighters
+    if (teamId.startsWith('ufc-')) {
+      const fighterId = teamId.replace('ufc-', '');
+      const fighter = knownFighters[fighterId];
+      if (fighter) {
+        return {
+          id: teamId,
+          displayName: fighter.displayName,
+          shortDisplayName: fighter.displayName,
+          abbreviation: fighter.displayName,
+          color: '1e293b',
+          logo: fighter.logo,
+          league: 'ufc' as League
+        };
+      }
+    }
+    // 3. Fallback: check if we can extract from events
+    for (const event of events) {
+      if (event.homeTeam.id === teamId) {
+        return {
+          id: teamId,
+          displayName: event.homeTeam.displayName,
+          shortDisplayName: event.homeTeam.displayName,
+          abbreviation: event.homeTeam.abbreviation,
+          color: event.homeTeam.color || '1e293b',
+          logo: event.homeTeam.logo,
+          league: event.league
+        };
+      }
+      if (event.awayTeam.id === teamId) {
+        return {
+          id: teamId,
+          displayName: event.awayTeam.displayName,
+          shortDisplayName: event.awayTeam.displayName,
+          abbreviation: event.awayTeam.abbreviation,
+          color: event.awayTeam.color || '1e293b',
+          logo: event.awayTeam.logo,
+          league: event.league
+        };
+      }
+      // If it's a UFC event, check fighters
+      if (event.league === 'ufc' && event.ufcFights) {
+        for (const fight of event.ufcFights) {
+          for (const comp of fight.competitors) {
+            const ufcId = `ufc-${comp.id}`;
+            if (ufcId === teamId) {
+              return {
+                id: teamId,
+                displayName: comp.displayName,
+                shortDisplayName: comp.displayName,
+                abbreviation: comp.displayName,
+                color: '1e293b',
+                logo: comp.logo,
+                league: 'ufc' as League
+              };
+            }
+          }
+        }
+      }
+    }
+    return null;
+  };
+
+  // Helper to check if an event is currently visible based on active toggles/filters
+  const isEventVisible = (event: GameEvent): boolean => {
+    // 1. League visibility toggle check
+    if (!toggles.leagues[event.league]) return false;
+
+    // 2. Individual team toggles (check if either team is toggled OFF)
+    if (toggles.teams[event.homeTeam.id] === false) return false;
+    if (toggles.teams[event.awayTeam.id] === false) return false;
+
+    // 3. Favorites only filter
+    if (showFavoritesOnly) {
+      const isLeagueFav = favorites.leagues.includes(event.league);
+      const isHomeFav = favorites.teams.includes(event.homeTeam.id);
+      const isAwayFav = favorites.teams.includes(event.awayTeam.id);
+      const isUfcCardFav = event.league === 'ufc' && event.ufcFights?.some(fight =>
+        fight.competitors.some(c => favorites.teams.includes(`ufc-${c.id}`))
+      );
+      
+      if (!isLeagueFav && !isHomeFav && !isAwayFav && !isUfcCardFav) return false;
+    }
+
+    return true;
+  };
+
+  const handleCloseDayModal = () => {
+    setSelectedDayEvents(null);
+    setShowHiddenGames(false);
+  };
+
+  // Helper to render a match card in the day schedule modal
+  const renderDetailedMatchCard = (event: GameEvent, isHidden: boolean) => {
+    const isLive = event.status.state === 'in';
+    
+    return (
+      <div 
+        key={event.id} 
+        className={`detailed-match-card ${isHidden ? 'hidden-card' : ''}`}
+        style={{ padding: '16px', cursor: 'pointer', opacity: isHidden ? 0.65 : 1 }}
+        onClick={() => {
+          setSelectedEvent(event);
+          handleCloseDayModal();
+        }}
+      >
+        <div className="match-card-header" style={{ marginBottom: '-6px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span className={`league-badge ${event.league}`}>{event.league}</span>
+            {isHidden && (
+              <span className="hidden-badge" style={{ 
+                fontSize: '9px', 
+                fontWeight: 700, 
+                padding: '1px 4px', 
+                borderRadius: '4px', 
+                background: 'rgba(239, 68, 68, 0.15)', 
+                color: 'var(--danger)',
+                border: '1px solid rgba(239, 68, 68, 0.3)'
+              }}>
+                HIDDEN
+              </span>
+            )}
+          </div>
+          <div className={`match-status-text ${isLive ? 'live' : ''}`} style={{ fontSize: '11px' }}>
+            {isLive && <span className="live-pulse-dot" />}
+            {event.status.detail || (event.status.state === 'pre' ? 'Upcoming' : 'Final')}
+          </div>
+        </div>
+
+        <div className="competitors-row" style={{ padding: '4px 0', gap: '8px' }}>
+          {event.league === 'f1' ? (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '4px 0', width: '100%' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <img src={event.homeTeam.logo} alt="" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
+                <span style={{ fontSize: '13px', fontWeight: 600 }}>{event.name}</span>
+              </div>
+              {event.status.state === 'post' ? (
+                <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--primary)' }}>
+                  Winner: {event.homeTeam.score}
+                </span>
+              ) : (
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                  {new Date(event.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </span>
+              )}
+            </div>
+          ) : event.league === 'ufc' ? (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '4px 0', width: '100%' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <img src={event.homeTeam.logo} alt="" style={{ width: '24px', height: '16px', objectFit: 'cover', borderRadius: '2px' }} />
+                <span style={{ fontSize: '13px', fontWeight: 600 }}>{event.name}</span>
+              </div>
+              <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                {event.status.state === 'post' ? 'Final' : new Date(event.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              </span>
+            </div>
+          ) : (
+            <div className="competitors-row" style={{ padding: '4px 0', gap: '8px', width: '100%' }}>
+              {/* Away */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
+                <img src={event.awayTeam.logo} alt={event.awayTeam.displayName} style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
+                <span style={{ fontSize: '13px', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {event.awayTeam.displayName}
+                </span>
+              </div>
+              
+              {/* Score or VS */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '14px', fontWeight: 700, fontFamily: 'monospace' }}>
+                {event.status.state !== 'pre' ? (
+                  <>
+                    <span style={{ color: event.awayTeam.winner ? 'var(--text-primary)' : 'var(--text-secondary)' }}>
+                      {event.awayTeam.score}
+                    </span>
+                    <span style={{ color: 'var(--text-muted)' }}>-</span>
+                    <span style={{ color: event.homeTeam.winner ? 'var(--text-primary)' : 'var(--text-secondary)' }}>
+                      {event.homeTeam.score}
+                    </span>
+                  </>
+                ) : (
+                  <span style={{ color: 'var(--text-muted)', fontSize: '11px', textTransform: 'uppercase' }}>
+                    {new Date(event.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                )}
+              </div>
+
+              {/* Home */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1, justifyContent: 'flex-end', textAlign: 'right' }}>
+                <span style={{ fontSize: '13px', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {event.homeTeam.displayName}
+                </span>
+                <img src={event.homeTeam.logo} alt={event.homeTeam.displayName} style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   // Clear all filters
   const handleClearFilters = () => {
     setToggles(INITIAL_TOGGLES);
@@ -517,6 +746,81 @@ export default function App() {
               <span className="slider"></span>
             </div>
           </button>
+        </div>
+
+        <div className="filter-section">
+          <h3 className="section-title">My Favorites</h3>
+          <div className="favorites-list">
+            {favorites.leagues.length === 0 && favorites.teams.length === 0 ? (
+              <div className="favorites-empty-state">
+                <Star size={16} className="empty-star-icon" />
+                <span>No favorites yet. Star leagues or teams below to pin them here.</span>
+              </div>
+            ) : (
+              <>
+                {/* Favorited Leagues */}
+                {favorites.leagues.map(league => {
+                  const isVisible = toggles.leagues[league];
+                  return (
+                    <div key={`fav-league-${league}`} className="fav-item league-fav-item">
+                      <div className="fav-item-info">
+                        <span className={`league-indicator ${league}`} />
+                        <span className="fav-item-name">{LEAGUE_DISPLAY_NAMES[league] || league.toUpperCase()}</span>
+                      </div>
+                      <div className="fav-item-actions">
+                        <button 
+                          className="action-btn"
+                          onClick={(e) => toggleLeagueVisibility(league, e)}
+                          title={isVisible ? "Hide league" : "Show league"}
+                        >
+                          {isVisible ? <Eye size={14} /> : <EyeOff size={14} style={{ color: 'var(--danger)' }} />}
+                        </button>
+                        <button 
+                          className="action-btn favorite-active"
+                          onClick={(e) => toggleLeagueFavorite(league, e)}
+                          title="Remove from favorites"
+                        >
+                          <Star size={14} fill="var(--star-color)" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {/* Favorited Teams */}
+                {favorites.teams.map(teamId => {
+                  const team = getTeamById(teamId);
+                  if (!team) return null;
+                  const isVisible = toggles.teams[teamId] !== false;
+                  return (
+                    <div key={`fav-team-${teamId}`} className="fav-item team-fav-item">
+                      <div className="fav-item-info">
+                        <img src={team.logo} alt={team.displayName} className="team-logo-small" />
+                        <span className="fav-item-name">{team.shortDisplayName}</span>
+                        <span className={`league-tag-badge ${team.league}`}>{team.league.toUpperCase()}</span>
+                      </div>
+                      <div className="fav-item-actions">
+                        <button 
+                          className="action-btn"
+                          onClick={() => toggleTeamVisibility(teamId)}
+                          title={isVisible ? "Hide team" : "Show team"}
+                        >
+                          {isVisible ? <Eye size={14} /> : <EyeOff size={14} style={{ color: 'var(--danger)' }} />}
+                        </button>
+                        <button 
+                          className="action-btn favorite-active"
+                          onClick={(e) => toggleTeamFavorite(teamId, e)}
+                          title="Remove from favorites"
+                        >
+                          <Star size={14} fill="var(--star-color)" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </>
+            )}
+          </div>
         </div>
 
         <div className="filter-section">
@@ -653,9 +957,19 @@ export default function App() {
       <main className="main-content">
         {/* Navigation & Header */}
         <header className="header">
-          <div className="logo-container">
-            <CalendarIcon className="logo-icon" size={24} />
-            <h1 className="logo-text">SportsCal</h1>
+          <div className="header-left">
+            <button 
+              className={`btn ${sidebarOpen ? 'btn-primary' : ''}`}
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              title={sidebarOpen ? "Hide Filters" : "Show Filters"}
+            >
+              <SlidersHorizontal size={16} />
+              <span>{sidebarOpen ? 'Hide Filters' : 'Filters'}</span>
+            </button>
+            <div className="logo-container">
+              <CalendarIcon className="logo-icon" size={24} />
+              <h1 className="logo-text">SportsCal</h1>
+            </div>
           </div>
 
           <div className="calendar-nav">
@@ -669,14 +983,6 @@ export default function App() {
           </div>
 
           <div className="header-actions">
-            <button 
-              className={`btn ${sidebarOpen ? 'btn-primary' : ''}`}
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              title={sidebarOpen ? "Hide Filters" : "Show Filters"}
-            >
-              <SlidersHorizontal size={16} />
-              <span>{sidebarOpen ? 'Hide Filters' : 'Filters'}</span>
-            </button>
             <button className="btn" onClick={handleToday}>
               Today
             </button>
@@ -701,28 +1007,30 @@ export default function App() {
             <div className="days-grid">
               {gridDates.map((date, idx) => {
                 const dateKey = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
-                const dayEvents = eventsByDate[dateKey] || [];
+                const dayFilteredEvents = eventsByDate[dateKey] || [];
+                const dayAllEvents = allEventsByDate[dateKey] || [];
                 const isCurrentMonth = date.getMonth() === currentDate.getMonth();
                 
                 // Show max 3 events inside the box
-                const visibleEvents = dayEvents.slice(0, 3);
-                const extraCount = dayEvents.length - 3;
+                const visibleEvents = dayFilteredEvents.slice(0, 3);
+                const extraCount = dayFilteredEvents.length - 3;
+                const hasGames = dayAllEvents.length > 0;
 
                 return (
                   <div 
                     key={idx} 
-                    className={`day-cell ${!isCurrentMonth ? 'inactive' : ''} ${isToday(date) ? 'today' : ''}`}
+                    className={`day-cell ${!isCurrentMonth ? 'inactive' : ''} ${isToday(date) ? 'today' : ''} ${!hasGames ? 'empty' : ''}`}
                     onClick={() => {
-                      if (dayEvents.length > 0) {
-                        setSelectedDayEvents({ date, events: dayEvents });
+                      if (hasGames) {
+                        setSelectedDayEvents({ date, events: dayAllEvents });
                       }
                     }}
                   >
                     <div className="day-header-row">
                       <span className="day-number">{date.getDate()}</span>
-                      {dayEvents.length > 0 && (
+                      {dayFilteredEvents.length > 0 && (
                         <span className="day-events-count">
-                          {dayEvents.length} {dayEvents.length === 1 ? 'game' : 'games'}
+                          {dayFilteredEvents.length} {dayFilteredEvents.length === 1 ? 'game' : 'games'}
                         </span>
                       )}
                     </div>
@@ -1119,113 +1427,64 @@ export default function App() {
       </div>
 
       {/* Day Schedule Modal */}
-      <div className={`modal-overlay ${selectedDayEvents ? 'active' : ''}`} onClick={() => setSelectedDayEvents(null)}>
-        {selectedDayEvents && (
-          <div className="modal-content" onClick={e => e.stopPropagation()}>
-            <div className="modal-header">
-              <span className="modal-title">
-                Games on {selectedDayEvents.date.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })}
-              </span>
-              <button className="modal-close" onClick={() => setSelectedDayEvents(null)}>
-                <X size={18} />
-              </button>
-            </div>
-            
-            <div className="modal-body" style={{ gap: '12px' }}>
-              {selectedDayEvents.events.map(event => {
-                const isLive = event.status.state === 'in';
-                
-                return (
-                  <div 
-                    key={event.id} 
-                    className="detailed-match-card"
-                    style={{ padding: '16px', cursor: 'pointer' }}
-                    onClick={() => {
-                      setSelectedEvent(event);
-                      setSelectedDayEvents(null); // transition to event modal
-                    }}
-                  >
-                    <div className="match-card-header" style={{ marginBottom: '-6px' }}>
-                      <span className={`league-badge ${event.league}`}>{event.league}</span>
-                      <div className={`match-status-text ${isLive ? 'live' : ''}`} style={{ fontSize: '11px' }}>
-                        {isLive && <span className="live-pulse-dot" />}
-                        {event.status.detail || (event.status.state === 'pre' ? 'Upcoming' : 'Final')}
-                      </div>
-                    </div>
+      <div className={`modal-overlay ${selectedDayEvents ? 'active' : ''}`} onClick={handleCloseDayModal}>
+        {selectedDayEvents && (() => {
+          const visibleGames = selectedDayEvents.events.filter(isEventVisible);
+          const hiddenGames = selectedDayEvents.events.filter(e => !isEventVisible(e));
 
-                    <div className="competitors-row" style={{ padding: '4px 0', gap: '8px' }}>
-                      {/* Away */}
-                    {event.league === 'f1' ? (
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '4px 0', width: '100%' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <img src={event.homeTeam.logo} alt="" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
-                          <span style={{ fontSize: '13px', fontWeight: 600 }}>{event.name}</span>
-                        </div>
-                        {event.status.state === 'post' ? (
-                          <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--primary)' }}>
-                            Winner: {event.homeTeam.score}
+          return (
+            <div className="modal-content" onClick={e => e.stopPropagation()}>
+              <div className="modal-header">
+                <span className="modal-title">
+                  Games on {selectedDayEvents.date.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })}
+                </span>
+                <button className="modal-close" onClick={handleCloseDayModal}>
+                  <X size={18} />
+                </button>
+              </div>
+              
+              <div className="modal-body" style={{ gap: '12px' }}>
+                {visibleGames.length === 0 && hiddenGames.length === 0 ? (
+                  <div style={{ padding: '24px 0', textAlign: 'center', color: 'var(--text-muted)' }}>
+                    No games scheduled for this day
+                  </div>
+                ) : (
+                  <>
+                    {/* Visible Games List */}
+                    {visibleGames.map(event => renderDetailedMatchCard(event, false))}
+
+                    {/* Collapsible Hidden Games Section */}
+                    {hiddenGames.length > 0 && (
+                      <div className="hidden-games-section" style={{ marginTop: '4px' }}>
+                        <button 
+                          className="hidden-games-toggle-btn"
+                          onClick={() => setShowHiddenGames(prev => !prev)}
+                        >
+                          <span>
+                            {showHiddenGames ? 'Hide' : 'Show'} {hiddenGames.length} Hidden Game{hiddenGames.length === 1 ? '' : 's'}
                           </span>
-                        ) : (
-                          <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                            {new Date(event.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                          </span>
+                          <ChevronDown 
+                            size={16} 
+                            style={{ 
+                              transform: showHiddenGames ? 'rotate(180deg)' : 'rotate(0deg)',
+                              transition: 'transform 0.2s ease'
+                            }} 
+                          />
+                        </button>
+
+                        {showHiddenGames && (
+                          <div className="hidden-games-list" style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '12px' }}>
+                            {hiddenGames.map(event => renderDetailedMatchCard(event, true))}
+                          </div>
                         )}
                       </div>
-                    ) : event.league === 'ufc' ? (
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '4px 0', width: '100%' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <img src={event.homeTeam.logo} alt="" style={{ width: '24px', height: '16px', objectFit: 'cover', borderRadius: '2px' }} />
-                          <span style={{ fontSize: '13px', fontWeight: 600 }}>{event.name}</span>
-                        </div>
-                        <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                          {event.status.state === 'post' ? 'Final' : new Date(event.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        </span>
-                      </div>
-                    ) : (
-                      <div className="competitors-row" style={{ padding: '4px 0', gap: '8px', width: '100%' }}>
-                        {/* Away */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
-                          <img src={event.awayTeam.logo} alt={event.awayTeam.displayName} style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
-                          <span style={{ fontSize: '13px', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                            {event.awayTeam.displayName}
-                          </span>
-                        </div>
-                        
-                        {/* Score or VS */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '14px', fontWeight: 700, fontFamily: 'monospace' }}>
-                          {event.status.state !== 'pre' ? (
-                            <>
-                              <span style={{ color: event.awayTeam.winner ? 'var(--text-primary)' : 'var(--text-secondary)' }}>
-                                {event.awayTeam.score}
-                              </span>
-                              <span style={{ color: 'var(--text-muted)' }}>-</span>
-                              <span style={{ color: event.homeTeam.winner ? 'var(--text-primary)' : 'var(--text-secondary)' }}>
-                                {event.homeTeam.score}
-                              </span>
-                            </>
-                          ) : (
-                            <span style={{ color: 'var(--text-muted)', fontSize: '11px', textTransform: 'uppercase' }}>
-                              {new Date(event.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                            </span>
-                          )}
-                        </div>
-
-                        {/* Home */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1, justifyContent: 'flex-end', textAlign: 'right' }}>
-                          <span style={{ fontSize: '13px', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                            {event.homeTeam.displayName}
-                          </span>
-                          <img src={event.homeTeam.logo} alt={event.homeTeam.displayName} style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
-                        </div>
-                      </div>
                     )}
-                    </div>
-                  </div>
-                );
-              })}
+                  </>
+                )}
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
       </div>
     </div>
   );

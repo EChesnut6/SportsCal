@@ -3,8 +3,6 @@
 ### date
 when click on date, teams/leagues that are hidden should be under a dropdown that can be expanded to see every game for every league on that day
 
-### cache user favorites
-check to make sure user caching is on
 
 ### UI
 cleaner hide, title, etc
