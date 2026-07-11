@@ -10,6 +10,9 @@ const LEAGUE_MAP: Record<League, { sport: string; key: string } | null> = {
   ufc: { sport: 'mma', key: 'ufc' },
   worldcup: { sport: 'soccer', key: 'fifa.world' },
   olympics: null,
+  epl: { sport: 'soccer', key: 'eng.1' },
+  laliga: { sport: 'soccer', key: 'esp.1' },
+  champions: { sport: 'soccer', key: 'uefa.champions' },
 };
 
 // In-memory cache for scoreboard fetches

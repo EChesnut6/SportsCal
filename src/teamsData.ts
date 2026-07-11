@@ -2035,5 +2035,8 @@ export const TEAMS_DIRECTORY: Record<League, Team[]> = {
     "league": "worldcup"
   }
 ],
-  "olympics": []
+  "olympics": [],
+  "epl": [],
+  "laliga": [],
+  "champions": []
 };

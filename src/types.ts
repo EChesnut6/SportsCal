@@ -1,4 +1,4 @@
-export type League = 'nfl' | 'nba' | 'mlb' | 'nhl' | 'mls' | 'f1' | 'ufc' | 'worldcup' | 'olympics';
+export type League = 'nfl' | 'nba' | 'mlb' | 'nhl' | 'mls' | 'f1' | 'ufc' | 'worldcup' | 'olympics' | 'epl' | 'laliga' | 'champions';
 
 export interface Team {
   id: string;

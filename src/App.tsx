@@ -13,7 +13,7 @@ import {
   SlidersHorizontal,
   ChevronDown
 } from 'lucide-react';
-import type { League, GameEvent, FavoritesState, TogglesState } from './types';
+import type { League, Team, GameEvent, FavoritesState, TogglesState } from './types';
 import { fetchScoreboard } from './api';
 import { TEAMS_DIRECTORY } from './teamsData';
 
@@ -68,6 +68,9 @@ const LEAGUE_DISPLAY_NAMES: Record<League, string> = {
   ufc: 'UFC',
   worldcup: 'World Cup',
   olympics: 'Olympic Games',
+  epl: 'EPL',
+  laliga: 'La Liga',
+  champions: 'Champions League',
 };
 
 const INITIAL_FAVORITES: FavoritesState = {
@@ -76,7 +79,7 @@ const INITIAL_FAVORITES: FavoritesState = {
 };
 
 const INITIAL_TOGGLES: TogglesState = {
-  leagues: { nfl: true, nba: true, mlb: true, nhl: true, mls: true, f1: true, ufc: true, worldcup: true, olympics: true },
+  leagues: { nfl: true, nba: true, mlb: true, nhl: true, mls: true, f1: true, ufc: true, worldcup: true, olympics: true, epl: true, laliga: true, champions: true },
   teams: {},
 };
 
@@ -98,7 +101,18 @@ export default function App() {
   });
   const [toggles, setToggles] = useState<TogglesState>(() => {
     const saved = localStorage.getItem(LOCAL_STORAGE_TOGGLES);
-    return saved ? JSON.parse(saved) : INITIAL_TOGGLES;
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        return {
+          leagues: { ...INITIAL_TOGGLES.leagues, ...parsed.leagues },
+          teams: { ...INITIAL_TOGGLES.teams, ...parsed.teams },
+        };
+      } catch (e) {
+        return INITIAL_TOGGLES;
+      }
+    }
+    return INITIAL_TOGGLES;
   });
   const [showFavoritesOnly, setShowFavoritesOnly] = useState<boolean>(() => {
     const saved = localStorage.getItem(LOCAL_STORAGE_FAV_ONLY);
@@ -107,8 +121,7 @@ export default function App() {
 
   // League Accents Color State
   const [leagueColors, setLeagueColors] = useState<Record<League, string>>(() => {
-    const saved = localStorage.getItem('sportscal_league_colors');
-    return saved ? JSON.parse(saved) : {
+    const defaultColors = {
       nfl: '#3b82f6',
       nba: '#f97316',
       mlb: '#10b981',
@@ -118,7 +131,19 @@ export default function App() {
       ufc: '#ef4444',
       worldcup: '#005fa9',
       olympics: '#f4c300',
+      epl: '#e90052',
+      laliga: '#f2384a',
+      champions: '#0052cc',
     };
+    const saved = localStorage.getItem('sportscal_league_colors');
+    if (saved) {
+      try {
+        return { ...defaultColors, ...JSON.parse(saved) };
+      } catch (e) {
+        return defaultColors;
+      }
+    }
+    return defaultColors;
   });
 
   // Dynamic CSS variables injector
@@ -190,6 +215,9 @@ export default function App() {
     ufc: false,
     worldcup: false,
     olympics: false,
+    epl: false,
+    laliga: false,
+    champions: false,
   });
   const [teamSearchQueries, setTeamSearchQueries] = useState<Record<League, string>>({
     nfl: '',
@@ -201,6 +229,9 @@ export default function App() {
     ufc: '',
     worldcup: '',
     olympics: '',
+    epl: '',
+    laliga: '',
+    champions: '',
   });
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(() => {
     const saved = localStorage.getItem(LOCAL_STORAGE_SIDEBAR_OPEN);
@@ -272,7 +303,20 @@ export default function App() {
       const endDateStr = formatDateForApi(fetchEnd);
 
       try {
-        const [nflEvents, nbaEvents, mlbEvents, nhlEvents, mlsEvents, f1Events, ufcEvents, worldcupEvents, olympicsEvents] = await Promise.all([
+        const [
+          nflEvents,
+          nbaEvents,
+          mlbEvents,
+          nhlEvents,
+          mlsEvents,
+          f1Events,
+          ufcEvents,
+          worldcupEvents,
+          olympicsEvents,
+          eplEvents,
+          laligaEvents,
+          championsEvents
+        ] = await Promise.all([
           fetchScoreboard('nfl', startDateStr, endDateStr),
           fetchScoreboard('nba', startDateStr, endDateStr),
           fetchScoreboard('mlb', startDateStr, endDateStr),
@@ -282,6 +326,9 @@ export default function App() {
           fetchScoreboard('ufc', startDateStr, endDateStr),
           fetchScoreboard('worldcup', startDateStr, endDateStr),
           fetchScoreboard('olympics', startDateStr, endDateStr),
+          fetchScoreboard('epl', startDateStr, endDateStr),
+          fetchScoreboard('laliga', startDateStr, endDateStr),
+          fetchScoreboard('champions', startDateStr, endDateStr),
         ]);
 
         if (active) {
@@ -294,7 +341,10 @@ export default function App() {
             ...f1Events,
             ...ufcEvents,
             ...worldcupEvents,
-            ...olympicsEvents
+            ...olympicsEvents,
+            ...eplEvents,
+            ...laligaEvents,
+            ...championsEvents
           ]);
           setLoading(false);
         }
@@ -468,7 +518,36 @@ export default function App() {
       .replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, '');
     
     let teamList = teams[league] || [];
-    if (league === 'ufc') {
+    if (teamList.length === 0 && league !== 'ufc') {
+      const uniqueTeams = new Map<string, Team>();
+      events.forEach(event => {
+        if (event.league === league) {
+          if (event.homeTeam && event.homeTeam.id && event.homeTeam.id !== 'f1-session' && event.homeTeam.id !== 'f1-league') {
+            uniqueTeams.set(event.homeTeam.id, {
+              id: event.homeTeam.id,
+              displayName: event.homeTeam.displayName,
+              shortDisplayName: event.homeTeam.displayName,
+              abbreviation: event.homeTeam.abbreviation,
+              color: event.homeTeam.color || '1e293b',
+              logo: event.homeTeam.logo,
+              league: league
+            });
+          }
+          if (event.awayTeam && event.awayTeam.id && event.awayTeam.id !== 'f1-session' && event.awayTeam.id !== 'f1-league') {
+            uniqueTeams.set(event.awayTeam.id, {
+              id: event.awayTeam.id,
+              displayName: event.awayTeam.displayName,
+              shortDisplayName: event.awayTeam.displayName,
+              abbreviation: event.awayTeam.abbreviation,
+              color: event.awayTeam.color || '1e293b',
+              logo: event.awayTeam.logo,
+              league: league
+            });
+          }
+        }
+      });
+      teamList = Array.from(uniqueTeams.values()).sort((a, b) => a.displayName.localeCompare(b.displayName));
+    } else if (league === 'ufc') {
       teamList = Object.values(knownFighters).map(f => ({
         id: f.id,
         displayName: f.displayName,
@@ -675,7 +754,8 @@ export default function App() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
                 <img src={event.awayTeam.logo} alt={event.awayTeam.displayName} style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
                 <span style={{ fontSize: '13px', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {event.awayTeam.displayName}
+                  <span className="desktop-only">{event.awayTeam.displayName}</span>
+                  <span className="mobile-only">{event.awayTeam.abbreviation}</span>
                 </span>
               </div>
               
@@ -701,7 +781,8 @@ export default function App() {
               {/* Home */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1, justifyContent: 'flex-end', textAlign: 'right' }}>
                 <span style={{ fontSize: '13px', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {event.homeTeam.displayName}
+                  <span className="desktop-only">{event.homeTeam.displayName}</span>
+                  <span className="mobile-only">{event.homeTeam.abbreviation}</span>
                 </span>
                 <img src={event.homeTeam.logo} alt={event.homeTeam.displayName} style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
               </div>
@@ -720,8 +801,27 @@ export default function App() {
 
   return (
     <div className="app-container">
+      {/* Sidebar Backdrop for Mobile */}
+      {sidebarOpen && (
+        <div 
+          className="sidebar-backdrop mobile-only" 
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar Filters */}
       <aside className={`sidebar ${sidebarOpen ? '' : 'collapsed'}`}>
+        {/* Mobile Sidebar Header */}
+        <div className="mobile-only sidebar-mobile-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', borderBottom: '1px solid var(--border-glass)', paddingBottom: '16px' }}>
+          <div className="logo-container" style={{ justifyContent: 'flex-start' }}>
+            <CalendarIcon className="logo-icon" size={20} />
+            <span className="logo-text" style={{ fontSize: '18px' }}>Filters</span>
+          </div>
+          <button className="action-btn" onClick={() => setSidebarOpen(false)} style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <X size={16} />
+          </button>
+        </div>
+
         <div className="filter-section">
           <h3 className="section-title">Calendar Mode</h3>
           
@@ -844,7 +944,7 @@ export default function App() {
           </div>
           
           <div className="league-filter-list">
-            {(['nfl', 'nba', 'mlb', 'nhl', 'mls', 'f1', 'ufc', 'worldcup', 'olympics'] as League[]).map(league => {
+            {(['nfl', 'nba', 'mlb', 'nhl', 'mls', 'f1', 'ufc', 'worldcup', 'olympics', 'epl', 'laliga', 'champions'] as League[]).map(league => {
               const isFav = favorites.leagues.includes(league);
               const isVisible = toggles.leagues[league];
               const isExpanded = expandedLeagues[league];
@@ -993,7 +1093,7 @@ export default function App() {
         <section className="calendar-view">
           <div className="weekdays-header">
             {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-              <div key={day} className="weekday">{day}</div>
+              <div key={day} className="weekday">{day[0]}</div>
             ))}
           </div>
 
@@ -1015,6 +1115,7 @@ export default function App() {
                 const visibleEvents = dayFilteredEvents.slice(0, 3);
                 const extraCount = dayFilteredEvents.length - 3;
                 const hasGames = dayAllEvents.length > 0;
+                const dayLeagues = Array.from(new Set(dayFilteredEvents.map(e => e.league)));
 
                 return (
                   <div 
@@ -1035,7 +1136,7 @@ export default function App() {
                       )}
                     </div>
                     
-                    <div className="day-events-list">
+                    <div className="day-events-list desktop-only">
                       {visibleEvents.map(event => {
                         const isLive = event.status.state === 'in';
                         const isFinal = event.status.state === 'post';
@@ -1106,7 +1207,7 @@ export default function App() {
                     </div>
 
                     {extraCount > 0 && (
-                      <div style={{
+                      <div className="desktop-only" style={{
                         fontSize: '9px',
                         fontWeight: 700,
                         color: 'var(--primary)',
@@ -1115,6 +1216,15 @@ export default function App() {
                         paddingTop: '2px'
                       }}>
                         + {extraCount} more
+                      </div>
+                    )}
+
+                    {/* Mobile Dots Row */}
+                    {dayFilteredEvents.length > 0 && (
+                      <div className="day-dots-row mobile-only">
+                        {dayLeagues.slice(0, 4).map(league => (
+                          <span key={league} className={`day-dot ${league}`} />
+                        ))}
                       </div>
                     )}
                   </div>
@@ -1427,7 +1537,7 @@ export default function App() {
       </div>
 
       {/* Day Schedule Modal */}
-      <div className={`modal-overlay ${selectedDayEvents ? 'active' : ''}`} onClick={handleCloseDayModal}>
+      <div className={`modal-overlay day-schedule-modal ${selectedDayEvents ? 'active' : ''}`} onClick={handleCloseDayModal}>
         {selectedDayEvents && (() => {
           const visibleGames = selectedDayEvents.events.filter(isEventVisible);
           const hiddenGames = selectedDayEvents.events.filter(e => !isEventVisible(e));

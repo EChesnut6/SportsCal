@@ -369,6 +369,9 @@ body {
 .league-indicator.ufc { background-color: var(--color-ufc); box-shadow: 0 0 6px var(--color-ufc); }
 .league-indicator.worldcup { background-color: var(--color-worldcup); box-shadow: 0 0 6px var(--color-worldcup); }
 .league-indicator.olympics { background-color: var(--color-olympics); box-shadow: 0 0 6px var(--color-olympics); }
+.league-indicator.epl { background-color: var(--color-epl); box-shadow: 0 0 6px var(--color-epl); }
+.league-indicator.laliga { background-color: var(--color-laliga); box-shadow: 0 0 6px var(--color-laliga); }
+.league-indicator.champions { background-color: var(--color-champions); box-shadow: 0 0 6px var(--color-champions); }
 
 .league-actions {
   display: flex;
@@ -639,6 +642,9 @@ body {
 .event-strip.ufc { border-left-color: var(--color-ufc); }
 .event-strip.worldcup { border-left-color: var(--color-worldcup); }
 .event-strip.olympics { border-left-color: var(--color-olympics); }
+.event-strip.epl { border-left-color: var(--color-epl); }
+.event-strip.laliga { border-left-color: var(--color-laliga); }
+.event-strip.champions { border-left-color: var(--color-champions); }
 
 .event-teams {
   overflow: hidden;
@@ -797,6 +803,9 @@ body {
 .league-badge.ufc { background-color: var(--color-ufc); }
 .league-badge.worldcup { background-color: var(--color-worldcup); }
 .league-badge.olympics { background-color: var(--color-olympics); }
+.league-badge.epl { background-color: var(--color-epl); }
+.league-badge.laliga { background-color: var(--color-laliga); }
+.league-badge.champions { background-color: var(--color-champions); }
 
 .match-status-text {
   font-size: 12px;
@@ -998,36 +1007,118 @@ input:checked + .slider:before {
   100% { filter: drop-shadow(0 0 4px var(--primary)); opacity: 0.9; }
 }
 
+/* Responsive Display Helpers */
+.mobile-only {
+  display: none !important;
+}
+
+.desktop-only {
+  display: block !important;
+}
+span.desktop-only {
+  display: inline !important;
+}
+
+/* Day Dots Row (Mobile View) */
+.day-dots-row {
+  display: flex;
+  justify-content: center;
+  gap: 3px;
+  margin-top: 4px;
+  width: 100%;
+}
+
+.day-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  opacity: 0.9;
+}
+.day-dot.nfl { background-color: var(--color-nfl); box-shadow: 0 0 3px var(--color-nfl); }
+.day-dot.nba { background-color: var(--color-nba); box-shadow: 0 0 3px var(--color-nba); }
+.day-dot.mlb { background-color: var(--color-mlb); box-shadow: 0 0 3px var(--color-mlb); }
+.day-dot.nhl { background-color: var(--color-nhl); box-shadow: 0 0 3px var(--color-nhl); }
+.day-dot.mls { background-color: var(--color-mls); box-shadow: 0 0 3px var(--color-mls); }
+.day-dot.f1 { background-color: var(--color-f1); box-shadow: 0 0 3px var(--color-f1); }
+.day-dot.ufc { background-color: var(--color-ufc); box-shadow: 0 0 3px var(--color-ufc); }
+.day-dot.worldcup { background-color: var(--color-worldcup); box-shadow: 0 0 3px var(--color-worldcup); }
+.day-dot.olympics { background-color: var(--color-olympics); box-shadow: 0 0 3px var(--color-olympics); }
+.day-dot.epl { background-color: var(--color-epl); box-shadow: 0 0 3px var(--color-epl); }
+.day-dot.laliga { background-color: var(--color-laliga); box-shadow: 0 0 3px var(--color-laliga); }
+.day-dot.champions { background-color: var(--color-champions); box-shadow: 0 0 3px var(--color-champions); }
+
 /* Responsive Grid and Mobile Drawers */
 @media (max-width: 1024px) {
+  .desktop-only {
+    display: none !important;
+  }
+  .mobile-only {
+    display: block !important;
+  }
+  span.mobile-only {
+    display: inline !important;
+  }
+  div.mobile-only {
+    display: flex !important;
+  }
+
   .app-container {
     flex-direction: column;
     padding: 16px;
   }
   
+  /* Sidebar Drawer Style */
   .sidebar {
-    width: 100%;
-    height: auto;
-    position: static;
-    transition: 
-      height var(--transition-normal), 
-      padding var(--transition-normal), 
-      margin-bottom var(--transition-normal), 
-      opacity var(--transition-normal), 
-      border var(--transition-normal);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 320px;
+    max-width: 85vw;
+    height: 100vh;
+    z-index: 1000;
+    border-radius: 0 20px 20px 0;
+    border: 1px solid var(--border-glass);
+    border-left: none;
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.6);
+    transform: translateX(-100%);
+    transition: transform var(--transition-normal) ease;
+    opacity: 1;
+    margin: 0;
+    background: rgba(10, 15, 28, 0.95);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    overflow-y: auto;
   }
   
   .sidebar.collapsed {
-    width: 100%;
-    height: 0;
-    padding-top: 0;
-    padding-bottom: 0;
-    margin-bottom: -24px;
-    border-top-width: 0;
-    border-bottom-width: 0;
+    transform: translateX(-100%);
+    width: 320px;
+    max-width: 85vw;
+    margin-right: 0;
     opacity: 0;
     pointer-events: none;
     overflow: hidden;
+  }
+
+  .sidebar:not(.collapsed) {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Mobile Sidebar Backdrop */
+  .sidebar-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 999;
+    animation: fadeIn 0.2s ease-out;
   }
   
   .calendar-view {
@@ -1035,53 +1126,187 @@ input:checked + .slider:before {
   }
 }
 
-@media (max-width: 640px) {
-  .header {
+/* Tablet / Mobile Day Cell Grid Optimization */
+@media (max-width: 768px) {
+  .day-cell {
+    min-height: 56px;
+    padding: 4px;
+    display: flex;
     flex-direction: column;
-    gap: 16px;
-    padding: 16px;
-    align-items: stretch;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+  }
+  
+  .day-header-row {
+    justify-content: center;
+    width: auto;
+  }
+  
+  .day-events-count {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  /* Two-row compact header layout */
+  .header {
+    display: grid;
+    grid-template-areas: 
+      "brand actions"
+      "nav nav";
+    gap: 12px;
+    padding: 12px 16px;
+    align-items: center;
+    position: sticky;
+    top: 16px;
+    z-index: 9;
   }
   
   .header-left {
-    justify-content: center;
+    grid-area: brand;
+    justify-content: flex-start;
+    gap: 12px;
   }
   
-  .logo-container {
-    justify-content: center;
+  /* Make filters toggle button compact & icon-only */
+  .header-left .btn span {
+    display: none;
   }
-  
-  .calendar-nav {
+  .header-left .btn {
+    padding: 8px;
+    width: 38px;
+    height: 38px;
     justify-content: center;
+    border-radius: 10px;
   }
   
   .header-actions {
-    justify-content: center;
+    grid-area: actions;
+    justify-content: flex-end;
+  }
+  
+  .header-actions .btn {
+    padding: 8px 12px;
+    font-size: 13px;
+    border-radius: 10px;
+  }
+  
+  .calendar-nav {
+    grid-area: nav;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 2px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 4px 8px;
+    border-radius: 10px;
+    border: 1px solid var(--border-glass);
+  }
+  
+  .current-month-year {
+    font-size: 15px;
+    min-width: unset;
+    font-weight: 700;
+  }
+  
+  .nav-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
   }
   
   .weekdays-header {
     font-size: 10px;
   }
   
-  .day-cell {
-    min-height: 60px;
-    padding: 6px;
+  /* Bottom Sheet style modals on mobile */
+  .modal-overlay {
+    align-items: flex-end;
   }
   
-  .day-number {
-    width: 18px;
-    height: 18px;
-    font-size: 11px;
+  .modal-content {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 20px 20px 0 0;
+    border-bottom: none;
+    border-left: none;
+    border-right: none;
+    max-height: 85vh;
+    transform: translateY(100%);
+    transition: transform var(--transition-normal) cubic-bezier(0.16, 1, 0.3, 1);
   }
   
-  .day-events-count {
-    font-size: 9px;
+  .modal-overlay.active .modal-content {
+    transform: translateY(0);
   }
   
-  .event-strip {
-    font-size: 9px;
-    padding: 2px 4px;
+  /* Day schedule modal specific full length override */
+  .day-schedule-modal .modal-content {
+    height: 100% !important;
+    max-height: 100% !important;
+    border-radius: 0 !important;
   }
+  
+  .day-schedule-modal .modal-header {
+    padding-top: calc(16px + env(safe-area-inset-top, 0px)) !important;
+  }
+  
+  .day-schedule-modal .modal-body {
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+  
+  /* Modal Card spacing & size overrides */
+  .competitors-row {
+    gap: 8px;
+    padding: 8px 0;
+  }
+  
+  .team-logo-large {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .team-name-large {
+    font-size: 13px;
+    max-width: 90px;
+  }
+  
+  .team-score-large {
+    font-size: 30px;
+  }
+  
+  .vs-text {
+    font-size: 13px;
+  }
+  
+  .modal-body {
+    padding: 16px;
+  }
+  
+  /* Touch target sizes */
+  .action-btn {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .team-filter-row {
+    padding: 8px 10px;
+  }
+}
+
+/* Ensure smooth inertial scrolling on iOS scrollable elements */
+.sidebar,
+.teams-list-container,
+.day-events-list,
+.modal-body,
+.favorites-list,
+.hidden-games-list {
+  -webkit-overflow-scrolling: touch;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 /* League Color Picker Custom Swatch */
@@ -1199,6 +1424,9 @@ input:checked + .slider:before {
 .league-tag-badge.ufc { border-color: rgba(239, 68, 68, 0.3); color: var(--color-ufc); }
 .league-tag-badge.worldcup { border-color: rgba(0, 95, 169, 0.3); color: var(--color-worldcup); }
 .league-tag-badge.olympics { border-color: rgba(244, 195, 0, 0.3); color: var(--color-olympics); }
+.league-tag-badge.epl { border-color: rgba(233, 0, 82, 0.3); color: var(--color-epl); }
+.league-tag-badge.laliga { border-color: rgba(242, 56, 74, 0.3); color: var(--color-laliga); }
+.league-tag-badge.champions { border-color: rgba(0, 82, 204, 0.3); color: var(--color-champions); }
 
 .fav-item-actions {
   display: flex;
