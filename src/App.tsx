@@ -83,6 +83,30 @@ const INITIAL_TOGGLES: TogglesState = {
   teams: {},
 };
 
+// Favicon SVG Component (matches public/favicon.svg but with currentColor fill for theme integration)
+function FaviconIcon({ className, size = 24 }: { className?: string; size?: number }) {
+  return (
+    <svg 
+      width={size} 
+      height={size} 
+      viewBox="0 0 64 64" 
+      className={className}
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M37.25,19.55H26.75a1,1,0,0,1-1-1V12.13a1,1,0,0,1,1-1h10.5a1,1,0,0,1,1,1v6.42A1,1,0,0,1,37.25,19.55Zm-9.5-2h8.5V13.13h-8.5Z"/>
+      <path d="M43.68,52.87H20.32a1,1,0,0,1-1-1V15.55a1,1,0,0,1,1-1h6.43a1,1,0,0,1,1,1v2h8.5v-2a1,1,0,0,1,1-1h6.43a1,1,0,0,1,1,1V51.87A1,1,0,0,1,43.68,52.87Zm-22.36-2H42.68V16.55H38.25v2a1,1,0,0,1-1,1H26.75a1,1,0,0,1-1-1v-2H21.32Z"/>
+      <path d="M25.91,46.76a3.31,3.31,0,1,1,3.3-3.3A3.3,3.3,0,0,1,25.91,46.76Zm0-4.61a1.31,1.31,0,1,0,1.3,1.31A1.31,1.31,0,0,0,25.91,42.15Z"/>
+      <path d="M26.93,42.69a1,1,0,0,1-1-1c0-.38-.14-8.6,4.28-13.39l-1.88-.57a1,1,0,0,1,.57-1.91l3.57,1.07a1,1,0,0,1,.69.78,1,1,0,0,1-.37,1c-5,3.83-4.86,12.91-4.86,13a1,1,0,0,1-1,1Z"/>
+      <path d="M32.31,32.94a1,1,0,0,1-1-1l-.13-4.07a1,1,0,0,1,1-1,1,1,0,0,1,1,1l.13,4.08a1,1,0,0,1-1,1Z"/>
+      <path d="M38.34,44.55a1,1,0,0,1-.71-.29l-3.54-3.54a1,1,0,0,1,0-1.42,1,1,0,0,1,1.41,0l3.55,3.54a1,1,0,0,1,0,1.42A1,1,0,0,1,38.34,44.55Z"/>
+      <path d="M34.8,44.55a1,1,0,0,1-.71-.29,1,1,0,0,1,0-1.42l3.54-3.54a1,1,0,1,1,1.42,1.42L35.5,44.26A1,1,0,0,1,34.8,44.55Z"/>
+      <path d="M39,26.71a1,1,0,0,1-.71-.29l-3.54-3.54a1,1,0,0,1,1.42-1.42L39.69,25a1,1,0,0,1,0,1.42A1,1,0,0,1,39,26.71Z"/>
+      <path d="M35.44,26.71a1,1,0,0,1-.71-.29,1,1,0,0,1,0-1.42l3.54-3.54a1,1,0,1,1,1.42,1.42l-3.54,3.54A1,1,0,0,1,35.44,26.71Z"/>
+    </svg>
+  );
+}
+
 export default function App() {
   // Calendar Navigation State
   const [currentDate, setCurrentDate] = useState<Date>(() => new Date());
@@ -122,23 +146,28 @@ export default function App() {
   // League Accents Color State
   const [leagueColors, setLeagueColors] = useState<Record<League, string>>(() => {
     const defaultColors = {
-      nfl: '#3b82f6',
-      nba: '#f97316',
-      mlb: '#10b981',
-      nhl: '#a855f7',
-      mls: '#00b140',
-      f1: '#e10600',
-      ufc: '#ef4444',
-      worldcup: '#005fa9',
-      olympics: '#f4c300',
-      epl: '#e90052',
-      laliga: '#f2384a',
-      champions: '#0052cc',
+      nfl: '#5282ba',
+      nba: '#d6793e',
+      mlb: '#3b9e7a',
+      nhl: '#8c62c2',
+      mls: '#46a84c',
+      f1: '#d42b24',
+      ufc: '#c23c3c',
+      worldcup: '#1e6091',
+      olympics: '#dca124',
+      epl: '#d61a55',
+      laliga: '#db3747',
+      champions: '#1c52b3',
     };
     const saved = localStorage.getItem('sportscal_league_colors');
     if (saved) {
       try {
-        return { ...defaultColors, ...JSON.parse(saved) };
+        const parsed = JSON.parse(saved);
+        // Auto-migrate if they were on the old cyber defaults (using old NFL #3b82f6)
+        if (parsed.nfl === '#3b82f6') {
+          return defaultColors;
+        }
+        return { ...defaultColors, ...parsed };
       } catch (e) {
         return defaultColors;
       }
@@ -799,6 +828,25 @@ export default function App() {
     setShowFavoritesOnly(false);
   };
 
+  // Reset league colors to the new defaults
+  const handleResetColors = () => {
+    const defaultColors = {
+      nfl: '#5282ba',
+      nba: '#d6793e',
+      mlb: '#3b9e7a',
+      nhl: '#8c62c2',
+      mls: '#46a84c',
+      f1: '#d42b24',
+      ufc: '#c23c3c',
+      worldcup: '#1e6091',
+      olympics: '#dca124',
+      epl: '#d61a55',
+      laliga: '#db3747',
+      champions: '#1c52b3',
+    };
+    setLeagueColors(defaultColors);
+  };
+
   return (
     <div className="app-container">
       {/* Sidebar Backdrop for Mobile */}
@@ -814,7 +862,7 @@ export default function App() {
         {/* Mobile Sidebar Header */}
         <div className="mobile-only sidebar-mobile-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', borderBottom: '1px solid var(--border-glass)', paddingBottom: '16px' }}>
           <div className="logo-container" style={{ justifyContent: 'flex-start' }}>
-            <CalendarIcon className="logo-icon" size={20} />
+            <FaviconIcon className="logo-icon" size={28} />
             <span className="logo-text" style={{ fontSize: '18px' }}>Filters</span>
           </div>
           <button className="action-btn" onClick={() => setSidebarOpen(false)} style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -926,21 +974,36 @@ export default function App() {
         <div className="filter-section">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <h3 className="section-title">Leagues & Teams</h3>
-            {hasTogglesOff && (
+            <div style={{ display: 'flex', gap: '8px' }}>
+              {hasTogglesOff && (
+                <button 
+                  onClick={handleClearFilters}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: 'var(--primary)',
+                    fontSize: '11px',
+                    fontWeight: 600,
+                    cursor: 'pointer'
+                  }}
+                >
+                  Reset Toggles
+                </button>
+              )}
               <button 
-                onClick={handleClearFilters}
+                onClick={handleResetColors}
                 style={{
                   background: 'none',
                   border: 'none',
-                  color: 'var(--primary)',
+                  color: 'var(--text-muted)',
                   fontSize: '11px',
                   fontWeight: 600,
                   cursor: 'pointer'
                 }}
               >
-                Reset Toggles
+                Reset Colors
               </button>
-            )}
+            </div>
           </div>
           
           <div className="league-filter-list">
@@ -1067,7 +1130,7 @@ export default function App() {
               <span>{sidebarOpen ? 'Hide Filters' : 'Filters'}</span>
             </button>
             <div className="logo-container">
-              <CalendarIcon className="logo-icon" size={24} />
+              <FaviconIcon className="logo-icon" size={36} />
               <h1 className="logo-text">SportsCal</h1>
             </div>
           </div>

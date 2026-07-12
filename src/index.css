@@ -1,46 +1,46 @@
 :root {
   --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   
-  /* Color Palette - Cyber Dark Glass Theme */
-  --bg-dark: #07090e;
-  --bg-panel: rgba(13, 19, 33, 0.75);
-  --bg-card: rgba(22, 30, 49, 0.6);
-  --bg-card-hover: rgba(30, 41, 67, 0.85);
+  /* Color Palette - Warm Charcoal & Champagne Gold Theme */
+  --bg-dark: #111112;
+  --bg-panel: rgba(35, 31, 32, 0.85); /* Matches new favicon #231f20 */
+  --bg-card: rgba(50, 47, 48, 0.55);
+  --bg-card-hover: rgba(62, 58, 59, 0.8);
   
-  --border-glass: rgba(255, 255, 255, 0.05);
+  --border-glass: rgba(255, 255, 255, 0.06);
   --border-glass-hover: rgba(255, 255, 255, 0.12);
-  --border-active: rgba(99, 102, 241, 0.4);
+  --border-active: rgba(223, 177, 91, 0.4);
   
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --text-dimmed: #475569;
+  --text-primary: #fcfbfa;
+  --text-secondary: #a6a3a0;
+  --text-muted: #75716e;
+  --text-dimmed: #555250;
   
-  --primary: #6366f1; /* Indigo */
-  --primary-glow: rgba(99, 102, 241, 0.15);
+  --primary: #dfb15b; /* Champagne Gold */
+  --primary-glow: rgba(223, 177, 91, 0.15);
   --danger: #ef4444; /* Live red */
   --star-color: #f59e0b; /* Amber */
   
-  /* League Accents */
-  --color-nfl: #3b82f6; /* Blue */
-  --color-nba: #f97316; /* Orange */
-  --color-mlb: #10b981; /* Green */
-  --color-nhl: #a855f7; /* Purple */
-  --color-mls: #00b140; /* Soccer Green */
-  --color-f1: #e10600; /* F1 Red */
-  --color-ufc: #ef4444; /* UFC Red */
-  --color-worldcup: #005fa9; /* FIFA Blue */
-  --color-olympics: #f4c300; /* Olympic Gold */
+  /* League Accents - Softer Warm/Earthy Tones */
+  --color-nfl: #5282ba; /* Slate Blue */
+  --color-nba: #d6793e; /* Terracotta */
+  --color-mlb: #3b9e7a; /* Sage Green */
+  --color-nhl: #8c62c2; /* Plum */
+  --color-mls: #46a84c; /* Grass Green */
+  --color-f1: #d42b24; /* Crimson */
+  --color-ufc: #c23c3c; /* Burgundy */
+  --color-worldcup: #1e6091; /* Muted FIFA Blue */
+  --color-olympics: #dca124; /* Muted Olympic Gold */
   
-  --glow-nfl: rgba(59, 130, 246, 0.2);
-  --glow-nba: rgba(249, 115, 22, 0.2);
-  --glow-mlb: rgba(16, 185, 129, 0.2);
-  --glow-nhl: rgba(168, 85, 247, 0.2);
-  --glow-mls: rgba(0, 177, 64, 0.2);
-  --glow-f1: rgba(225, 6, 0, 0.2);
-  --glow-ufc: rgba(239, 68, 68, 0.2);
-  --glow-worldcup: rgba(0, 95, 169, 0.2);
-  --glow-olympics: rgba(244, 195, 0, 0.2);
+  --glow-nfl: rgba(82, 130, 186, 0.2);
+  --glow-nba: rgba(214, 121, 62, 0.2);
+  --glow-mlb: rgba(59, 158, 122, 0.2);
+  --glow-nhl: rgba(140, 98, 194, 0.2);
+  --glow-mls: rgba(70, 168, 76, 0.2);
+  --glow-f1: rgba(212, 43, 36, 0.2);
+  --glow-ufc: rgba(194, 60, 60, 0.2);
+  --glow-worldcup: rgba(30, 96, 145, 0.2);
+  --glow-olympics: rgba(220, 161, 36, 0.2);
 
   --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
   --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.3);
@@ -59,9 +59,9 @@
 body {
   background-color: var(--bg-dark);
   background-image: 
-    radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.05) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, rgba(168, 85, 247, 0.04) 0px, transparent 50%),
-    radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.02) 0px, transparent 50%);
+    radial-gradient(at 0% 0%, rgba(223, 177, 91, 0.04) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(35, 31, 32, 0.25) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(223, 177, 91, 0.02) 0px, transparent 50%);
   background-attachment: fixed;
   color: var(--text-primary);
   font-family: var(--font-sans);
@@ -263,8 +263,8 @@ body {
 }
 
 .btn-primary:hover {
-  background: #4f46e5;
-  box-shadow: 0 0 12px rgba(99, 102, 241, 0.4);
+  background: #cfa24d;
+  box-shadow: 0 0 12px rgba(223, 177, 91, 0.4);
 }
 
 .btn-icon-only {
@@ -560,13 +560,13 @@ body {
 
 .day-cell.today {
   border-color: var(--border-active);
-  background: rgba(99, 102, 241, 0.04);
+  background: rgba(223, 177, 91, 0.04);
 }
 
 .day-cell.today .day-number {
   background: var(--primary);
   color: var(--text-primary);
-  box-shadow: 0 0 10px rgba(99, 102, 241, 0.4);
+  box-shadow: 0 0 10px rgba(223, 177, 91, 0.4);
 }
 
 .day-header-row {

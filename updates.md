@@ -3,12 +3,20 @@
 ### Teams
 should be sorted alphabetically when shown underneath the leagues
 
-### UI
-cleaner hide, title, etc
-- the filter hide button should at least be same side as the filters, maybe a three lines button to make clear it's menu stuff?
-
-### Leagues
-soccer leagues and cups
-
 ### UFC
 sugar sean and possible others
+
+### College football
+FBS
+favorite conferences + teams
+league shows ncaaf, then clicking shows the conference, then clicking shows the teams in those conferences
+can hide conferences
+
+### Highlight days
+depending on certain things, days on the calander should be highlighted
+- playoffs
+- season opener
+- "Game" days, multiple favorites playing on the same day
+
+### favorites vs hidden
+favorited teams should always be shown if "favorites only" is on, even if the league that team is in is hidden
