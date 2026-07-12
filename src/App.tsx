@@ -11,7 +11,13 @@ import {
   ExternalLink, 
   X,
   SlidersHorizontal,
-  ChevronDown
+  ChevronDown,
+  Search,
+  LayoutGrid,
+  List,
+  Sparkles,
+  TrendingUp,
+  Trophy
 } from 'lucide-react';
 import type { League, Team, GameEvent, FavoritesState, TogglesState } from './types';
 import { fetchScoreboard } from './api';
@@ -114,6 +120,19 @@ export default function App() {
   // Data State
   const [events, setEvents] = useState<GameEvent[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+
+  // View Mode: grid or agenda
+  const [viewMode, setViewMode] = useState<'grid' | 'agenda'>(() => {
+    const saved = localStorage.getItem('sportscal_view_mode');
+    return (saved === 'agenda' || saved === 'grid') ? saved : 'grid';
+  });
+
+  // Global search query
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
+  useEffect(() => {
+    localStorage.setItem('sportscal_view_mode', viewMode);
+  }, [viewMode]);
 
   // Static list of all teams in all leagues (independent of visible month)
   const teams = TEAMS_DIRECTORY;
@@ -455,17 +474,82 @@ export default function App() {
     });
   };
 
-  // Filter events based on active filters & toggles
+  // Helper to check if event matches global search query
+  const matchesSearch = (event: GameEvent): boolean => {
+    const searchClean = searchQuery.toLowerCase().trim();
+    if (!searchClean) return true;
+    
+    return Boolean(
+      event.name.toLowerCase().includes(searchClean) ||
+      event.shortName.toLowerCase().includes(searchClean) ||
+      event.homeTeam.displayName.toLowerCase().includes(searchClean) ||
+      event.homeTeam.abbreviation.toLowerCase().includes(searchClean) ||
+      event.awayTeam.displayName.toLowerCase().includes(searchClean) ||
+      event.awayTeam.abbreviation.toLowerCase().includes(searchClean) ||
+      Boolean(event.venue && event.venue.toLowerCase().includes(searchClean)) ||
+      Boolean(LEAGUE_DISPLAY_NAMES[event.league] && LEAGUE_DISPLAY_NAMES[event.league].toLowerCase().includes(searchClean)) ||
+      event.league.toLowerCase().includes(searchClean) ||
+      (event.ufcFights && event.ufcFights.some(fight => 
+        fight.name.toLowerCase().includes(searchClean) || 
+        fight.competitors.some(c => c.displayName.toLowerCase().includes(searchClean))
+      )) ||
+      (event.f1Competitors && event.f1Competitors.some(driver =>
+        driver.name.toLowerCase().includes(searchClean)
+      ))
+    );
+  };
+
+  // Helper to check if an event is currently visible based on active toggles/filters & search query
+  const isEventVisible = (event: GameEvent): boolean => {
+    // 0. Search query check
+    if (!matchesSearch(event)) return false;
+
+    // 1. League visibility toggle check
+    if (!toggles.leagues[event.league]) return false;
+
+    // 2. Individual team toggles (check if either team is toggled OFF)
+    if (toggles.teams[event.homeTeam.id] === false) return false;
+    if (toggles.teams[event.awayTeam.id] === false) return false;
+
+    // 3. Favorites only filter
+    if (showFavoritesOnly) {
+      const isLeagueFav = favorites.leagues.includes(event.league);
+      const isHomeFav = favorites.teams.includes(event.homeTeam.id);
+      const isAwayFav = favorites.teams.includes(event.awayTeam.id);
+      const isUfcCardFav = event.league === 'ufc' && event.ufcFights?.some(fight =>
+        fight.competitors.some(c => favorites.teams.includes(`ufc-${c.id}`))
+      );
+      
+      if (!isLeagueFav && !isHomeFav && !isAwayFav && !isUfcCardFav) return false;
+    }
+
+    return true;
+  };
+
+  // Helper to check if a Date matches Today
+  const isToday = (date: Date): boolean => {
+    const today = new Date();
+    return (
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear()
+    );
+  };
+
+  // Filter events based on active filters & toggles & search query
   const filteredEvents = useMemo(() => {
     return events.filter(event => {
-      // 1. League visibility toggle check
+      // 1. Search Query Check
+      if (!matchesSearch(event)) return false;
+
+      // 2. League visibility toggle check
       if (!toggles.leagues[event.league]) return false;
 
-      // 2. Individual team toggles (check if either team is toggled OFF)
+      // 3. Individual team toggles (check if either team is toggled OFF)
       if (toggles.teams[event.homeTeam.id] === false) return false;
       if (toggles.teams[event.awayTeam.id] === false) return false;
 
-      // 3. Favorites only filter
+      // 4. Favorites only filter
       if (showFavoritesOnly) {
         const isLeagueFav = favorites.leagues.includes(event.league);
         const isHomeFav = favorites.teams.includes(event.homeTeam.id);
@@ -479,7 +563,81 @@ export default function App() {
 
       return true;
     });
-  }, [events, toggles, favorites, showFavoritesOnly]);
+  }, [events, toggles, favorites, showFavoritesOnly, searchQuery]);
+
+  // Compute live events (visible based on active filters)
+  const liveEvents = useMemo(() => {
+    return events.filter(e => e.status.state === 'in' && isEventVisible(e));
+  }, [events, toggles, favorites, showFavoritesOnly, searchQuery]);
+
+  // Compute today's events (visible based on active filters, excluding live)
+  const todayEvents = useMemo(() => {
+    return events.filter(e => {
+      const d = new Date(e.date);
+      return isToday(d) && e.status.state !== 'in' && isEventVisible(e);
+    });
+  }, [events, toggles, favorites, showFavoritesOnly, searchQuery]);
+
+  // Group filtered events by date for Agenda/List view
+  const agendaDays = useMemo(() => {
+    // Filter events to only the selected month
+    const monthEvents = filteredEvents.filter(event => {
+      const d = new Date(event.date);
+      return d.getMonth() === currentDate.getMonth() && d.getFullYear() === currentDate.getFullYear();
+    });
+
+    // Group by date key
+    const map: Record<string, { date: Date; events: GameEvent[] }> = {};
+    monthEvents.forEach(event => {
+      const d = new Date(event.date);
+      const dateKey = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+      if (!map[dateKey]) {
+        map[dateKey] = { date: new Date(d.getFullYear(), d.getMonth(), d.getDate()), events: [] };
+      }
+      map[dateKey].events.push(event);
+    });
+
+    // Sort dates ascending
+    return Object.values(map).sort((a, b) => a.date.getTime() - b.date.getTime());
+  }, [filteredEvents, currentDate]);
+
+  const monthStats = useMemo(() => {
+    const monthEvents = filteredEvents.filter(event => {
+      const d = new Date(event.date);
+      return d.getMonth() === currentDate.getMonth() && d.getFullYear() === currentDate.getFullYear();
+    });
+
+    const activeLeagues = new Set(monthEvents.map(event => event.league));
+    const upcoming = monthEvents.filter(event => event.status.state === 'pre').length;
+    const completed = monthEvents.filter(event => event.status.state === 'post').length;
+    const primeTime = monthEvents.filter(event => {
+      const hour = new Date(event.date).getHours();
+      return hour >= 18 && hour <= 22;
+    }).length;
+
+    return {
+      total: monthEvents.length,
+      activeLeagues: activeLeagues.size,
+      upcoming,
+      completed,
+      primeTime,
+    };
+  }, [filteredEvents, currentDate]);
+
+  const topLeagueRows = useMemo(() => {
+    const leagueCounts = filteredEvents.reduce((acc, event) => {
+      const d = new Date(event.date);
+      if (d.getMonth() !== currentDate.getMonth() || d.getFullYear() !== currentDate.getFullYear()) {
+        return acc;
+      }
+      acc[event.league] = (acc[event.league] || 0) + 1;
+      return acc;
+    }, {} as Record<League, number>);
+
+    return Object.entries(leagueCounts)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 4) as [League, number][];
+  }, [filteredEvents, currentDate]);
 
   // Group filtered events by local calendar cell date
   const eventsByDate = useMemo(() => {
@@ -522,16 +680,6 @@ export default function App() {
 
     return map;
   }, [events]);
-
-  // Helper to check if a Date matches Today
-  const isToday = (date: Date): boolean => {
-    const today = new Date();
-    return (
-      date.getDate() === today.getDate() &&
-      date.getMonth() === today.getMonth() &&
-      date.getFullYear() === today.getFullYear()
-    );
-  };
 
   // Helper to format date string
   const formatMonthName = (date: Date): string => {
@@ -684,30 +832,6 @@ export default function App() {
     return null;
   };
 
-  // Helper to check if an event is currently visible based on active toggles/filters
-  const isEventVisible = (event: GameEvent): boolean => {
-    // 1. League visibility toggle check
-    if (!toggles.leagues[event.league]) return false;
-
-    // 2. Individual team toggles (check if either team is toggled OFF)
-    if (toggles.teams[event.homeTeam.id] === false) return false;
-    if (toggles.teams[event.awayTeam.id] === false) return false;
-
-    // 3. Favorites only filter
-    if (showFavoritesOnly) {
-      const isLeagueFav = favorites.leagues.includes(event.league);
-      const isHomeFav = favorites.teams.includes(event.homeTeam.id);
-      const isAwayFav = favorites.teams.includes(event.awayTeam.id);
-      const isUfcCardFav = event.league === 'ufc' && event.ufcFights?.some(fight =>
-        fight.competitors.some(c => favorites.teams.includes(`ufc-${c.id}`))
-      );
-      
-      if (!isLeagueFav && !isHomeFav && !isAwayFav && !isUfcCardFav) return false;
-    }
-
-    return true;
-  };
-
   const handleCloseDayModal = () => {
     setSelectedDayEvents(null);
     setShowHiddenGames(false);
@@ -814,6 +938,92 @@ export default function App() {
                   <span className="mobile-only">{event.homeTeam.abbreviation}</span>
                 </span>
                 <img src={event.homeTeam.logo} alt={event.homeTeam.displayName} style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  // Helper to render a compact card in the scoreboard ticker
+  const renderTickerCard = (event: GameEvent, isLive: boolean) => {
+    const isFinal = event.status.state === 'post';
+    let scoreString = '';
+    
+    if (event.league === 'f1') {
+      if (isFinal) {
+        scoreString = event.homeTeam.score;
+      } else if (isLive) {
+        scoreString = 'LIVE';
+      } else {
+        const detail = event.status.detail;
+        scoreString = detail.includes('PM') || detail.includes('AM') 
+          ? detail.replace(' EST', '').replace(' EDT', '') 
+          : new Date(event.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      }
+    } else if (event.league === 'ufc') {
+      if (isFinal) {
+        scoreString = 'Final';
+      } else if (isLive) {
+        scoreString = 'LIVE';
+      } else {
+        const detail = event.status.detail;
+        scoreString = detail.includes('PM') || detail.includes('AM') 
+          ? detail.replace(' EST', '').replace(' EDT', '') 
+          : new Date(event.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      }
+    } else {
+      if (isLive || isFinal) {
+        scoreString = `${event.awayTeam.score} - ${event.homeTeam.score}`;
+      } else {
+        const detail = event.status.detail;
+        scoreString = detail.includes('PM') || detail.includes('AM') 
+          ? detail.replace(' EST', '').replace(' EDT', '') 
+          : new Date(event.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      }
+    }
+
+    return (
+      <div 
+        key={`ticker-${event.id}`}
+        className={`ticker-card ${event.league} ${isLive ? 'live' : ''}`}
+        onClick={() => setSelectedEvent(event)}
+        style={{
+          background: event.league !== 'f1' && event.league !== 'ufc'
+            ? `linear-gradient(135deg, rgba(30, 35, 45, 0.9) 0%, #${event.homeTeam.color}15 100%)`
+            : undefined
+        }}
+      >
+        <div className="ticker-card-top">
+          <span className={`league-badge ${event.league}`}>{event.league}</span>
+          <span className={`ticker-status ${isLive ? 'live' : ''}`}>
+            {isLive && <span className="live-pulse-dot" />}
+            {isLive ? (event.status.detail || 'LIVE') : (isFinal ? 'Final' : 'Upcoming')}
+          </span>
+        </div>
+        
+        <div className="ticker-card-matchup">
+          {event.league === 'f1' ? (
+            <div className="ticker-f1">
+              <span className="ticker-team-name">{event.shortName.replace(' Grand Prix', ' GP')}</span>
+              <span className="ticker-score">{scoreString}</span>
+            </div>
+          ) : event.league === 'ufc' ? (
+            <div className="ticker-ufc">
+              <span className="ticker-team-name">{event.awayTeam.abbreviation} vs {event.homeTeam.abbreviation}</span>
+              <span className="ticker-score">{scoreString}</span>
+            </div>
+          ) : (
+            <div className="ticker-teams-row">
+              <div className="ticker-team">
+                <img src={event.awayTeam.logo} alt="" className="ticker-logo" />
+                <span className="ticker-team-abbr" style={{ borderBottom: `2px solid #${event.awayTeam.color || 'transparent'}` }}>{event.awayTeam.abbreviation}</span>
+              </div>
+              <span className={`ticker-vs-score ${isLive ? 'live' : ''}`}>{scoreString}</span>
+              <div className="ticker-team">
+                <span className="ticker-team-abbr" style={{ borderBottom: `2px solid #${event.homeTeam.color || 'transparent'}` }}>{event.homeTeam.abbreviation}</span>
+                <img src={event.homeTeam.logo} alt="" className="ticker-logo" />
               </div>
             </div>
           )}
@@ -1115,7 +1325,6 @@ export default function App() {
           </div>
         </div>
       </aside>
-
       {/* Main Dashboard Panel */}
       <main className="main-content">
         {/* Navigation & Header */}
@@ -1129,9 +1338,31 @@ export default function App() {
               <SlidersHorizontal size={16} />
               <span>{sidebarOpen ? 'Hide Filters' : 'Filters'}</span>
             </button>
+            
             <div className="logo-container">
               <FaviconIcon className="logo-icon" size={36} />
               <h1 className="logo-text">SportsCal</h1>
+            </div>
+            
+            {/* Search Input Box */}
+            <div className="search-bar-container">
+              <Search size={16} className="search-bar-icon" />
+              <input 
+                type="text" 
+                placeholder="Search matchups, teams..."
+                className="search-bar-input"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+              />
+              {searchQuery && (
+                <button 
+                  className="search-clear-btn" 
+                  onClick={() => setSearchQuery('')}
+                  title="Clear search"
+                >
+                  <X size={14} />
+                </button>
+              )}
             </div>
           </div>
 
@@ -1146,158 +1377,406 @@ export default function App() {
           </div>
 
           <div className="header-actions">
+            {/* View Mode Toggle */}
+            <div className="view-toggle-group">
+              <button 
+                className={`view-toggle-btn ${viewMode === 'grid' ? 'active' : ''}`}
+                onClick={() => setViewMode('grid')}
+                title="Calendar Grid"
+              >
+                <LayoutGrid size={16} />
+                <span className="desktop-only">Grid</span>
+              </button>
+              <button 
+                className={`view-toggle-btn ${viewMode === 'agenda' ? 'active' : ''}`}
+                onClick={() => setViewMode('agenda')}
+                title="Agenda List"
+              >
+                <List size={16} />
+                <span className="desktop-only">Agenda</span>
+              </button>
+            </div>
+            
             <button className="btn" onClick={handleToday}>
               Today
             </button>
           </div>
         </header>
 
-        {/* Calendar View Area */}
-        <section className="calendar-view">
-          <div className="weekdays-header">
-            {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-              <div key={day} className="weekday">{day[0]}</div>
-            ))}
+        <section className="dashboard-overview" aria-label="Calendar overview">
+          <div className="overview-hero">
+            <div>
+              <div className="overview-kicker">
+                <Sparkles size={14} />
+                <span>Command Center</span>
+              </div>
+              <h2>{monthStats.total} matchups on deck</h2>
+              <p>
+                {monthStats.activeLeagues} active leagues, {monthStats.upcoming} upcoming, {monthStats.primeTime} prime time windows.
+              </p>
+            </div>
+            <div className="overview-ring" aria-hidden="true">
+              <span>{liveEvents.length}</span>
+              <small>live</small>
+            </div>
           </div>
 
-          {loading ? (
-            <div className="days-grid" style={{ gridAutoRows: 'unset', gridTemplateRows: 'repeat(6, 1fr)' }}>
-              {Array.from({ length: 42 }).map((_, i) => (
-                <div key={i} className="skeleton-grid-cell" />
-              ))}
+          <div className="overview-stats-grid">
+            <div className="overview-stat-card live">
+              <span className="stat-label">Live Now</span>
+              <strong>{liveEvents.length}</strong>
+              <span className="stat-detail">{todayEvents.length} later today</span>
             </div>
-          ) : (
-            <div className="days-grid">
-              {gridDates.map((date, idx) => {
-                const dateKey = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
-                const dayFilteredEvents = eventsByDate[dateKey] || [];
-                const dayAllEvents = allEventsByDate[dateKey] || [];
-                const isCurrentMonth = date.getMonth() === currentDate.getMonth();
-                
-                // Show max 3 events inside the box
-                const visibleEvents = dayFilteredEvents.slice(0, 3);
-                const extraCount = dayFilteredEvents.length - 3;
-                const hasGames = dayAllEvents.length > 0;
-                const dayLeagues = Array.from(new Set(dayFilteredEvents.map(e => e.league)));
+            <div className="overview-stat-card">
+              <span className="stat-label">Month Slate</span>
+              <strong>{monthStats.total}</strong>
+              <span className="stat-detail">{monthStats.completed} completed</span>
+            </div>
+            <div className="overview-stat-card">
+              <span className="stat-label">Favorites</span>
+              <strong>{favorites.leagues.length + favorites.teams.length}</strong>
+              <span className="stat-detail">{showFavoritesOnly ? 'filtered view' : 'ready to pin'}</span>
+            </div>
+          </div>
 
-                return (
-                  <div 
-                    key={idx} 
-                    className={`day-cell ${!isCurrentMonth ? 'inactive' : ''} ${isToday(date) ? 'today' : ''} ${!hasGames ? 'empty' : ''}`}
-                    onClick={() => {
-                      if (hasGames) {
-                        setSelectedDayEvents({ date, events: dayAllEvents });
-                      }
-                    }}
-                  >
-                    <div className="day-header-row">
-                      <span className="day-number">{date.getDate()}</span>
-                      {dayFilteredEvents.length > 0 && (
-                        <span className="day-events-count">
-                          {dayFilteredEvents.length} {dayFilteredEvents.length === 1 ? 'game' : 'games'}
-                        </span>
-                      )}
-                    </div>
-                    
-                    <div className="day-events-list desktop-only">
-                      {visibleEvents.map(event => {
-                        const isLive = event.status.state === 'in';
-                        const isFinal = event.status.state === 'post';
-                        let scoreString = '';
-                        
-                        if (event.league === 'f1') {
-                          if (isFinal) {
-                            scoreString = event.homeTeam.score;
-                          } else if (isLive) {
-                            scoreString = 'LIVE';
-                          } else {
-                            const detail = event.status.detail;
-                            scoreString = detail.includes('PM') || detail.includes('AM') 
-                              ? detail.replace(' EST', '').replace(' EDT', '') 
-                              : new Date(event.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                          }
-                        } else if (event.league === 'ufc') {
-                          if (isFinal) {
-                            scoreString = 'Final';
-                          } else if (isLive) {
-                            scoreString = 'LIVE';
-                          } else {
-                            const detail = event.status.detail;
-                            scoreString = detail.includes('PM') || detail.includes('AM') 
-                              ? detail.replace(' EST', '').replace(' EDT', '') 
-                              : new Date(event.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                          }
-                        } else {
-                          if (isLive || isFinal) {
-                            scoreString = `${event.awayTeam.score}-${event.homeTeam.score}`;
-                          } else {
-                            const detail = event.status.detail;
-                            scoreString = detail.includes('PM') || detail.includes('AM') 
-                              ? detail.replace(' EST', '').replace(' EDT', '') 
-                              : new Date(event.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                          }
-                        }
-
-                        let eventTeamsDisplay = '';
-                        if (event.league === 'f1') {
-                          eventTeamsDisplay = `F1: ${event.shortName.replace(' Grand Prix', ' GP')}`;
-                        } else if (event.league === 'ufc') {
-                          eventTeamsDisplay = `UFC: ${event.awayTeam.abbreviation} vs ${event.homeTeam.abbreviation}`;
-                        } else {
-                          eventTeamsDisplay = `${event.awayTeam.abbreviation} @ ${event.homeTeam.abbreviation}`;
-                        }
-
-                        return (
-                          <div 
-                            key={event.id}
-                            className={`event-strip ${event.league} ${isLive ? 'live' : ''}`}
-                            onClick={e => {
-                              // Stop propagation so we don't open the Day View Modal instead
-                              e.stopPropagation();
-                              setSelectedEvent(event);
-                            }}
-                          >
-                            <span className="event-teams">
-                              {eventTeamsDisplay}
-                            </span>
-                            <span className="event-score-time">
-                              {isLive && <span className="live-pulse-dot" style={{ marginRight: '4px' }} />}
-                              {scoreString}
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </div>
-
-                    {extraCount > 0 && (
-                      <div className="desktop-only" style={{
-                        fontSize: '9px',
-                        fontWeight: 700,
-                        color: 'var(--primary)',
-                        textAlign: 'center',
-                        marginTop: 'auto',
-                        paddingTop: '2px'
-                      }}>
-                        + {extraCount} more
-                      </div>
-                    )}
-
-                    {/* Mobile Dots Row */}
-                    {dayFilteredEvents.length > 0 && (
-                      <div className="day-dots-row mobile-only">
-                        {dayLeagues.slice(0, 4).map(league => (
-                          <span key={league} className={`day-dot ${league}`} />
-                        ))}
-                      </div>
-                    )}
+          <div className="league-pulse-panel">
+            <div className="league-pulse-header">
+              <span>League Pulse</span>
+              <Trophy size={15} />
+            </div>
+            <div className="league-pulse-list">
+              {topLeagueRows.length === 0 ? (
+                <span className="league-pulse-empty">No active leagues in this view</span>
+              ) : (
+                topLeagueRows.map(([league, count]) => (
+                  <div key={league} className="league-pulse-row">
+                    <span className={`league-indicator ${league}`} />
+                    <span>{LEAGUE_DISPLAY_NAMES[league] || league.toUpperCase()}</span>
+                    <strong>{count}</strong>
                   </div>
-                );
-              })}
+                ))
+              )}
             </div>
+          </div>
+        </section>
+
+        {/* Live/Today Scoreboard Ticker */}
+        {(liveEvents.length > 0 || todayEvents.length > 0) && (
+          <div className="scoreboard-ticker">
+            <div className="ticker-header">
+              <div className="ticker-title">
+                {liveEvents.length > 0 ? (
+                  <>
+                    <span className="live-pulse-dot" />
+                    <span className="live-title-text">Live Matchups</span>
+                  </>
+                ) : (
+                  <>
+                    <TrendingUp size={14} className="ticker-icon" style={{ color: 'var(--primary)' }} />
+                    <span>Today's Slate</span>
+                  </>
+                )}
+              </div>
+              <div className="ticker-count">
+                {liveEvents.length > 0 ? `${liveEvents.length} Live` : `${todayEvents.length} Scheduled`}
+              </div>
+            </div>
+            <div className="ticker-cards-scroll">
+              {liveEvents.map(event => renderTickerCard(event, true))}
+              {todayEvents.map(event => renderTickerCard(event, false))}
+            </div>
+          </div>
+        )}
+
+        {/* Main Content (Grid or Agenda) */}
+        <section className={`calendar-view ${viewMode === 'agenda' ? 'agenda-mode' : ''}`}>
+          {viewMode === 'agenda' ? (
+            // Agenda View
+            loading ? (
+              <div className="skeleton-loader" style={{ padding: '24px' }}>
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="skeleton-line" style={{ height: '75px', marginBottom: '12px' }} />
+                ))}
+              </div>
+            ) : agendaDays.length === 0 ? (
+              <div className="agenda-empty-state">
+                <Trophy size={48} className="agenda-empty-icon" />
+                <h3>No matchups found</h3>
+                <p>There are no games matching your active filters or search query in this month.</p>
+                {(hasTogglesOff || searchQuery) && (
+                  <button 
+                    className="btn btn-primary" 
+                    onClick={() => {
+                      handleClearFilters();
+                      setSearchQuery('');
+                    }} 
+                    style={{ marginTop: '16px' }}
+                  >
+                    Clear All Filters
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="agenda-days-list">
+                {agendaDays.map(({ date, events: dayEvents }) => {
+                  const dateKey = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+                  const isDayToday = isToday(date);
+                  
+                  return (
+                    <div 
+                      key={dateKey} 
+                      className={`agenda-day-card ${isDayToday ? 'today' : ''}`}
+                    >
+                      <div className="agenda-day-header">
+                        <div className="agenda-day-date">
+                          <span className="agenda-day-name">
+                            {date.toLocaleDateString([], { weekday: 'long' })}
+                          </span>
+                          <span className="agenda-day-number">
+                            {date.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })}
+                          </span>
+                        </div>
+                        {isDayToday && (
+                          <span className="agenda-today-badge">
+                            <Sparkles size={11} style={{ marginRight: '4px' }} />
+                            Today
+                          </span>
+                        )}
+                        <div className="agenda-day-games-count">
+                          {dayEvents.length} {dayEvents.length === 1 ? 'matchup' : 'matchups'}
+                        </div>
+                      </div>
+                      
+                      <div className="agenda-day-events">
+                        {dayEvents.map(event => {
+                          const isLive = event.status.state === 'in';
+                          const isFinal = event.status.state === 'post';
+                          const isHomeWinner = event.homeTeam.winner;
+                          const isAwayWinner = event.awayTeam.winner;
+
+                          let scoreText = '';
+                          if (event.league === 'f1') {
+                            scoreText = isFinal ? event.homeTeam.score : (isLive ? 'LIVE' : new Date(event.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+                          } else if (event.league === 'ufc') {
+                            scoreText = isFinal ? 'Final' : (isLive ? 'LIVE' : new Date(event.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+                          } else {
+                            scoreText = (isLive || isFinal) 
+                              ? `${event.awayTeam.score} - ${event.homeTeam.score}` 
+                              : new Date(event.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                          }
+
+                          return (
+                            <div 
+                              key={event.id}
+                              className={`agenda-event-row ${event.league} ${isLive ? 'live' : ''}`}
+                              onClick={() => setSelectedEvent(event)}
+                              style={{
+                                background: event.league !== 'f1' && event.league !== 'ufc'
+                                  ? `linear-gradient(135deg, rgba(20, 24, 33, 0.3) 0%, #${event.homeTeam.color}0a 100%)`
+                                  : undefined
+                              }}
+                            >
+                              <div className="agenda-event-meta">
+                                <span className={`league-badge ${event.league}`}>{event.league}</span>
+                                <span className={`agenda-event-status ${isLive ? 'live' : ''}`}>
+                                  {isLive && <span className="live-pulse-dot" />}
+                                  {event.status.detail || (isLive ? 'LIVE' : isFinal ? 'Final' : 'Upcoming')}
+                                </span>
+                              </div>
+                              
+                              <div className="agenda-event-matchup">
+                                {event.league === 'f1' ? (
+                                  <div className="agenda-f1-layout">
+                                    <img src={event.homeTeam.logo} alt="" className="agenda-team-logo" />
+                                    <span className="agenda-event-name-text">{event.name}</span>
+                                  </div>
+                                ) : event.league === 'ufc' ? (
+                                  <div className="agenda-ufc-layout">
+                                    <img src={event.awayTeam.logo} alt="" className="agenda-ufc-logo" />
+                                    <span className="agenda-event-name-text">{event.name}</span>
+                                    <img src={event.homeTeam.logo} alt="" className="agenda-ufc-logo" />
+                                  </div>
+                                ) : (
+                                  <div className="agenda-teams-layout">
+                                    <div className={`agenda-team ${isAwayWinner ? 'winner' : ''}`}>
+                                      <img src={event.awayTeam.logo} alt="" className="agenda-team-logo" />
+                                      <span className="agenda-team-name">{event.awayTeam.displayName}</span>
+                                    </div>
+                                    <span className="agenda-vs">@</span>
+                                    <div className={`agenda-team ${isHomeWinner ? 'winner' : ''}`}>
+                                      <img src={event.homeTeam.logo} alt="" className="agenda-team-logo" />
+                                      <span className="agenda-team-name">{event.homeTeam.displayName}</span>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+
+                              <div className="agenda-event-score-time">
+                                <span className={`agenda-score-value ${isLive ? 'live' : ''}`}>{scoreText}</span>
+                                {event.tvBroadcasts.length > 0 && (
+                                  <div className="agenda-broadcast-icons">
+                                    <Tv size={12} />
+                                    <span>{event.tvBroadcasts[0]}</span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )
+          ) : (
+            // Calendar Grid View
+            <>
+              <div className="weekdays-header">
+                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                  <div key={day} className="weekday">{day[0]}</div>
+                ))}
+              </div>
+
+              {loading ? (
+                <div className="days-grid" style={{ gridAutoRows: 'unset', gridTemplateRows: 'repeat(6, 1fr)' }}>
+                  {Array.from({ length: 42 }).map((_, i) => (
+                    <div key={i} className="skeleton-grid-cell" />
+                  ))}
+                </div>
+              ) : (
+                <div className="days-grid">
+                  {gridDates.map((date, idx) => {
+                    const dateKey = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+                    const dayFilteredEvents = eventsByDate[dateKey] || [];
+                    const dayAllEvents = allEventsByDate[dateKey] || [];
+                    const isCurrentMonth = date.getMonth() === currentDate.getMonth();
+                    
+                    // Show max 3 events inside the box
+                    const visibleEvents = dayFilteredEvents.slice(0, 3);
+                    const extraCount = dayFilteredEvents.length - 3;
+                    const hasGames = dayAllEvents.length > 0;
+                    const dayLeagues = Array.from(new Set(dayFilteredEvents.map(e => e.league)));
+
+                    return (
+                      <div 
+                        key={idx} 
+                        className={`day-cell ${!isCurrentMonth ? 'inactive' : ''} ${isToday(date) ? 'today' : ''} ${!hasGames ? 'empty' : ''}`}
+                        onClick={() => {
+                          if (hasGames) {
+                            setSelectedDayEvents({ date, events: dayAllEvents });
+                          }
+                        }}
+                      >
+                        <div className="day-header-row">
+                          <span className="day-number">{date.getDate()}</span>
+                          {dayFilteredEvents.length > 0 && (
+                            <span className="day-events-count">
+                              {dayFilteredEvents.length} {dayFilteredEvents.length === 1 ? 'game' : 'games'}
+                            </span>
+                          )}
+                        </div>
+                        
+                        <div className="day-events-list desktop-only">
+                          {visibleEvents.map(event => {
+                            const isLive = event.status.state === 'in';
+                            const isFinal = event.status.state === 'post';
+                            let scoreString = '';
+                            
+                            if (event.league === 'f1') {
+                              if (isFinal) {
+                                scoreString = event.homeTeam.score;
+                              } else if (isLive) {
+                                scoreString = 'LIVE';
+                              } else {
+                                const detail = event.status.detail;
+                                scoreString = detail.includes('PM') || detail.includes('AM') 
+                                  ? detail.replace(' EST', '').replace(' EDT', '') 
+                                  : new Date(event.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                              }
+                            } else if (event.league === 'ufc') {
+                              if (isFinal) {
+                                scoreString = 'Final';
+                              } else if (isLive) {
+                                scoreString = 'LIVE';
+                              } else {
+                                const detail = event.status.detail;
+                                scoreString = detail.includes('PM') || detail.includes('AM') 
+                                  ? detail.replace(' EST', '').replace(' EDT', '') 
+                                  : new Date(event.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                              }
+                            } else {
+                              if (isLive || isFinal) {
+                                scoreString = `${event.awayTeam.score}-${event.homeTeam.score}`;
+                              } else {
+                                const detail = event.status.detail;
+                                scoreString = detail.includes('PM') || detail.includes('AM') 
+                                  ? detail.replace(' EST', '').replace(' EDT', '') 
+                                  : new Date(event.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                              }
+                            }
+
+                            let eventTeamsDisplay = '';
+                            if (event.league === 'f1') {
+                              eventTeamsDisplay = `F1: ${event.shortName.replace(' Grand Prix', ' GP')}`;
+                            } else if (event.league === 'ufc') {
+                              eventTeamsDisplay = `UFC: ${event.awayTeam.abbreviation} vs ${event.homeTeam.abbreviation}`;
+                            } else {
+                              eventTeamsDisplay = `${event.awayTeam.abbreviation} @ ${event.homeTeam.abbreviation}`;
+                            }
+
+                            return (
+                              <div 
+                                key={event.id}
+                                className={`event-strip ${event.league} ${isLive ? 'live' : ''}`}
+                                onClick={e => {
+                                  // Stop propagation so we don't open the Day View Modal instead
+                                  e.stopPropagation();
+                                  setSelectedEvent(event);
+                                }}
+                              >
+                                <span className="event-teams">
+                                  {eventTeamsDisplay}
+                                </span>
+                                <span className="event-score-time">
+                                  {isLive && <span className="live-pulse-dot" style={{ marginRight: '4px' }} />}
+                                  {scoreString}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        {extraCount > 0 && (
+                          <div className="desktop-only" style={{
+                            fontSize: '9px',
+                            fontWeight: 700,
+                            color: 'var(--primary)',
+                            textAlign: 'center',
+                            marginTop: 'auto',
+                            paddingTop: '2px'
+                          }}>
+                            + {extraCount} more
+                          </div>
+                        )}
+
+                        {/* Mobile Dots Row */}
+                        {dayFilteredEvents.length > 0 && (
+                          <div className="day-dots-row mobile-only">
+                            {dayLeagues.slice(0, 4).map(league => (
+                              <span key={league} className={`day-dot ${league}`} />
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </>
           )}
         </section>
       </main>
-
       {/* Game Details Modal */}
       <div className={`modal-overlay ${selectedEvent ? 'active' : ''}`} onClick={() => setSelectedEvent(null)}>
         {selectedEvent && (
