@@ -5,6 +5,8 @@ const LEAGUE_MAP: Record<League, { sport: string; key: string } | null> = {
   nba: { sport: 'basketball', key: 'nba' },
   mlb: { sport: 'baseball', key: 'mlb' },
   nhl: { sport: 'hockey', key: 'nhl' },
+  ncaaf: { sport: 'football', key: 'college-football' },
+  ncaab: { sport: 'basketball', key: 'mens-college-basketball' },
   mls: { sport: 'soccer', key: 'usa.1' },
   f1: { sport: 'racing', key: 'f1' },
   ufc: { sport: 'mma', key: 'ufc' },
@@ -13,6 +15,57 @@ const LEAGUE_MAP: Record<League, { sport: string; key: string } | null> = {
   epl: { sport: 'soccer', key: 'eng.1' },
   laliga: { sport: 'soccer', key: 'esp.1' },
   champions: { sport: 'soccer', key: 'uefa.champions' },
+};
+
+const ESPN_CONFERENCE_MAP: Record<string, string> = {
+  // FBS Power & Major Conferences
+  '1': 'ACC',
+  '4': 'Big 12',
+  '5': 'Big Ten',
+  '8': 'SEC',
+  '9': 'Big Ten',
+  '12': 'Pac-12',
+  
+  // Basketball Major
+  '10': 'Big East',
+
+  // FBS Group of 5
+  '15': 'MAC', // Mid-American Conference (Miami OH, Ohio, Toledo, etc.)
+  '17': 'Mountain West',
+  '18': 'C-USA',
+  '37': 'Sun Belt',
+  '151': 'AAC',
+
+  // Independents
+  '184': 'Independent',
+
+  // FCS Conferences -> all mapped directly to 'FCS'
+  '20': 'FCS', // Big Sky
+  '21': 'FCS', // Missouri Valley
+  '22': 'FCS', // Ivy League
+  '23': 'FCS', // CAA / Coastal Athletic
+  '24': 'FCS', // MEAC
+  '25': 'FCS', // Southland / NEC
+  '26': 'FCS', // SWAC
+  '27': 'FCS', // MEAC
+  '28': 'FCS', // NEC
+  '29': 'FCS', // SoCon / WCC
+  '30': 'FCS', // Pioneer
+  '31': 'FCS', // UAC
+  '32': 'FCS', // Patriot
+  '33': 'FCS', // Big South / OVC
+  '48': 'FCS', // Division II / Non-FBS
+  '62': 'FCS', // SWAC
+  '81': 'FCS', // FCS Subdivision
+  '179': 'FCS', // FCS Division
+};
+
+const resolveEspnConference = (teamObj: any): string | undefined => {
+  const confId = String(teamObj?.conferenceId || teamObj?.groups?.id || teamObj?.conference?.id || '');
+  if (confId && ESPN_CONFERENCE_MAP[confId]) {
+    return ESPN_CONFERENCE_MAP[confId];
+  }
+  return undefined;
 };
 
 // In-memory cache for scoreboard fetches
@@ -276,6 +329,8 @@ export async function fetchScoreboard(
 
         const tvBroadcasts = comp.broadcasts?.flatMap((b: any) => b.names || []) || [];
         const espnLink = event.links?.find((l: any) => l.rel?.includes('desktop'))?.href || event.links?.[0]?.href || 'https://www.espn.com';
+        const homeConf = resolveEspnConference(home.team);
+        const awayConf = resolveEspnConference(away.team);
 
         events.push({
           id: event.id,
@@ -298,6 +353,7 @@ export async function fetchScoreboard(
             color: home.team?.color || '4b5563',
             score: home.score || '0',
             winner: home.winner,
+            conference: homeConf,
           },
           awayTeam: {
             id: `${league}-${away.team?.id || ''}`,
@@ -307,6 +363,7 @@ export async function fetchScoreboard(
             color: away.team?.color || '4b5563',
             score: away.score || '0',
             winner: away.winner,
+            conference: awayConf,
           },
           tvBroadcasts,
           espnLink,

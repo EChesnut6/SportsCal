@@ -26,6 +26,8 @@
   --color-nba: #d6793e; /* Terracotta */
   --color-mlb: #3b9e7a; /* Sage Green */
   --color-nhl: #8c62c2; /* Plum */
+  --color-ncaaf: #0e4800; /* Deep Turf Green */
+  --color-ncaab: #d53ae0; /* Magenta / Purple */
   --color-mls: #46a84c; /* Grass Green */
   --color-f1: #d42b24; /* Crimson */
   --color-ufc: #c23c3c; /* Burgundy */
@@ -36,6 +38,8 @@
   --glow-nba: rgba(214, 121, 62, 0.2);
   --glow-mlb: rgba(59, 158, 122, 0.2);
   --glow-nhl: rgba(140, 98, 194, 0.2);
+  --glow-ncaaf: rgba(14, 72, 0, 0.2);
+  --glow-ncaab: rgba(213, 58, 224, 0.2);
   --glow-mls: rgba(70, 168, 76, 0.2);
   --glow-f1: rgba(212, 43, 36, 0.2);
   --glow-ufc: rgba(194, 60, 60, 0.2);
@@ -364,6 +368,8 @@ body {
 .league-indicator.nba { background-color: var(--color-nba); box-shadow: 0 0 6px var(--color-nba); }
 .league-indicator.mlb { background-color: var(--color-mlb); box-shadow: 0 0 6px var(--color-mlb); }
 .league-indicator.nhl { background-color: var(--color-nhl); box-shadow: 0 0 6px var(--color-nhl); }
+.league-indicator.ncaaf { background-color: var(--color-ncaaf); box-shadow: 0 0 6px var(--color-ncaaf); }
+.league-indicator.ncaab { background-color: var(--color-ncaab); box-shadow: 0 0 6px var(--color-ncaab); }
 .league-indicator.mls { background-color: var(--color-mls); box-shadow: 0 0 6px var(--color-mls); }
 .league-indicator.f1 { background-color: var(--color-f1); box-shadow: 0 0 6px var(--color-f1); }
 .league-indicator.ufc { background-color: var(--color-ufc); box-shadow: 0 0 6px var(--color-ufc); }
@@ -414,7 +420,7 @@ body {
 }
 
 .league-filter-item.expanded .league-teams-wrapper {
-  max-height: 280px;
+  max-height: 520px;
   border-top-width: 1px;
 }
 
@@ -423,7 +429,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  max-height: 278px;
+  max-height: 500px;
   overflow-y: auto;
 }
 
@@ -458,6 +464,61 @@ body {
 
 .team-filter-row:hover {
   background: rgba(255, 255, 255, 0.03);
+}
+
+/* Conference Sub-Drawer Styles */
+.conference-item {
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.18);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.conference-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  transition: background var(--transition-fast);
+}
+
+.conference-header:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.conference-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.conference-count-badge {
+  font-size: 10px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-muted);
+  padding: 2px 6px;
+  border-radius: 10px;
+}
+
+.conference-teams-wrapper {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height var(--transition-normal) ease-out;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 0 6px;
+}
+
+.conference-item.expanded .conference-teams-wrapper {
+  max-height: 450px;
+  overflow-y: auto;
+  padding: 6px;
 }
 
 .team-label {
@@ -637,6 +698,8 @@ body {
 .event-strip.nba { border-left-color: var(--color-nba); }
 .event-strip.mlb { border-left-color: var(--color-mlb); }
 .event-strip.nhl { border-left-color: var(--color-nhl); }
+.event-strip.ncaaf { border-left-color: var(--color-ncaaf); }
+.event-strip.ncaab { border-left-color: var(--color-ncaab); }
 .event-strip.mls { border-left-color: var(--color-mls); }
 .event-strip.f1 { border-left-color: var(--color-f1); }
 .event-strip.ufc { border-left-color: var(--color-ufc); }
@@ -798,6 +861,8 @@ body {
 .league-badge.nba { background-color: var(--color-nba); }
 .league-badge.mlb { background-color: var(--color-mlb); }
 .league-badge.nhl { background-color: var(--color-nhl); }
+.league-badge.ncaaf { background-color: var(--color-ncaaf); }
+.league-badge.ncaab { background-color: var(--color-ncaab); }
 .league-badge.mls { background-color: var(--color-mls); }
 .league-badge.f1 { background-color: var(--color-f1); }
 .league-badge.ufc { background-color: var(--color-ufc); }
@@ -1039,6 +1104,8 @@ span.desktop-only {
 .day-dot.nba { background-color: var(--color-nba); box-shadow: 0 0 3px var(--color-nba); }
 .day-dot.mlb { background-color: var(--color-mlb); box-shadow: 0 0 3px var(--color-mlb); }
 .day-dot.nhl { background-color: var(--color-nhl); box-shadow: 0 0 3px var(--color-nhl); }
+.day-dot.ncaaf { background-color: var(--color-ncaaf); box-shadow: 0 0 3px var(--color-ncaaf); }
+.day-dot.ncaab { background-color: var(--color-ncaab); box-shadow: 0 0 3px var(--color-ncaab); }
 .day-dot.mls { background-color: var(--color-mls); box-shadow: 0 0 3px var(--color-mls); }
 .day-dot.f1 { background-color: var(--color-f1); box-shadow: 0 0 3px var(--color-f1); }
 .day-dot.ufc { background-color: var(--color-ufc); box-shadow: 0 0 3px var(--color-ufc); }
@@ -1419,6 +1486,8 @@ span.desktop-only {
 .league-tag-badge.nba { border-color: rgba(249, 115, 22, 0.3); color: var(--color-nba); }
 .league-tag-badge.mlb { border-color: rgba(16, 185, 129, 0.3); color: var(--color-mlb); }
 .league-tag-badge.nhl { border-color: rgba(168, 85, 247, 0.3); color: var(--color-nhl); }
+.league-tag-badge.ncaaf { border-color: rgba(14, 72, 0, 0.3); color: var(--color-ncaaf); }
+.league-tag-badge.ncaab { border-color: rgba(213, 58, 224, 0.3); color: var(--color-ncaab); }
 .league-tag-badge.mls { border-color: rgba(0, 177, 64, 0.3); color: var(--color-mls); }
 .league-tag-badge.f1 { border-color: rgba(225, 6, 0, 0.3); color: var(--color-f1); }
 .league-tag-badge.ufc { border-color: rgba(239, 68, 68, 0.3); color: var(--color-ufc); }
@@ -1475,14 +1544,163 @@ span.desktop-only {
   color: var(--text-primary);
 }
 
-.hidden-games-list {
+/* League Directory Modal & Popups */
+.league-details-modal .league-modal-content {
+  width: 92%;
+  max-width: 920px;
+  max-height: 85vh;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  max-height: 320px;
-  overflow-y: auto;
-  padding-right: 4px;
 }
+
+.league-modal-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.league-modal-body {
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modal-search-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-glass-hover);
+  padding: 10px 14px;
+  border-radius: 12px;
+}
+
+.modal-search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  outline: none;
+}
+
+.college-directory-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modal-conference-card {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border-glass);
+  border-radius: 14px;
+  padding: 14px;
+  transition: all var(--transition-fast);
+}
+
+.modal-conference-card.minimized {
+  padding-bottom: 12px;
+}
+
+.modal-conference-card.minimized .modal-conference-header {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+.modal-conference-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-glass);
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  user-select: none;
+  transition: opacity var(--transition-fast);
+}
+
+.modal-conference-header:hover {
+  opacity: 0.9;
+}
+
+.modal-conference-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.modal-conference-title h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.modal-teams-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.modal-team-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-glass);
+  border-radius: 10px;
+  transition: all var(--transition-fast);
+}
+
+.modal-team-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--border-glass-hover);
+}
+
+.modal-team-card.dimmed {
+  opacity: 0.5;
+}
+
+.modal-team-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.modal-team-logo {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
+
+.modal-team-details {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.modal-team-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.modal-team-abbrev {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.15));
+}
+
 
 
 

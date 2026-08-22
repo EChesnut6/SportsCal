@@ -1,4 +1,4 @@
-export type League = 'nfl' | 'nba' | 'mlb' | 'nhl' | 'mls' | 'f1' | 'ufc' | 'worldcup' | 'olympics' | 'epl' | 'laliga' | 'champions';
+export type League = 'nfl' | 'nba' | 'mlb' | 'nhl' | 'ncaaf' | 'ncaab' | 'mls' | 'f1' | 'ufc' | 'worldcup' | 'olympics' | 'epl' | 'laliga' | 'champions';
 
 export interface Team {
   id: string;
@@ -9,6 +9,7 @@ export interface Team {
   alternateColor?: string; // hex color without #
   logo: string;
   league: League;
+  conference?: string; // e.g. "SEC", "Big Ten", "Big 12", "ACC", "Pac-12", "Big East", "WCC", "Independent", etc.
 }
 
 export interface GameStatus {
@@ -56,6 +57,7 @@ export interface GameEvent {
     color: string;
     score: string;
     winner?: boolean;
+    conference?: string;
   };
   awayTeam: {
     id: string;
@@ -65,6 +67,7 @@ export interface GameEvent {
     color: string;
     score: string;
     winner?: boolean;
+    conference?: string;
   };
   tvBroadcasts: string[];
   espnLink: string;
@@ -77,11 +80,14 @@ export interface GameEvent {
 
 export interface FavoritesState {
   leagues: League[];
+  conferences?: string[]; // Conference IDs, e.g. "ncaaf-SEC"
   teams: string[]; // Team IDs
 }
 
 export interface TogglesState {
   leagues: Record<League, boolean>;
+  conferences?: Record<string, boolean>; // Conference ID -> boolean
   teams: Record<string, boolean>; // Team ID -> boolean
 }
+
 

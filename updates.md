@@ -20,3 +20,6 @@ depending on certain things, days on the calander should be highlighted
 
 ### favorites vs hidden
 favorited teams should always be shown if "favorites only" is on, even if the league that team is in is hidden
+
+### Easy view
+colored dots representing leagues shown on the bottom of days (similar to mobile view) as a way to quickly see what leagues are playing on what day

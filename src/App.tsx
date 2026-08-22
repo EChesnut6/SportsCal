@@ -3,6 +3,8 @@ import {
   Calendar as CalendarIcon, 
   ChevronLeft, 
   ChevronRight, 
+  ChevronUp,
+  ChevronDown,
   Star, 
   Eye, 
   EyeOff, 
@@ -11,11 +13,13 @@ import {
   ExternalLink, 
   X,
   SlidersHorizontal,
-  ChevronDown
+  Maximize2,
+  Search
 } from 'lucide-react';
 import type { League, Team, GameEvent, FavoritesState, TogglesState } from './types';
 import { fetchScoreboard } from './api';
-import { TEAMS_DIRECTORY } from './teamsData';
+import { TEAMS_DIRECTORY, getReadableTeamColor } from './teamsData';
+import { registerTeams, getAllTeamsForLeague } from './teamCache';
 
 // Helper to format date for API (YYYYMMDD)
 const formatDateForApi = (date: Date): string => {
@@ -63,6 +67,8 @@ const LEAGUE_DISPLAY_NAMES: Record<League, string> = {
   nba: 'NBA',
   mlb: 'MLB',
   nhl: 'NHL',
+  ncaaf: 'College Football',
+  ncaab: 'College Basketball',
   mls: 'MLS',
   f1: 'Formula 1',
   ufc: 'UFC',
@@ -79,7 +85,7 @@ const INITIAL_FAVORITES: FavoritesState = {
 };
 
 const INITIAL_TOGGLES: TogglesState = {
-  leagues: { nfl: true, nba: true, mlb: true, nhl: true, mls: true, f1: true, ufc: true, worldcup: true, olympics: true, epl: true, laliga: true, champions: true },
+  leagues: { nfl: true, nba: true, mlb: true, nhl: true, ncaaf: true, ncaab: true, mls: true, f1: true, ufc: true, worldcup: true, olympics: true, epl: true, laliga: true, champions: true },
   teams: {},
 };
 
@@ -115,13 +121,24 @@ export default function App() {
   const [events, setEvents] = useState<GameEvent[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  // Static list of all teams in all leagues (independent of visible month)
-  const teams = TEAMS_DIRECTORY;
+
 
   // Favorites & Filter Toggles State
   const [favorites, setFavorites] = useState<FavoritesState>(() => {
     const saved = localStorage.getItem(LOCAL_STORAGE_FAVORITES);
-    return saved ? JSON.parse(saved) : INITIAL_FAVORITES;
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        return {
+          leagues: parsed.leagues || [],
+          conferences: parsed.conferences || [],
+          teams: parsed.teams || [],
+        };
+      } catch {
+        return INITIAL_FAVORITES;
+      }
+    }
+    return INITIAL_FAVORITES;
   });
   const [toggles, setToggles] = useState<TogglesState>(() => {
     const saved = localStorage.getItem(LOCAL_STORAGE_TOGGLES);
@@ -130,9 +147,10 @@ export default function App() {
         const parsed = JSON.parse(saved);
         return {
           leagues: { ...INITIAL_TOGGLES.leagues, ...parsed.leagues },
+          conferences: parsed.conferences || {},
           teams: { ...INITIAL_TOGGLES.teams, ...parsed.teams },
         };
-      } catch (e) {
+      } catch {
         return INITIAL_TOGGLES;
       }
     }
@@ -150,6 +168,8 @@ export default function App() {
       nba: '#d6793e',
       mlb: '#3b9e7a',
       nhl: '#8c62c2',
+      ncaaf: '#0e4800',
+      ncaab: '#d53ae0',
       mls: '#46a84c',
       f1: '#d42b24',
       ufc: '#c23c3c',
@@ -167,8 +187,11 @@ export default function App() {
         if (parsed.nfl === '#3b82f6') {
           return defaultColors;
         }
-        return { ...defaultColors, ...parsed };
-      } catch (e) {
+        const validParsed = Object.fromEntries(
+          Object.entries(parsed).filter(([_, v]) => typeof v === 'string' && (v as string).trim().length > 0)
+        );
+        return { ...defaultColors, ...validParsed };
+      } catch {
         return defaultColors;
       }
     }
@@ -207,31 +230,11 @@ export default function App() {
     return saved ? JSON.parse(saved) : {};
   });
 
-  useEffect(() => {
-    let updated = false;
-    const newFighters = { ...knownFighters };
-    events.forEach(event => {
-      if (event.league === 'ufc' && event.ufcFights) {
-        event.ufcFights.forEach(fight => {
-          fight.competitors.forEach(c => {
-            const fullId = `ufc-${c.id}`;
-            if (!newFighters[fullId]) {
-              newFighters[fullId] = {
-                id: fullId,
-                displayName: c.displayName,
-                logo: c.logo
-              };
-              updated = true;
-            }
-          });
-        });
-      }
-    });
-    if (updated) {
-      setKnownFighters(newFighters);
-      localStorage.setItem('sportscal_known_fighters', JSON.stringify(newFighters));
-    }
-  }, [events, knownFighters]);
+  // Persistent Dynamic Teams Cache (stores newly discovered teams/players from API in localStorage)
+  const [dynamicTeams, setDynamicTeams] = useState<Record<string, Record<string, Team>>>(() => {
+    const saved = localStorage.getItem('sportscal_dynamic_teams');
+    return saved ? JSON.parse(saved) : {};
+  });
 
   // UI States
   const [expandedLeagues, setExpandedLeagues] = useState<Record<League, boolean>>({
@@ -239,6 +242,8 @@ export default function App() {
     nba: false,
     mlb: false,
     nhl: false,
+    ncaaf: false,
+    ncaab: false,
     mls: false,
     f1: false,
     ufc: false,
@@ -253,6 +258,8 @@ export default function App() {
     nba: '',
     mlb: '',
     nhl: '',
+    ncaaf: '',
+    ncaab: '',
     mls: '',
     f1: '',
     ufc: '',
@@ -262,6 +269,7 @@ export default function App() {
     laliga: '',
     champions: '',
   });
+  const [expandedConferences, setExpandedConferences] = useState<Record<string, boolean>>({});
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(() => {
     const saved = localStorage.getItem(LOCAL_STORAGE_SIDEBAR_OPEN);
     return saved ? saved === 'true' : true;
@@ -270,6 +278,9 @@ export default function App() {
   // Modals state
   const [selectedEvent, setSelectedEvent] = useState<GameEvent | null>(null);
   const [selectedDayEvents, setSelectedDayEvents] = useState<{ date: Date; events: GameEvent[] } | null>(null);
+  const [selectedLeagueDetails, setSelectedLeagueDetails] = useState<League | 'favorites' | null>(null);
+  const [modalSearchQuery, setModalSearchQuery] = useState<string>('');
+  const [minimizedModalConferences, setMinimizedModalConferences] = useState<Record<string, boolean>>({});
   const [showHiddenGames, setShowHiddenGames] = useState<boolean>(false);
 
   // Persistence Effects
@@ -337,6 +348,8 @@ export default function App() {
           nbaEvents,
           mlbEvents,
           nhlEvents,
+          ncaafEvents,
+          ncaabEvents,
           mlsEvents,
           f1Events,
           ufcEvents,
@@ -350,6 +363,8 @@ export default function App() {
           fetchScoreboard('nba', startDateStr, endDateStr),
           fetchScoreboard('mlb', startDateStr, endDateStr),
           fetchScoreboard('nhl', startDateStr, endDateStr),
+          fetchScoreboard('ncaaf', startDateStr, endDateStr),
+          fetchScoreboard('ncaab', startDateStr, endDateStr),
           fetchScoreboard('mls', startDateStr, endDateStr),
           fetchScoreboard('f1', startDateStr, endDateStr),
           fetchScoreboard('ufc', startDateStr, endDateStr),
@@ -366,6 +381,8 @@ export default function App() {
             ...nbaEvents,
             ...mlbEvents,
             ...nhlEvents,
+            ...ncaafEvents,
+            ...ncaabEvents,
             ...mlsEvents,
             ...f1Events,
             ...ufcEvents,
@@ -430,6 +447,20 @@ export default function App() {
     });
   };
 
+  const toggleConferenceFavorite = (confId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setFavorites(prev => {
+      const currentConfs = prev.conferences || [];
+      const isFav = currentConfs.includes(confId);
+      return {
+        ...prev,
+        conferences: isFav
+          ? currentConfs.filter(id => id !== confId)
+          : [...currentConfs, confId],
+      };
+    });
+  };
+
   // Toggle handlers for Visibility Toggles
   const toggleLeagueVisibility = (league: League, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -440,6 +471,65 @@ export default function App() {
         [league]: !prev.leagues[league],
       },
     }));
+  };
+
+  const toggleConferenceVisibility = (confId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setToggles(prev => {
+      const currentConfs = prev.conferences || {};
+      const currentVal = currentConfs[confId] !== false; // defaults to true
+      return {
+        ...prev,
+        conferences: {
+          ...currentConfs,
+          [confId]: !currentVal,
+        },
+      };
+    });
+  };
+
+  const toggleHideAllFavoriteConferences = () => {
+    const favConfs = favorites.conferences || [];
+    if (favConfs.length === 0) return;
+    const allHidden = favConfs.every(id => toggles.conferences?.[id] === false);
+
+    setToggles(prev => {
+      const newConfs = { ...(prev.conferences || {}) };
+      favConfs.forEach(id => {
+        newConfs[id] = allHidden; // If all were hidden, set all to true; otherwise hide all
+      });
+      return {
+        ...prev,
+        conferences: newConfs
+      };
+    });
+  };
+
+  const toggleMinimizeModalConference = (confId: string) => {
+    setMinimizedModalConferences(prev => ({
+      ...prev,
+      [confId]: !prev[confId]
+    }));
+  };
+
+  const handleCollapseAllModalConferences = (confIds: string[]) => {
+    setMinimizedModalConferences(prev => {
+      const nextState = { ...prev };
+      confIds.forEach(id => {
+        nextState[id] = true;
+      });
+      return nextState;
+    });
+  };
+
+  const handleExpandAllModalConferences = (confIds: string[]) => {
+    setMinimizedModalConferences(prev => {
+      const nextState = { ...prev };
+      confIds.forEach(id => {
+        nextState[id] = false;
+      });
+      return nextState;
+    });
   };
 
   const toggleTeamVisibility = (teamId: string) => {
@@ -455,167 +545,8 @@ export default function App() {
     });
   };
 
-  // Filter events based on active filters & toggles
-  const filteredEvents = useMemo(() => {
-    return events.filter(event => {
-      // 1. League visibility toggle check
-      if (!toggles.leagues[event.league]) return false;
-
-      // 2. Individual team toggles (check if either team is toggled OFF)
-      if (toggles.teams[event.homeTeam.id] === false) return false;
-      if (toggles.teams[event.awayTeam.id] === false) return false;
-
-      // 3. Favorites only filter
-      if (showFavoritesOnly) {
-        const isLeagueFav = favorites.leagues.includes(event.league);
-        const isHomeFav = favorites.teams.includes(event.homeTeam.id);
-        const isAwayFav = favorites.teams.includes(event.awayTeam.id);
-        const isUfcCardFav = event.league === 'ufc' && event.ufcFights?.some(fight =>
-          fight.competitors.some(c => favorites.teams.includes(`ufc-${c.id}`))
-        );
-        
-        if (!isLeagueFav && !isHomeFav && !isAwayFav && !isUfcCardFav) return false;
-      }
-
-      return true;
-    });
-  }, [events, toggles, favorites, showFavoritesOnly]);
-
-  // Group filtered events by local calendar cell date
-  const eventsByDate = useMemo(() => {
-    const map: Record<string, GameEvent[]> = {};
-    
-    filteredEvents.forEach(event => {
-      const localDate = new Date(event.date);
-      const dateKey = `${localDate.getFullYear()}-${localDate.getMonth()}-${localDate.getDate()}`;
-      if (!map[dateKey]) {
-        map[dateKey] = [];
-      }
-      map[dateKey].push(event);
-    });
-
-    // Sort events by date-time
-    Object.keys(map).forEach(key => {
-      map[key].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-    });
-
-    return map;
-  }, [filteredEvents]);
-
-  // Group all events (including hidden ones) by local calendar cell date
-  const allEventsByDate = useMemo(() => {
-    const map: Record<string, GameEvent[]> = {};
-    
-    events.forEach(event => {
-      const localDate = new Date(event.date);
-      const dateKey = `${localDate.getFullYear()}-${localDate.getMonth()}-${localDate.getDate()}`;
-      if (!map[dateKey]) {
-        map[dateKey] = [];
-      }
-      map[dateKey].push(event);
-    });
-
-    // Sort events by date-time
-    Object.keys(map).forEach(key => {
-      map[key].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-    });
-
-    return map;
-  }, [events]);
-
-  // Helper to check if a Date matches Today
-  const isToday = (date: Date): boolean => {
-    const today = new Date();
-    return (
-      date.getDate() === today.getDate() &&
-      date.getMonth() === today.getMonth() &&
-      date.getFullYear() === today.getFullYear()
-    );
-  };
-
-  // Helper to format date string
-  const formatMonthName = (date: Date): string => {
-    return date.toLocaleString('default', { month: 'long', year: 'numeric' });
-  };
-
-  // Get active teams for list rendering (filtered by search query)
-  const getFilteredTeams = (league: League) => {
-    const rawQuery = teamSearchQueries[league];
-    const cleanQuery = rawQuery
-      .toLowerCase()
-      .trim()
-      .replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, '');
-    
-    let teamList = teams[league] || [];
-    if (teamList.length === 0 && league !== 'ufc') {
-      const uniqueTeams = new Map<string, Team>();
-      events.forEach(event => {
-        if (event.league === league) {
-          if (event.homeTeam && event.homeTeam.id && event.homeTeam.id !== 'f1-session' && event.homeTeam.id !== 'f1-league') {
-            uniqueTeams.set(event.homeTeam.id, {
-              id: event.homeTeam.id,
-              displayName: event.homeTeam.displayName,
-              shortDisplayName: event.homeTeam.displayName,
-              abbreviation: event.homeTeam.abbreviation,
-              color: event.homeTeam.color || '1e293b',
-              logo: event.homeTeam.logo,
-              league: league
-            });
-          }
-          if (event.awayTeam && event.awayTeam.id && event.awayTeam.id !== 'f1-session' && event.awayTeam.id !== 'f1-league') {
-            uniqueTeams.set(event.awayTeam.id, {
-              id: event.awayTeam.id,
-              displayName: event.awayTeam.displayName,
-              shortDisplayName: event.awayTeam.displayName,
-              abbreviation: event.awayTeam.abbreviation,
-              color: event.awayTeam.color || '1e293b',
-              logo: event.awayTeam.logo,
-              league: league
-            });
-          }
-        }
-      });
-      teamList = Array.from(uniqueTeams.values()).sort((a, b) => a.displayName.localeCompare(b.displayName));
-    } else if (league === 'ufc') {
-      teamList = Object.values(knownFighters).map(f => ({
-        id: f.id,
-        displayName: f.displayName,
-        shortDisplayName: f.displayName,
-        abbreviation: f.displayName,
-        color: '1e293b',
-        logo: f.logo,
-        league: 'ufc' as League
-      }));
-    }
-
-    if (!cleanQuery) return teamList;
-
-    const queryTokens = cleanQuery.split(/\s+/);
-
-    return teamList.filter(team => {
-      const matchName = team.displayName.toLowerCase();
-      const matchAbbrev = team.abbreviation.toLowerCase();
-
-      return queryTokens.every(token => {
-        const alias = ALIAS_MAP[token];
-        return (
-          matchName.includes(token) ||
-          matchAbbrev.includes(token) ||
-          (alias && matchName.includes(alias))
-        );
-      });
-    });
-  };
-
-  const hasTogglesOff = useMemo(() => {
-    // If any team or league has a toggle off, we show a badge
-    const anyLeagueOff = Object.values(toggles.leagues).some(val => !val);
-    const anyTeamOff = Object.values(toggles.teams).some(val => !val);
-    return anyLeagueOff || anyTeamOff;
-  }, [toggles]);
-
   // Helper to get team details by ID
-  const getTeamById = (teamId: string) => {
+  const getTeamById = React.useCallback((teamId: string) => {
     // 1. Check all leagues in TEAMS_DIRECTORY
     for (const league in TEAMS_DIRECTORY) {
       const match = TEAMS_DIRECTORY[league as League].find(t => t.id === teamId);
@@ -682,27 +613,517 @@ export default function App() {
       }
     }
     return null;
+  }, [knownFighters, events]);
+
+  // Filter events based on active filters & toggles
+  const filteredEvents = useMemo(() => {
+    return events.filter(event => {
+      // 1. League visibility toggle check
+      if (!toggles.leagues[event.league]) return false;
+
+      // 2. Conference visibility toggle check (for college sports)
+      if (event.league === 'ncaaf' || event.league === 'ncaab') {
+        const homeTeamObj = getTeamById(event.homeTeam.id);
+        const awayTeamObj = getTeamById(event.awayTeam.id);
+
+        if (homeTeamObj?.conference) {
+          const confId = `${event.league}-${homeTeamObj.conference}`;
+          if (toggles.conferences?.[confId] === false && toggles.teams[event.homeTeam.id] !== true) {
+            return false;
+          }
+        }
+        if (awayTeamObj?.conference) {
+          const confId = `${event.league}-${awayTeamObj.conference}`;
+          if (toggles.conferences?.[confId] === false && toggles.teams[event.awayTeam.id] !== true) {
+            return false;
+          }
+        }
+      }
+
+      // 3. Individual team toggles (check if either team is toggled OFF)
+      if (toggles.teams[event.homeTeam.id] === false) return false;
+      if (toggles.teams[event.awayTeam.id] === false) return false;
+
+      // 4. Favorites only filter
+      if (showFavoritesOnly) {
+        const isLeagueFav = favorites.leagues.includes(event.league);
+        const isHomeFav = favorites.teams.includes(event.homeTeam.id);
+        const isAwayFav = favorites.teams.includes(event.awayTeam.id);
+
+        // Conference favorites check
+        let isConfFav = false;
+        if (event.league === 'ncaaf' || event.league === 'ncaab') {
+          const homeTeamObj = getTeamById(event.homeTeam.id);
+          const awayTeamObj = getTeamById(event.awayTeam.id);
+          const confs = favorites.conferences || [];
+          if (homeTeamObj?.conference && confs.includes(`${event.league}-${homeTeamObj.conference}`)) {
+            isConfFav = true;
+          }
+          if (awayTeamObj?.conference && confs.includes(`${event.league}-${awayTeamObj.conference}`)) {
+            isConfFav = true;
+          }
+        }
+
+        const isUfcCardFav = event.league === 'ufc' && event.ufcFights?.some(fight =>
+          fight.competitors.some(c => favorites.teams.includes(`ufc-${c.id}`))
+        );
+        
+        if (!isLeagueFav && !isHomeFav && !isAwayFav && !isConfFav && !isUfcCardFav) return false;
+      }
+
+      return true;
+    });
+  }, [events, toggles, favorites, showFavoritesOnly, getTeamById]);
+
+  // Group filtered events by local calendar cell date
+  const eventsByDate = useMemo(() => {
+    const map: Record<string, GameEvent[]> = {};
+    
+    filteredEvents.forEach(event => {
+      const localDate = new Date(event.date);
+      const dateKey = `${localDate.getFullYear()}-${localDate.getMonth()}-${localDate.getDate()}`;
+      if (!map[dateKey]) {
+        map[dateKey] = [];
+      }
+      map[dateKey].push(event);
+    });
+
+    // Sort events by date-time
+    Object.keys(map).forEach(key => {
+      map[key].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    });
+
+    return map;
+  }, [filteredEvents]);
+
+  // Group all events (including hidden ones) by local calendar cell date
+  const allEventsByDate = useMemo(() => {
+    const map: Record<string, GameEvent[]> = {};
+    
+    events.forEach(event => {
+      const localDate = new Date(event.date);
+      const dateKey = `${localDate.getFullYear()}-${localDate.getMonth()}-${localDate.getDate()}`;
+      if (!map[dateKey]) {
+        map[dateKey] = [];
+      }
+      map[dateKey].push(event);
+    });
+
+    // Sort events by date-time
+    Object.keys(map).forEach(key => {
+      map[key].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    });
+
+    return map;
+  }, [events]);
+
+  // Helper to check if a Date matches Today
+  const isToday = (date: Date): boolean => {
+    const today = new Date();
+    return (
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear()
+    );
   };
+
+  // Helper to format date string
+  const formatMonthName = (date: Date): string => {
+    return date.toLocaleString('default', { month: 'long', year: 'numeric' });
+  };
+
+  // Helper to look up conference for dynamic/unrecognized teams directly from processed JSON directory
+  const getConferenceForTeam = React.useCallback((name: string, abbrev: string, league: League): string => {
+    if (league !== 'ncaaf' && league !== 'ncaab') return '';
+
+    const list = TEAMS_DIRECTORY[league] || [];
+    const cleanName = (name || '').toLowerCase().trim();
+    const cleanAbbrev = (abbrev || '').toLowerCase().trim();
+
+    // 1. Match by exact displayName or shortDisplayName
+    const exactMatch = list.find(t => 
+      t.displayName.toLowerCase() === cleanName ||
+      t.shortDisplayName.toLowerCase() === cleanName
+    );
+    if (exactMatch && exactMatch.conference) return exactMatch.conference;
+
+    // 2. Abbreviation + name inclusion match
+    const abbrevMatch = list.find(t => 
+      t.abbreviation && t.abbreviation.toLowerCase() === cleanAbbrev &&
+      (t.displayName.toLowerCase().includes(cleanName) || cleanName.includes(t.shortDisplayName.toLowerCase()))
+    );
+    if (abbrevMatch && abbrevMatch.conference) return abbrevMatch.conference;
+
+    // 3. Fallback partial match if name contains full display name or short display name
+    const partialMatch = list.find(t => 
+      cleanName.includes(t.shortDisplayName.toLowerCase()) ||
+      t.displayName.toLowerCase().includes(cleanName)
+    );
+    if (partialMatch && partialMatch.conference) return partialMatch.conference;
+
+    // Default unrecognized dynamic teams
+    return league === 'ncaaf' ? 'FCS' : 'Independent';
+  }, []);
+
+  // Persistent auto-registration effect for teams & fighters from live events
+  useEffect(() => {
+    let updatedTeams = false;
+    let updatedFighters = false;
+    const newDynamicTeams = { ...dynamicTeams };
+    const newFighters = { ...knownFighters };
+    const teamsToRegister: Team[] = [];
+
+    events.forEach(event => {
+      const lg = event.league;
+      if (!newDynamicTeams[lg]) {
+        newDynamicTeams[lg] = {};
+      }
+
+      // Handle UFC fighters
+      if (lg === 'ufc' && event.ufcFights) {
+        event.ufcFights.forEach(fight => {
+          fight.competitors.forEach(c => {
+            const fullId = `ufc-${c.id}`;
+            if (!newFighters[fullId]) {
+              newFighters[fullId] = {
+                id: fullId,
+                displayName: c.displayName,
+                logo: c.logo
+              };
+              updatedFighters = true;
+            }
+          });
+        });
+      }
+
+      // Handle Home Team
+      if (event.homeTeam && event.homeTeam.id && !event.homeTeam.id.startsWith('f1-')) {
+        const teamId = event.homeTeam.id;
+        const isStatic = (TEAMS_DIRECTORY[lg] || []).some(t => t.id === teamId);
+        const teamConf = event.homeTeam.conference || getConferenceForTeam(event.homeTeam.displayName, event.homeTeam.abbreviation, lg);
+        const tObj: Team = {
+          id: teamId,
+          displayName: event.homeTeam.displayName,
+          shortDisplayName: event.homeTeam.displayName,
+          abbreviation: event.homeTeam.abbreviation,
+          color: event.homeTeam.color || '1e293b',
+          logo: event.homeTeam.logo,
+          league: lg,
+          conference: teamConf
+        };
+        teamsToRegister.push(tObj);
+        if (!isStatic && !newDynamicTeams[lg][teamId]) {
+          newDynamicTeams[lg][teamId] = tObj;
+          updatedTeams = true;
+        }
+      }
+
+      // Handle Away Team
+      if (event.awayTeam && event.awayTeam.id && !event.awayTeam.id.startsWith('f1-')) {
+        const teamId = event.awayTeam.id;
+        const isStatic = (TEAMS_DIRECTORY[lg] || []).some(t => t.id === teamId);
+        const teamConf = event.awayTeam.conference || getConferenceForTeam(event.awayTeam.displayName, event.awayTeam.abbreviation, lg);
+        const tObj: Team = {
+          id: teamId,
+          displayName: event.awayTeam.displayName,
+          shortDisplayName: event.awayTeam.displayName,
+          abbreviation: event.awayTeam.abbreviation,
+          color: event.awayTeam.color || '1e293b',
+          logo: event.awayTeam.logo,
+          league: lg,
+          conference: teamConf
+        };
+        teamsToRegister.push(tObj);
+        if (!isStatic && !newDynamicTeams[lg][teamId]) {
+          newDynamicTeams[lg][teamId] = tObj;
+          updatedTeams = true;
+        }
+      }
+    });
+
+    if (teamsToRegister.length > 0) {
+      registerTeams(teamsToRegister);
+    }
+    if (updatedTeams) {
+      setDynamicTeams(newDynamicTeams);
+      localStorage.setItem('sportscal_dynamic_teams', JSON.stringify(newDynamicTeams));
+    }
+    if (updatedFighters) {
+      setKnownFighters(newFighters);
+      localStorage.setItem('sportscal_known_fighters', JSON.stringify(newFighters));
+    }
+  }, [events, dynamicTeams, knownFighters, getConferenceForTeam]);
+
+  // Helper to get all combined teams for a league (combining static directory + persistent dynamic teamCache + live events)
+  const getCombinedLeagueTeams = React.useCallback((league: League): Team[] => {
+    if (league === 'ufc') {
+      return Object.values(knownFighters).map(f => ({
+        id: f.id,
+        displayName: f.displayName,
+        shortDisplayName: f.displayName,
+        abbreviation: f.displayName,
+        color: '1e293b',
+        logo: f.logo,
+        league: 'ufc' as League
+      }));
+    }
+
+    const cachedTeams = getAllTeamsForLeague(league);
+    const teamMap = new Map<string, Team>();
+
+    cachedTeams.forEach(t => {
+      const computedConf = getConferenceForTeam(t.displayName, t.abbreviation, league);
+      teamMap.set(t.id, {
+        ...t,
+        conference: computedConf || t.conference
+      });
+    });
+
+    // Add live teams from current events if not yet registered
+    events.forEach(event => {
+      if (event.league === league) {
+        if (event.homeTeam && event.homeTeam.id && !event.homeTeam.id.startsWith('f1-')) {
+          const teamConf = getConferenceForTeam(event.homeTeam.displayName, event.homeTeam.abbreviation, league) || event.homeTeam.conference;
+          if (!teamMap.has(event.homeTeam.id)) {
+            teamMap.set(event.homeTeam.id, {
+              id: event.homeTeam.id,
+              displayName: event.homeTeam.displayName,
+              shortDisplayName: event.homeTeam.displayName,
+              abbreviation: event.homeTeam.abbreviation,
+              color: event.homeTeam.color || '1e293b',
+              logo: event.homeTeam.logo,
+              league: league,
+              conference: teamConf
+            });
+          }
+        }
+        if (event.awayTeam && event.awayTeam.id && !event.awayTeam.id.startsWith('f1-')) {
+          const teamConf = getConferenceForTeam(event.awayTeam.displayName, event.awayTeam.abbreviation, league) || event.awayTeam.conference;
+          if (!teamMap.has(event.awayTeam.id)) {
+            teamMap.set(event.awayTeam.id, {
+              id: event.awayTeam.id,
+              displayName: event.awayTeam.displayName,
+              shortDisplayName: event.awayTeam.displayName,
+              abbreviation: event.awayTeam.abbreviation,
+              color: event.awayTeam.color || '1e293b',
+              logo: event.awayTeam.logo,
+              league: league,
+              conference: teamConf
+            });
+          }
+        }
+      }
+    });
+
+    return Array.from(teamMap.values()).sort((a, b) => a.displayName.localeCompare(b.displayName));
+  }, [events, knownFighters, getConferenceForTeam]);
+
+  // Get active teams for list rendering (filtered by search query)
+  const getFilteredTeams = (league: League) => {
+    const rawQuery = teamSearchQueries[league];
+    const cleanQuery = rawQuery
+      .toLowerCase()
+      .trim()
+      .replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, '');
+    
+    const teamList = getCombinedLeagueTeams(league);
+    if (!cleanQuery) return teamList;
+
+    const queryTokens = cleanQuery.split(/\s+/);
+
+    return teamList.filter(team => {
+      const matchName = team.displayName.toLowerCase();
+      const matchAbbrev = team.abbreviation.toLowerCase();
+
+      return queryTokens.every(token => {
+        const alias = ALIAS_MAP[token];
+        return (
+          matchName.includes(token) ||
+          matchAbbrev.includes(token) ||
+          (alias && matchName.includes(alias))
+        );
+      });
+    });
+  };
+
+  const hasTogglesOff = useMemo(() => {
+    // If any team, conference, or league has a toggle off, we show a badge
+    const anyLeagueOff = Object.values(toggles.leagues).some(val => !val);
+    const anyConfOff = toggles.conferences ? Object.values(toggles.conferences).some(val => !val) : false;
+    const anyTeamOff = Object.values(toggles.teams).some(val => !val);
+    return anyLeagueOff || anyConfOff || anyTeamOff;
+  }, [toggles]);
+
+  // Helper to group teams of a college league by conference
+  const getLeagueConferences = (league: League) => {
+    const teamList = getCombinedLeagueTeams(league);
+    const confMap: Record<string, Team[]> = {};
+    
+    teamList.forEach(team => {
+      const conf = team.conference || 'Other';
+      if (!confMap[conf]) confMap[conf] = [];
+      confMap[conf].push(team);
+    });
+    
+    const searchQ = (teamSearchQueries[league] || '').trim().toLowerCase();
+    
+    return Object.entries(confMap)
+      .map(([confName, confTeams]) => {
+        let filteredTeams = confTeams;
+        if (searchQ) {
+          const queryTokens = searchQ.split(/\s+/);
+          filteredTeams = confTeams.filter(team => {
+            const matchName = team.displayName.toLowerCase();
+            const matchAbbrev = team.abbreviation.toLowerCase();
+            const matchConf = confName.toLowerCase();
+            return queryTokens.every(token => {
+              const alias = ALIAS_MAP[token];
+              return (
+                matchName.includes(token) ||
+                matchAbbrev.includes(token) ||
+                matchConf.includes(token) ||
+                (alias && matchName.includes(alias))
+              );
+            });
+          });
+        }
+        return {
+          name: confName,
+          id: `${league}-${confName}`,
+          teams: filteredTeams,
+          totalTeamCount: confTeams.length
+        };
+      })
+      .filter(conf => {
+        if (!searchQ) return true;
+        const matchConfName = conf.name.toLowerCase().includes(searchQ);
+        return matchConfName || conf.teams.length > 0;
+      })
+      .sort((a, b) => a.name.localeCompare(b.name));
+  };
+
+  // Helper to get modal conferences with search query
+  const getModalConferences = (league: League, searchQ: string) => {
+    const teamList = getCombinedLeagueTeams(league);
+    const confMap: Record<string, Team[]> = {};
+
+    teamList.forEach(team => {
+      const conf = team.conference || 'Other';
+      if (!confMap[conf]) confMap[conf] = [];
+      confMap[conf].push(team);
+    });
+
+    const cleanQ = searchQ.trim().toLowerCase();
+
+    return Object.entries(confMap)
+      .map(([confName, confTeams]) => {
+        let filteredTeams = confTeams;
+        if (cleanQ) {
+          const queryTokens = cleanQ.split(/\s+/);
+          filteredTeams = confTeams.filter(team => {
+            const matchName = team.displayName.toLowerCase();
+            const matchAbbrev = team.abbreviation.toLowerCase();
+            const matchConf = confName.toLowerCase();
+            return queryTokens.every(token => {
+              const alias = ALIAS_MAP[token];
+              return (
+                matchName.includes(token) ||
+                matchAbbrev.includes(token) ||
+                matchConf.includes(token) ||
+                (alias && matchName.includes(alias))
+              );
+            });
+          });
+        }
+        return {
+          name: confName,
+          id: `${league}-${confName}`,
+          teams: filteredTeams,
+        };
+      })
+      .filter(conf => {
+        if (!cleanQ) return true;
+        const matchConfName = conf.name.toLowerCase().includes(cleanQ);
+        return matchConfName || conf.teams.length > 0;
+      })
+      .sort((a, b) => a.name.localeCompare(b.name));
+  };
+
+  // Helper to get modal teams for standard leagues
+  const getModalTeams = (league: League, searchQ: string) => {
+    const teamList = getCombinedLeagueTeams(league);
+    const cleanQ = searchQ.trim().toLowerCase();
+    if (!cleanQ) return teamList;
+
+    const queryTokens = cleanQ.split(/\s+/);
+    return teamList.filter(team => {
+      const matchName = team.displayName.toLowerCase();
+      const matchAbbrev = team.abbreviation.toLowerCase();
+      return queryTokens.every(token => {
+        const alias = ALIAS_MAP[token];
+        return (
+          matchName.includes(token) ||
+          matchAbbrev.includes(token) ||
+          (alias && matchName.includes(alias))
+        );
+      });
+    });
+  };
+
+
 
   // Helper to check if an event is currently visible based on active toggles/filters
   const isEventVisible = (event: GameEvent): boolean => {
     // 1. League visibility toggle check
     if (!toggles.leagues[event.league]) return false;
 
-    // 2. Individual team toggles (check if either team is toggled OFF)
+    // 2. Conference visibility toggle check (for college sports)
+    if (event.league === 'ncaaf' || event.league === 'ncaab') {
+      const homeTeamObj = getTeamById(event.homeTeam.id);
+      const awayTeamObj = getTeamById(event.awayTeam.id);
+      
+      if (homeTeamObj?.conference) {
+        const confId = `${event.league}-${homeTeamObj.conference}`;
+        if (toggles.conferences?.[confId] === false && toggles.teams[event.homeTeam.id] !== true) {
+          return false;
+        }
+      }
+      if (awayTeamObj?.conference) {
+        const confId = `${event.league}-${awayTeamObj.conference}`;
+        if (toggles.conferences?.[confId] === false && toggles.teams[event.awayTeam.id] !== true) {
+          return false;
+        }
+      }
+    }
+
+    // 3. Individual team toggles (check if either team is toggled OFF)
     if (toggles.teams[event.homeTeam.id] === false) return false;
     if (toggles.teams[event.awayTeam.id] === false) return false;
 
-    // 3. Favorites only filter
+    // 4. Favorites only filter
     if (showFavoritesOnly) {
       const isLeagueFav = favorites.leagues.includes(event.league);
       const isHomeFav = favorites.teams.includes(event.homeTeam.id);
       const isAwayFav = favorites.teams.includes(event.awayTeam.id);
+
+      let isConfFav = false;
+      if (event.league === 'ncaaf' || event.league === 'ncaab') {
+        const homeTeamObj = getTeamById(event.homeTeam.id);
+        const awayTeamObj = getTeamById(event.awayTeam.id);
+        const confs = favorites.conferences || [];
+        if (homeTeamObj?.conference && confs.includes(`${event.league}-${homeTeamObj.conference}`)) {
+          isConfFav = true;
+        }
+        if (awayTeamObj?.conference && confs.includes(`${event.league}-${awayTeamObj.conference}`)) {
+          isConfFav = true;
+        }
+      }
+
       const isUfcCardFav = event.league === 'ufc' && event.ufcFights?.some(fight =>
         fight.competitors.some(c => favorites.teams.includes(`ufc-${c.id}`))
       );
       
-      if (!isLeagueFav && !isHomeFav && !isAwayFav && !isUfcCardFav) return false;
+      if (!isLeagueFav && !isHomeFav && !isAwayFav && !isConfFav && !isUfcCardFav) return false;
     }
 
     return true;
@@ -835,6 +1256,8 @@ export default function App() {
       nba: '#d6793e',
       mlb: '#3b9e7a',
       nhl: '#8c62c2',
+      ncaaf: '#0e4800',
+      ncaab: '#d53ae0',
       mls: '#46a84c',
       f1: '#d42b24',
       ufc: '#c23c3c',
@@ -897,9 +1320,18 @@ export default function App() {
         </div>
 
         <div className="filter-section">
-          <h3 className="section-title">My Favorites</h3>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h3 className="section-title">My Favorites</h3>
+            <button 
+              className="action-btn"
+              onClick={() => setSelectedLeagueDetails('favorites')}
+              title="Open full Favorites popup directory"
+            >
+              <Maximize2 size={14} />
+            </button>
+          </div>
           <div className="favorites-list">
-            {favorites.leagues.length === 0 && favorites.teams.length === 0 ? (
+            {favorites.leagues.length === 0 && favorites.teams.length === 0 && (!favorites.conferences || favorites.conferences.length === 0) ? (
               <div className="favorites-empty-state">
                 <Star size={16} className="empty-star-icon" />
                 <span>No favorites yet. Star leagues or teams below to pin them here.</span>
@@ -910,7 +1342,7 @@ export default function App() {
                 {favorites.leagues.map(league => {
                   const isVisible = toggles.leagues[league];
                   return (
-                    <div key={`fav-league-${league}`} className="fav-item league-fav-item">
+                    <div key={`fav-league-${league}`} className={`fav-item league-fav-item ${!isVisible ? 'dimmed' : ''}`}>
                       <div className="fav-item-info">
                         <span className={`league-indicator ${league}`} />
                         <span className="fav-item-name">{LEAGUE_DISPLAY_NAMES[league] || league.toUpperCase()}</span>
@@ -935,13 +1367,46 @@ export default function App() {
                   );
                 })}
 
+                {/* Favorited Conferences */}
+                {(favorites.conferences || []).map(confId => {
+                  const parts = confId.split('-');
+                  const confLeague = parts[0] as League;
+                  const confName = parts.slice(1).join('-');
+                  const isVisible = toggles.conferences?.[confId] !== false;
+                  return (
+                    <div key={`fav-conf-${confId}`} className={`fav-item conference-fav-item ${!isVisible ? 'dimmed' : ''}`}>
+                      <div className="fav-item-info">
+                        <span className={`league-indicator ${confLeague}`} />
+                        <span className="fav-item-name">{confName}</span>
+                        <span className={`league-tag-badge ${confLeague}`}>{confLeague.toUpperCase()}</span>
+                      </div>
+                      <div className="fav-item-actions">
+                        <button 
+                          className="action-btn"
+                          onClick={(e) => toggleConferenceVisibility(confId, e)}
+                          title={isVisible ? "Hide conference" : "Show conference"}
+                        >
+                          {isVisible ? <Eye size={14} /> : <EyeOff size={14} style={{ color: 'var(--danger)' }} />}
+                        </button>
+                        <button 
+                          className="action-btn favorite-active"
+                          onClick={(e) => toggleConferenceFavorite(confId, e)}
+                          title="Remove from favorites"
+                        >
+                          <Star size={14} fill="var(--star-color)" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+
                 {/* Favorited Teams */}
                 {favorites.teams.map(teamId => {
                   const team = getTeamById(teamId);
                   if (!team) return null;
                   const isVisible = toggles.teams[teamId] !== false;
                   return (
-                    <div key={`fav-team-${teamId}`} className="fav-item team-fav-item">
+                    <div key={`fav-team-${teamId}`} className={`fav-item team-fav-item ${!isVisible ? 'dimmed' : ''}`}>
                       <div className="fav-item-info">
                         <img src={team.logo} alt={team.displayName} className="team-logo-small" />
                         <span className="fav-item-name">{team.shortDisplayName}</span>
@@ -1007,7 +1472,7 @@ export default function App() {
           </div>
           
           <div className="league-filter-list">
-            {(['nfl', 'nba', 'mlb', 'nhl', 'mls', 'f1', 'ufc', 'worldcup', 'olympics', 'epl', 'laliga', 'champions'] as League[]).map(league => {
+            {(['nfl', 'nba', 'mlb', 'nhl', 'ncaaf', 'ncaab', 'mls', 'f1', 'ufc', 'worldcup', 'olympics', 'epl', 'laliga', 'champions'] as League[]).map(league => {
               const isFav = favorites.leagues.includes(league);
               const isVisible = toggles.leagues[league];
               const isExpanded = expandedLeagues[league];
@@ -1047,16 +1512,26 @@ export default function App() {
                       >
                         {isVisible ? <Eye size={15} /> : <EyeOff size={15} style={{ color: 'var(--danger)' }} />}
                       </button>
+                      <button 
+                        className="action-btn"
+                        onClick={e => {
+                          e.stopPropagation();
+                          setSelectedLeagueDetails(league);
+                        }}
+                        title={`Open full ${LEAGUE_DISPLAY_NAMES[league] || league} popup directory`}
+                      >
+                        <Maximize2 size={14} />
+                      </button>
                     </div>
                   </div>
 
-                  {/* League Teams Collapsible Content */}
+                  {/* League Teams / Conferences Collapsible Content */}
                   <div className="league-teams-wrapper">
                     <div className="teams-list-container">
                       <div className="team-search-input-wrapper">
                         <input 
                           type="text" 
-                          placeholder="Search teams..." 
+                          placeholder={league === 'ncaaf' || league === 'ncaab' ? "Search conferences or teams..." : "Search teams..."} 
                           className="team-search-input"
                           value={teamSearchQueries[league]}
                           onChange={e => setTeamSearchQueries(prev => ({ ...prev, [league]: e.target.value }))}
@@ -1064,48 +1539,146 @@ export default function App() {
                         />
                       </div>
                       
-                      {leagueTeams.length === 0 ? (
-                        <div style={{ padding: '8px', fontSize: '11px', color: 'var(--text-muted)', textAlign: 'center' }}>
-                          No teams found
-                        </div>
-                      ) : (
-                        leagueTeams.map(team => {
-                          const isTeamFav = favorites.teams.includes(team.id);
-                          const isTeamVisible = toggles.teams[team.id] !== false;
+                      {league === 'ncaaf' || league === 'ncaab' ? (
+                        // College Sports: Render Conferences Hierarchy
+                        getLeagueConferences(league).length === 0 ? (
+                          <div style={{ padding: '8px', fontSize: '11px', color: 'var(--text-muted)', textAlign: 'center' }}>
+                            No conferences found
+                          </div>
+                        ) : (
+                          getLeagueConferences(league).map(conf => {
+                            const isConfFav = (favorites.conferences || []).includes(conf.id);
+                            const isConfVisible = toggles.conferences?.[conf.id] !== false;
+                            const searchQ = (teamSearchQueries[league] || '').trim();
+                            const isConfExpanded = searchQ.length > 0 || expandedConferences[conf.id];
 
-                          return (
-                            <div key={team.id} className="team-filter-row">
-                              <label className="team-label">
-                                <input 
-                                  type="checkbox" 
-                                  className="team-row-checkbox"
-                                  checked={isTeamVisible}
-                                  onChange={() => toggleTeamVisibility(team.id)}
-                                />
-                                <img src={team.logo} alt={team.displayName} className="team-logo-small" />
-                                <span 
-                                  className="team-name-text" 
-                                  style={{ 
-                                    textDecoration: isTeamVisible ? 'none' : 'line-through',
-                                    opacity: isTeamVisible ? 1 : 0.5,
-                                    borderLeft: `2px solid #${team.color}`,
-                                    paddingLeft: '4px'
-                                  }}
+                            return (
+                              <div key={conf.id} className={`conference-item ${isConfExpanded ? 'expanded' : ''}`}>
+                                {/* Conference Header */}
+                                <div 
+                                  className="conference-header"
+                                  onClick={() => setExpandedConferences(prev => ({ ...prev, [conf.id]: !prev[conf.id] }))}
                                 >
-                                  {team.shortDisplayName}
-                                </span>
-                              </label>
+                                  <div className="conference-title-group">
+                                    <ChevronRight 
+                                      size={14} 
+                                      style={{ 
+                                        transform: isConfExpanded ? 'rotate(90deg)' : 'rotate(0deg)',
+                                        transition: 'transform 0.2s ease',
+                                        color: 'var(--text-muted)'
+                                      }} 
+                                    />
+                                    <span>{conf.name}</span>
+                                    <span className="conference-count-badge">{conf.totalTeamCount} teams</span>
+                                  </div>
+                                  
+                                  <div className="league-actions" onClick={e => e.stopPropagation()}>
+                                    <button 
+                                      className={`action-btn ${isConfFav ? 'favorite-active' : ''}`}
+                                      onClick={e => toggleConferenceFavorite(conf.id, e)}
+                                      title={isConfFav ? "Remove conference from favorites" : "Favorite conference"}
+                                    >
+                                      <Star size={13} fill={isConfFav ? 'var(--star-color)' : 'none'} />
+                                    </button>
+                                    <button 
+                                      className="action-btn"
+                                      onClick={e => toggleConferenceVisibility(conf.id, e)}
+                                      title={isConfVisible ? "Hide conference" : "Show conference"}
+                                    >
+                                      {isConfVisible ? <Eye size={13} /> : <EyeOff size={13} style={{ color: 'var(--danger)' }} />}
+                                    </button>
+                                  </div>
+                                </div>
 
-                              <button 
-                                className={`action-btn ${isTeamFav ? 'favorite-active' : ''}`}
-                                onClick={e => toggleTeamFavorite(team.id, e)}
-                                title={isTeamFav ? "Remove from favorites" : "Favorite team"}
-                              >
-                                <Star size={13} fill={isTeamFav ? 'var(--star-color)' : 'none'} />
-                              </button>
-                            </div>
-                          );
-                        })
+                                {/* Conference Teams */}
+                                <div className="conference-teams-wrapper">
+                                  {conf.teams.map(team => {
+                                    const isTeamFav = favorites.teams.includes(team.id);
+                                    const isTeamVisible = toggles.teams[team.id] !== false;
+
+                                    return (
+                                      <div key={team.id} className="team-filter-row">
+                                        <label className="team-label">
+                                          <input 
+                                            type="checkbox" 
+                                            className="team-row-checkbox"
+                                            checked={isTeamVisible}
+                                            onChange={() => toggleTeamVisibility(team.id)}
+                                          />
+                                          <img src={team.logo} alt={team.displayName} className="team-logo-small" />
+                                          <span 
+                                            className="team-name-text" 
+                                            style={{ 
+                                              textDecoration: isTeamVisible ? 'none' : 'line-through',
+                                              opacity: isTeamVisible ? 1 : 0.5,
+                                              borderLeft: `2px solid #${getReadableTeamColor(team.color, team.alternateColor)}`,
+                                              paddingLeft: '4px'
+                                            }}
+                                          >
+                                            {team.shortDisplayName}
+                                          </span>
+                                        </label>
+
+                                        <button 
+                                          className={`action-btn ${isTeamFav ? 'favorite-active' : ''}`}
+                                          onClick={e => toggleTeamFavorite(team.id, e)}
+                                          title={isTeamFav ? "Remove from favorites" : "Favorite team"}
+                                        >
+                                          <Star size={13} fill={isTeamFav ? 'var(--star-color)' : 'none'} />
+                                        </button>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            );
+                          })
+                        )
+                      ) : (
+                        // Standard Leagues: Render Teams Directly
+                        leagueTeams.length === 0 ? (
+                          <div style={{ padding: '8px', fontSize: '11px', color: 'var(--text-muted)', textAlign: 'center' }}>
+                            No teams found
+                          </div>
+                        ) : (
+                          leagueTeams.map(team => {
+                            const isTeamFav = favorites.teams.includes(team.id);
+                            const isTeamVisible = toggles.teams[team.id] !== false;
+
+                            return (
+                              <div key={team.id} className="team-filter-row">
+                                <label className="team-label">
+                                  <input 
+                                    type="checkbox" 
+                                    className="team-row-checkbox"
+                                    checked={isTeamVisible}
+                                    onChange={() => toggleTeamVisibility(team.id)}
+                                  />
+                                  <img src={team.logo} alt={team.displayName} className="team-logo-small" />
+                                  <span 
+                                    className="team-name-text" 
+                                    style={{ 
+                                      textDecoration: isTeamVisible ? 'none' : 'line-through',
+                                      opacity: isTeamVisible ? 1 : 0.5,
+                                      borderLeft: `2px solid #${getReadableTeamColor(team.color, team.alternateColor)}`,
+                                      paddingLeft: '4px'
+                                    }}
+                                  >
+                                    {team.shortDisplayName}
+                                  </span>
+                                </label>
+
+                                <button 
+                                  className={`action-btn ${isTeamFav ? 'favorite-active' : ''}`}
+                                  onClick={e => toggleTeamFavorite(team.id, e)}
+                                  title={isTeamFav ? "Remove from favorites" : "Favorite team"}
+                                >
+                                  <Star size={13} fill={isTeamFav ? 'var(--star-color)' : 'none'} />
+                                </button>
+                              </div>
+                            );
+                          })
+                        )
                       )}
                     </div>
                   </div>
@@ -1659,6 +2232,524 @@ export default function App() {
           );
         })()}
       </div>
+
+      {/* League & Conference Directory Modal */}
+    <div 
+      className={`modal-overlay league-details-modal ${selectedLeagueDetails ? 'active' : ''}`} 
+      onClick={() => {
+        setSelectedLeagueDetails(null);
+        setModalSearchQuery('');
+      }}
+    >
+      {selectedLeagueDetails && (
+        <div className="modal-content league-modal-content" onClick={e => e.stopPropagation()}>
+          <div className="modal-header">
+            <div className="league-modal-title-group">
+              {selectedLeagueDetails === 'favorites' ? (
+                <Star size={22} fill="var(--star-color)" color="var(--star-color)" />
+              ) : (
+                <span className={`league-indicator ${selectedLeagueDetails}`} />
+              )}
+              <div>
+                <span className="modal-title">
+                  {selectedLeagueDetails === 'favorites'
+                    ? "My Favorites Directory"
+                    : `${LEAGUE_DISPLAY_NAMES[selectedLeagueDetails] || selectedLeagueDetails.toUpperCase()} Directory`}
+                </span>
+                <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                  {selectedLeagueDetails === 'favorites'
+                    ? "Full directory view of favorited leagues, conferences, and teams"
+                    : "Full details and toggles for conferences and teams"}
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {selectedLeagueDetails !== 'favorites' && (
+                <>
+                  <button 
+                    className={`action-btn ${favorites.leagues.includes(selectedLeagueDetails) ? 'favorite-active' : ''}`}
+                    onClick={(e) => toggleLeagueFavorite(selectedLeagueDetails, e)}
+                    title="Favorite league"
+                  >
+                    <Star size={16} fill={favorites.leagues.includes(selectedLeagueDetails) ? 'var(--star-color)' : 'none'} />
+                  </button>
+                  
+                  <button 
+                    className="action-btn"
+                    onClick={(e) => toggleLeagueVisibility(selectedLeagueDetails, e)}
+                    title="Toggle league visibility"
+                  >
+                    {toggles.leagues[selectedLeagueDetails] ? <Eye size={16} /> : <EyeOff size={16} style={{ color: 'var(--danger)' }} />}
+                  </button>
+                </>
+              )}
+
+              <button 
+                className="modal-close" 
+                onClick={() => {
+                  setSelectedLeagueDetails(null);
+                  setModalSearchQuery('');
+                }}
+              >
+                <X size={18} />
+              </button>
+            </div>
+          </div>
+
+          <div className="modal-body league-modal-body">
+            {/* Search bar inside modal */}
+            <div className="modal-search-bar">
+              <Search size={15} style={{ color: 'var(--text-muted)' }} />
+              <input 
+                type="text"
+                placeholder={
+                  selectedLeagueDetails === 'favorites'
+                    ? "Search favorites (teams, conferences, leagues)..."
+                    : selectedLeagueDetails === 'ncaaf' || selectedLeagueDetails === 'ncaab' 
+                    ? "Search teams, conferences, or cities..." 
+                    : "Search teams or cities..."
+                }
+                value={modalSearchQuery}
+                onChange={e => setModalSearchQuery(e.target.value)}
+                className="modal-search-input"
+              />
+              {modalSearchQuery && (
+                <button className="action-btn" onClick={() => setModalSearchQuery('')}>
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+
+            {/* Content for Favorites Open View */}
+            {selectedLeagueDetails === 'favorites' ? (
+              <div className="college-directory-container">
+                {/* Favorites Display Toolbar with Hide Conferences controls */}
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '12px 16px',
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  border: '1px solid var(--border-glass)',
+                  borderRadius: '12px'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                    <Star size={16} fill="var(--star-color)" color="var(--star-color)" />
+                    <span>Favorites Directory Overview</span>
+                  </div>
+
+                  {(favorites.conferences && favorites.conferences.length > 0) && (
+                    <button
+                      className="btn"
+                      style={{ fontSize: '12px', padding: '6px 12px' }}
+                      onClick={toggleHideAllFavoriteConferences}
+                      title="Toggle visibility for all favorited conferences"
+                    >
+                      {favorites.conferences.every(id => toggles.conferences?.[id] === false) ? (
+                        <>
+                          <Eye size={14} />
+                          <span>Show All Conferences</span>
+                        </>
+                      ) : (
+                        <>
+                          <EyeOff size={14} style={{ color: 'var(--danger)' }} />
+                          <span>Hide All Conferences</span>
+                        </>
+                      )}
+                    </button>
+                  )}
+                </div>
+
+                {/* Favorited Conferences */}
+                {(favorites.conferences && favorites.conferences.length > 0) && (
+                  <div style={{ marginTop: '8px' }}>
+                    <h4 style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-muted)', marginBottom: '12px' }}>
+                      Favorited Conferences ({favorites.conferences.length})
+                    </h4>
+                    {favorites.conferences.map(confId => {
+                      const parts = confId.split('-');
+                      const confLeague = parts[0] as League;
+                      const confName = parts.slice(1).join('-');
+                      const isConfVisible = toggles.conferences?.[confId] !== false;
+                      const isMinimized = !modalSearchQuery.trim() && minimizedModalConferences[confId] === true;
+
+                      const allLeagueTeams = getCombinedLeagueTeams(confLeague);
+                      const confTeams = allLeagueTeams.filter(t => t.conference === confName);
+
+                      const searchQ = modalSearchQuery.trim().toLowerCase();
+                      if (searchQ && !confName.toLowerCase().includes(searchQ) && !confTeams.some(t => t.displayName.toLowerCase().includes(searchQ) || t.abbreviation.toLowerCase().includes(searchQ))) {
+                        return null;
+                      }
+
+                      return (
+                        <div key={`modal-fav-conf-${confId}`} className={`modal-conference-card ${!isConfVisible ? 'dimmed' : ''} ${isMinimized ? 'minimized' : ''}`} style={{ marginBottom: '14px' }}>
+                          <div 
+                            className="modal-conference-header"
+                            onClick={() => toggleMinimizeModalConference(confId)}
+                            title={isMinimized ? "Click to expand conference" : "Click to minimize conference"}
+                          >
+                            <div className="modal-conference-title">
+                              <ChevronDown 
+                                size={16} 
+                                style={{ 
+                                  transform: isMinimized ? 'rotate(-90deg)' : 'rotate(0deg)',
+                                  transition: 'transform 0.2s ease',
+                                  color: 'var(--text-muted)'
+                                }} 
+                              />
+                              <span className={`league-indicator ${confLeague}`} />
+                              <h3>{confName} Conference</h3>
+                              <span className={`league-tag-badge ${confLeague}`}>{confLeague.toUpperCase()}</span>
+                              {!isConfVisible && (
+                                <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '4px', background: 'rgba(239, 68, 68, 0.2)', color: 'var(--danger)', fontWeight: 600 }}>
+                                  Hidden
+                                </span>
+                              )}
+                            </div>
+
+                            <div className="fav-item-actions" onClick={e => e.stopPropagation()}>
+                              <button 
+                                className="action-btn"
+                                onClick={e => toggleConferenceVisibility(confId, e)}
+                                title={isConfVisible ? "Hide conference" : "Show conference"}
+                              >
+                                {isConfVisible ? <Eye size={14} /> : <EyeOff size={14} style={{ color: 'var(--danger)' }} />}
+                              </button>
+
+                              <button 
+                                className="action-btn favorite-active"
+                                onClick={e => toggleConferenceFavorite(confId, e)}
+                                title="Remove conference favorite"
+                              >
+                                <Star size={14} fill="var(--star-color)" />
+                              </button>
+                            </div>
+                          </div>
+
+                          {!isMinimized && (
+                            <div className="modal-teams-grid">
+                              {confTeams.map(team => {
+                                const isTeamFav = favorites.teams.includes(team.id);
+                                const isTeamVisible = toggles.teams[team.id] !== false;
+
+                                return (
+                                  <div key={`conf-team-${team.id}`} className={`modal-team-card ${!isTeamVisible || !isConfVisible ? 'dimmed' : ''}`}>
+                                    <div className="modal-team-main">
+                                      <input 
+                                        type="checkbox" 
+                                        checked={isTeamVisible && isConfVisible}
+                                        onChange={() => toggleTeamVisibility(team.id)}
+                                        className="team-row-checkbox"
+                                      />
+                                      <img src={team.logo} alt={team.displayName} className="modal-team-logo" />
+                                      <div className="modal-team-details">
+                                        <span className="modal-team-name">{team.displayName}</span>
+                                        <span className="modal-team-abbrev" style={{ color: `#${getReadableTeamColor(team.color, team.alternateColor)}` }}>
+                                          {team.abbreviation}
+                                        </span>
+                                      </div>
+                                    </div>
+
+                                    <button 
+                                      className={`action-btn ${isTeamFav ? 'favorite-active' : ''}`}
+                                      onClick={e => toggleTeamFavorite(team.id, e)}
+                                      title={isTeamFav ? "Remove team favorite" : "Favorite team"}
+                                    >
+                                      <Star size={14} fill={isTeamFav ? 'var(--star-color)' : 'none'} />
+                                    </button>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* Favorited Leagues */}
+                {favorites.leagues.length > 0 && (
+                  <div style={{ marginTop: '8px' }}>
+                    <h4 style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-muted)', marginBottom: '12px' }}>
+                      Favorited Leagues ({favorites.leagues.length})
+                    </h4>
+                    <div className="modal-teams-grid standard-league-grid">
+                      {favorites.leagues.map(lg => {
+                        const isVisible = toggles.leagues[lg];
+                        const searchQ = modalSearchQuery.trim().toLowerCase();
+                        const lgName = LEAGUE_DISPLAY_NAMES[lg] || lg.toUpperCase();
+                        if (searchQ && !lgName.toLowerCase().includes(searchQ)) return null;
+
+                        return (
+                          <div key={`modal-fav-lg-${lg}`} className={`modal-team-card ${!isVisible ? 'dimmed' : ''}`}>
+                            <div className="modal-team-main">
+                              <span className={`league-indicator ${lg}`} />
+                              <div className="modal-team-details">
+                                <span className="modal-team-name">{lgName}</span>
+                              </div>
+                            </div>
+
+                            <div className="fav-item-actions">
+                              <button 
+                                className="action-btn"
+                                onClick={e => toggleLeagueVisibility(lg, e)}
+                                title={isVisible ? "Hide league" : "Show league"}
+                              >
+                                {isVisible ? <Eye size={14} /> : <EyeOff size={14} style={{ color: 'var(--danger)' }} />}
+                              </button>
+
+                              <button 
+                                className="action-btn favorite-active"
+                                onClick={e => toggleLeagueFavorite(lg, e)}
+                                title="Remove league favorite"
+                              >
+                                <Star size={14} fill="var(--star-color)" />
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Favorited Teams */}
+                {favorites.teams.length > 0 && (
+                  <div style={{ marginTop: '8px' }}>
+                    <h4 style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-muted)', marginBottom: '12px' }}>
+                      Favorited Teams ({favorites.teams.length})
+                    </h4>
+                    <div className="modal-teams-grid standard-league-grid">
+                      {favorites.teams.map(teamId => {
+                        const team = getTeamById(teamId);
+                        if (!team) return null;
+                        const searchQ = modalSearchQuery.trim().toLowerCase();
+                        if (searchQ && !team.displayName.toLowerCase().includes(searchQ) && !team.abbreviation.toLowerCase().includes(searchQ)) return null;
+
+                        const isTeamVisible = toggles.teams[teamId] !== false;
+                        const confId = team.conference ? `${team.league}-${team.conference}` : null;
+                        const isConfVisible = confId ? toggles.conferences?.[confId] !== false : true;
+
+                        return (
+                          <div key={`modal-fav-team-${teamId}`} className={`modal-team-card ${!isTeamVisible || !isConfVisible ? 'dimmed' : ''}`}>
+                            <div className="modal-team-main">
+                              <input 
+                                type="checkbox" 
+                                checked={isTeamVisible && isConfVisible}
+                                onChange={() => toggleTeamVisibility(teamId)}
+                                className="team-row-checkbox"
+                              />
+                              <img src={team.logo} alt={team.displayName} className="modal-team-logo" />
+                              <div className="modal-team-details">
+                                <span className="modal-team-name">{team.displayName}</span>
+                                <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                                  <span className="modal-team-abbrev" style={{ color: `#${getReadableTeamColor(team.color, team.alternateColor)}` }}>
+                                    {team.abbreviation}
+                                  </span>
+                                  <span className={`league-tag-badge ${team.league}`}>{team.league.toUpperCase()}</span>
+                                  {team.conference && (
+                                    <span style={{ fontSize: '10px', color: 'var(--text-muted)', background: 'rgba(255,255,255,0.05)', padding: '1px 4px', borderRadius: '3px' }}>
+                                      {team.conference}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+
+                            <button 
+                              className="action-btn favorite-active"
+                              onClick={e => toggleTeamFavorite(teamId, e)}
+                              title="Remove team favorite"
+                            >
+                              <Star size={14} fill="var(--star-color)" />
+                            </button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : selectedLeagueDetails === 'ncaaf' || selectedLeagueDetails === 'ncaab' ? (
+              // Content for College Sports
+              (() => {
+                const modalConfs = getModalConferences(selectedLeagueDetails, modalSearchQuery);
+                const allConfIds = modalConfs.map(c => c.id);
+                const searchQ = modalSearchQuery.trim().toLowerCase();
+
+                return (
+                  <div className="college-directory-container">
+                    {/* Toolbar with Collapse All / Expand All controls */}
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      padding: '10px 14px',
+                      background: 'rgba(255, 255, 255, 0.03)',
+                      border: '1px solid var(--border-glass)',
+                      borderRadius: '12px',
+                      marginBottom: '4px'
+                    }}>
+                      <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600 }}>
+                        {modalConfs.length} Conferences ({modalConfs.reduce((sum, c) => sum + c.teams.length, 0)} Teams)
+                      </span>
+
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <button
+                          className="btn"
+                          style={{ fontSize: '11px', padding: '5px 10px' }}
+                          onClick={() => handleCollapseAllModalConferences(allConfIds)}
+                          title="Collapse all conference sections"
+                        >
+                          <ChevronUp size={14} />
+                          <span>Collapse All</span>
+                        </button>
+                        <button
+                          className="btn"
+                          style={{ fontSize: '11px', padding: '5px 10px' }}
+                          onClick={() => handleExpandAllModalConferences(allConfIds)}
+                          title="Expand all conference sections"
+                        >
+                          <ChevronDown size={14} />
+                          <span>Expand All</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {modalConfs.map(conf => {
+                      const isConfFav = (favorites.conferences || []).includes(conf.id);
+                      const isConfVisible = toggles.conferences?.[conf.id] !== false;
+                      const isMinimized = !searchQ && minimizedModalConferences[conf.id] === true;
+
+                      return (
+                        <div key={conf.id} className={`modal-conference-card ${!isConfVisible ? 'dimmed' : ''} ${isMinimized ? 'minimized' : ''}`}>
+                          <div 
+                            className="modal-conference-header"
+                            onClick={() => toggleMinimizeModalConference(conf.id)}
+                            title={isMinimized ? "Click to expand conference" : "Click to minimize conference"}
+                          >
+                            <div className="modal-conference-title">
+                              <ChevronDown 
+                                size={16} 
+                                style={{ 
+                                  transform: isMinimized ? 'rotate(-90deg)' : 'rotate(0deg)',
+                                  transition: 'transform 0.2s ease',
+                                  color: 'var(--text-muted)'
+                                }} 
+                              />
+                              <h3>{conf.name} Conference</h3>
+                              <span className="conference-count-badge">{conf.teams.length} teams</span>
+                              {!isConfVisible && (
+                                <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '4px', background: 'rgba(239, 68, 68, 0.2)', color: 'var(--danger)', fontWeight: 600 }}>
+                                  Hidden
+                                </span>
+                              )}
+                            </div>
+
+                            <div className="fav-item-actions" onClick={e => e.stopPropagation()}>
+                              <button 
+                                className={`action-btn ${isConfFav ? 'favorite-active' : ''}`}
+                                onClick={e => toggleConferenceFavorite(conf.id, e)}
+                                title={isConfFav ? "Remove conference favorite" : "Favorite conference"}
+                              >
+                                <Star size={14} fill={isConfFav ? 'var(--star-color)' : 'none'} />
+                              </button>
+
+                              <button 
+                                className="action-btn"
+                                onClick={e => toggleConferenceVisibility(conf.id, e)}
+                                title={isConfVisible ? "Hide conference" : "Show conference"}
+                              >
+                                {isConfVisible ? <Eye size={14} /> : <EyeOff size={14} style={{ color: 'var(--danger)' }} />}
+                              </button>
+                            </div>
+                          </div>
+
+                          {!isMinimized && (
+                            <div className="modal-teams-grid">
+                              {conf.teams.map(team => {
+                                const isTeamFav = favorites.teams.includes(team.id);
+                                const isTeamVisible = toggles.teams[team.id] !== false;
+
+                                return (
+                                  <div key={team.id} className={`modal-team-card ${!isTeamVisible || !isConfVisible ? 'dimmed' : ''}`}>
+                                    <div className="modal-team-main">
+                                      <input 
+                                        type="checkbox" 
+                                        checked={isTeamVisible && isConfVisible}
+                                        onChange={() => toggleTeamVisibility(team.id)}
+                                        className="team-row-checkbox"
+                                      />
+                                      <img src={team.logo} alt={team.displayName} className="modal-team-logo" />
+                                      <div className="modal-team-details">
+                                        <span className="modal-team-name">{team.displayName}</span>
+                                        <span className="modal-team-abbrev" style={{ color: `#${getReadableTeamColor(team.color, team.alternateColor)}` }}>
+                                          {team.abbreviation}
+                                        </span>
+                                      </div>
+                                    </div>
+
+                                    <button 
+                                      className={`action-btn ${isTeamFav ? 'favorite-active' : ''}`}
+                                      onClick={e => toggleTeamFavorite(team.id, e)}
+                                      title={isTeamFav ? "Remove team favorite" : "Favorite team"}
+                                    >
+                                      <Star size={14} fill={isTeamFav ? 'var(--star-color)' : 'none'} />
+                                    </button>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })()
+            ) : (
+              // Content for Standard Leagues
+              <div className="modal-teams-grid standard-league-grid">
+                {getModalTeams(selectedLeagueDetails, modalSearchQuery).map(team => {
+                  const isTeamFav = favorites.teams.includes(team.id);
+                  const isTeamVisible = toggles.teams[team.id] !== false;
+
+                  return (
+                    <div key={team.id} className={`modal-team-card ${!isTeamVisible ? 'dimmed' : ''}`}>
+                      <div className="modal-team-main">
+                        <input 
+                          type="checkbox" 
+                          checked={isTeamVisible}
+                          onChange={() => toggleTeamVisibility(team.id)}
+                          className="team-row-checkbox"
+                        />
+                        <img src={team.logo} alt={team.displayName} className="modal-team-logo" />
+                        <div className="modal-team-details">
+                          <span className="modal-team-name">{team.displayName}</span>
+                          <span className="modal-team-abbrev" style={{ color: `#${getReadableTeamColor(team.color, team.alternateColor)}` }}>
+                            {team.abbreviation}
+                          </span>
+                        </div>
+                      </div>
+
+                      <button 
+                        className={`action-btn ${isTeamFav ? 'favorite-active' : ''}`}
+                        onClick={e => toggleTeamFavorite(team.id, e)}
+                        title={isTeamFav ? "Remove team favorite" : "Favorite team"}
+                      >
+                        <Star size={14} fill={isTeamFav ? 'var(--star-color)' : 'none'} />
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
-  );
+  </div>
+);
 }

@@ -1,4 +1,6 @@
 import type { League, Team } from './types';
+import cfbProcessed from '../testing/cfb_processed.json';
+import cbbProcessed from '../testing/cbb_processed.json';
 
 export const TEAMS_DIRECTORY: Record<League, Team[]> = {
   "nfl": [
@@ -1249,6 +1251,8 @@ export const TEAMS_DIRECTORY: Record<League, Team[]> = {
       "league": "nhl"
     }
   ],
+  "ncaaf": cfbProcessed as Team[],
+  "ncaab": cbbProcessed as Team[],
   "mls": [
     {
       "id": "mls-18418",
@@ -2040,3 +2044,114 @@ export const TEAMS_DIRECTORY: Record<League, Team[]> = {
   "laliga": [],
   "champions": []
 };
+
+/**
+ * Calculates perceived lightness of a hex color (0-100).
+ */
+export function getHexLightness(hexColor: string | undefined): number {
+  if (!hexColor) return 0;
+  let hex = hexColor.replace('#', '').trim();
+  if (hex.length === 3) {
+    hex = hex.split('').map(c => c + c).join('');
+  }
+  if (hex.length !== 6) return 50;
+
+  const r = parseInt(hex.substring(0, 2), 16) / 255;
+  const g = parseInt(hex.substring(2, 4), 16) / 255;
+  const b = parseInt(hex.substring(4, 6), 16) / 255;
+
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  return ((max + min) / 2) * 100;
+}
+
+/**
+ * Returns a readable hex color for dark background themes.
+ * If the primary color lightness is below minLightness (default 52%),
+ * it checks alternateColor. If that's also too dark or unavailable,
+ * it dynamically boosts HSL lightness while retaining the team's hue & saturation.
+ */
+export function getReadableTeamColor(
+  color: string | undefined, 
+  alternateColor?: string | undefined, 
+  minLightness = 52
+): string {
+  if (!color || color === '1e293b' || color === '000000') {
+    if (alternateColor && getHexLightness(alternateColor) >= minLightness) {
+      return alternateColor.replace('#', '').trim();
+    }
+    if (!color || color === '1e293b') return 'dfb15b';
+  }
+
+  const cleanPrimary = color.replace('#', '').trim();
+  const primaryLightness = getHexLightness(cleanPrimary);
+
+  if (primaryLightness >= minLightness) {
+    return cleanPrimary;
+  }
+
+  // Check alternate color if provided
+  if (alternateColor) {
+    const cleanAlt = alternateColor.replace('#', '').trim();
+    const altLightness = getHexLightness(cleanAlt);
+    if (altLightness >= minLightness) {
+      return cleanAlt;
+    }
+  }
+
+  // Convert primary RGB to HSL and boost Lightness
+  let hex = cleanPrimary;
+  if (hex.length === 3) {
+    hex = hex.split('').map(c => c + c).join('');
+  }
+  if (hex.length !== 6) return 'dfb15b';
+
+  const rNorm = parseInt(hex.substring(0, 2), 16) / 255;
+  const gNorm = parseInt(hex.substring(2, 4), 16) / 255;
+  const bNorm = parseInt(hex.substring(4, 6), 16) / 255;
+
+  const max = Math.max(rNorm, gNorm, bNorm);
+  const min = Math.min(rNorm, gNorm, bNorm);
+  let h = 0;
+  let s = 0;
+
+  if (max !== min) {
+    const d = max - min;
+    const l = (max + min) / 2;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case rNorm: h = (gNorm - bNorm) / d + (gNorm < bNorm ? 6 : 0); break;
+      case gNorm: h = (bNorm - rNorm) / d + 2; break;
+      case bNorm: h = (rNorm - gNorm) / d + 4; break;
+    }
+    h /= 6;
+  }
+
+  // If black or near grayscale, return a high-visibility light silver
+  if (s < 0.15) {
+    return 'cbd5e1';
+  }
+
+  // Boost lightness to target (minLightness / 100)
+  const newL = minLightness / 100;
+  const q = newL < 0.5 ? newL * (1 + s) : newL + s - newL * s;
+  const p = 2 * newL - q;
+
+  const hue2rgb = (pVal: number, qVal: number, tVal: number) => {
+    let t = tVal;
+    if (t < 0) t += 1;
+    if (t > 1) t -= 1;
+    if (t < 1/6) return pVal + (qVal - pVal) * 6 * t;
+    if (t < 1/2) return qVal;
+    if (t < 2/3) return pVal + (qVal - pVal) * (2/3 - t) * 6;
+    return pVal;
+  };
+
+  const newR = Math.round(hue2rgb(p, q, h + 1/3) * 255);
+  const newG = Math.round(hue2rgb(p, q, h) * 255);
+  const newB = Math.round(hue2rgb(p, q, h - 1/3) * 255);
+
+  const toHex = (n: number) => n.toString(16).padStart(2, '0');
+  return `${toHex(newR)}${toHex(newG)}${toHex(newB)}`;
+}
+
