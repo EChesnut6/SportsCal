@@ -190,7 +190,134 @@ export async function fetchScoreboard(
     if (!res.ok) throw new Error(`HTTP error ${res.status}`);
     const data = await res.json();
     
+const F1_COUNTRY_MAP: Record<string, string> = {
+  'australia': 'aus', 'australian': 'aus', 'melbourne': 'aus',
+  'china': 'chn', 'chinese': 'chn', 'shanghai': 'chn',
+  'japan': 'jpn', 'japanese': 'jpn', 'suzuka': 'jpn',
+  'bahrain': 'brn', 'bahraini': 'brn', 'sakhir': 'brn',
+  'saudi': 'ksa', 'jeddah': 'ksa',
+  'united states': 'usa', 'american': 'usa', 'usa': 'usa', 'miami': 'usa', 'austin': 'usa', 'las vegas': 'usa',
+  'italy': 'ita', 'italian': 'ita', 'imola': 'ita', 'monza': 'ita',
+  'monaco': 'mon', 'monte carlo': 'mon',
+  'spain': 'esp', 'spanish': 'esp', 'barcelona': 'esp', 'madrid': 'esp',
+  'canada': 'can', 'canadian': 'can', 'montreal': 'can',
+  'austria': 'aut', 'austrian': 'aut', 'spielberg': 'aut',
+  'great britain': 'gbr', 'british': 'gbr', 'united kingdom': 'gbr', 'uk': 'gbr', 'silverstone': 'gbr',
+  'hungary': 'hun', 'hungarian': 'hun', 'budapest': 'hun',
+  'belgium': 'bel', 'belgian': 'bel', 'spa': 'bel',
+  'netherlands': 'ned', 'dutch': 'ned', 'zandvoort': 'ned',
+  'azerbaijan': 'aze', 'baku': 'aze',
+  'singapore': 'sgp',
+  'mexico': 'mex', 'mexican': 'mex',
+  'brazil': 'bra', 'brazilian': 'bra', 'sao paulo': 'bra', 'interlagos': 'bra',
+  'qatar': 'qat',
+  'united arab emirates': 'uae', 'uae': 'uae', 'abu dhabi': 'uae'
+};
+
+const resolveF1CountryFlag = (locationStr: string): string => {
+  const clean = (locationStr || '').toLowerCase();
+  for (const [key, code] of Object.entries(F1_COUNTRY_MAP)) {
+    if (clean.includes(key)) {
+      return `https://a.espncdn.com/i/teamlogos/countries/500/${code}.png`;
+    }
+  }
+  return '';
+};
+
+const F1_DRIVER_TEAMS_MAP: Record<string, { teamName: string; teamColor: string }> = {
+  // Ferrari (Hamilton + Leclerc)
+  'leclerc': { teamName: 'Ferrari', teamColor: '#DC0000' },
+  'c. leclerc': { teamName: 'Ferrari', teamColor: '#DC0000' },
+  'hamilton': { teamName: 'Ferrari', teamColor: '#DC0000' },
+  'l. hamilton': { teamName: 'Ferrari', teamColor: '#DC0000' },
+  'beganovic': { teamName: 'Ferrari', teamColor: '#DC0000' },
+
+  // McLaren (Norris + Piastri)
+  'norris': { teamName: 'McLaren', teamColor: '#FF8700' },
+  'l. norris': { teamName: 'McLaren', teamColor: '#FF8700' },
+  'piastri': { teamName: 'McLaren', teamColor: '#FF8700' },
+  'o. piastri': { teamName: 'McLaren', teamColor: '#FF8700' },
+  'hirakawa': { teamName: 'McLaren', teamColor: '#FF8700' },
+
+  // Red Bull Racing (Verstappen + Lawson + Lindblad)
+  'verstappen': { teamName: 'Red Bull', teamColor: '#00327D' },
+  'm. verstappen': { teamName: 'Red Bull', teamColor: '#00327D' },
+  'lindblad': { teamName: 'Red Bull', teamColor: '#00327D' },
+
+  // Mercedes (Russell + Antonelli)
+  'russell': { teamName: 'Mercedes', teamColor: '#00D2BE' },
+  'g. russell': { teamName: 'Mercedes', teamColor: '#00D2BE' },
+  'antonelli': { teamName: 'Mercedes', teamColor: '#00D2BE' },
+  'k. antonelli': { teamName: 'Mercedes', teamColor: '#00D2BE' },
+  'vesti': { teamName: 'Mercedes', teamColor: '#00D2BE' },
+
+  // Aston Martin (Alonso + Stroll + Crawford)
+  'alonso': { teamName: 'Aston Martin', teamColor: '#006F62' },
+  'f. alonso': { teamName: 'Aston Martin', teamColor: '#006F62' },
+  'stroll': { teamName: 'Aston Martin', teamColor: '#006F62' },
+  'l. stroll': { teamName: 'Aston Martin', teamColor: '#006F62' },
+  'crawford': { teamName: 'Aston Martin', teamColor: '#006F62' },
+
+  // Williams (Sainz + Albon)
+  'sainz': { teamName: 'Williams', teamColor: '#64C4FF' },
+  'c. sainz': { teamName: 'Williams', teamColor: '#64C4FF' },
+  'albon': { teamName: 'Williams', teamColor: '#64C4FF' },
+  'a. albon': { teamName: 'Williams', teamColor: '#64C4FF' },
+  'browning': { teamName: 'Williams', teamColor: '#64C4FF' },
+
+  // Alpine (Gasly + Colapinto + Aron)
+  'gasly': { teamName: 'Alpine', teamColor: '#0093CC' },
+  'p. gasly': { teamName: 'Alpine', teamColor: '#0093CC' },
+  'colapinto': { teamName: 'Alpine', teamColor: '#0093CC' },
+  'f. colapinto': { teamName: 'Alpine', teamColor: '#0093CC' },
+  'aron': { teamName: 'Alpine', teamColor: '#0093CC' },
+  'doohan': { teamName: 'Alpine', teamColor: '#0093CC' },
+
+  // Haas (Ocon + Bearman)
+  'ocon': { teamName: 'Haas', teamColor: '#E6002B' },
+  'e. ocon': { teamName: 'Haas', teamColor: '#E6002B' },
+  'bearman': { teamName: 'Haas', teamColor: '#E6002B' },
+  'o. bearman': { teamName: 'Haas', teamColor: '#E6002B' },
+  'magnussen': { teamName: 'Haas', teamColor: '#E6002B' },
+
+  // Racing Bulls / RB (Tsunoda + Lawson + Hadjar + Iwasa)
+  'tsunoda': { teamName: 'RB', teamColor: '#6692FF' },
+  'y. tsunoda': { teamName: 'RB', teamColor: '#6692FF' },
+  'lawson': { teamName: 'RB', teamColor: '#6692FF' },
+  'l. lawson': { teamName: 'RB', teamColor: '#6692FF' },
+  'hadjar': { teamName: 'RB', teamColor: '#6692FF' },
+  'i. hadjar': { teamName: 'RB', teamColor: '#6692FF' },
+  'iwasa': { teamName: 'RB', teamColor: '#6692FF' },
+  'ricciardo': { teamName: 'RB', teamColor: '#6692FF' },
+
+  // Audi (Hülkenberg + Bortoleto + Bottas + Zhou)
+  'hulkenberg': { teamName: 'Audi', teamColor: '#FF2D00' },
+  'hülkenberg': { teamName: 'Audi', teamColor: '#FF2D00' },
+  'n. hulkenberg': { teamName: 'Audi', teamColor: '#FF2D00' },
+  'bortoleto': { teamName: 'Audi', teamColor: '#FF2D00' },
+  'g. bortoleto': { teamName: 'Audi', teamColor: '#FF2D00' },
+  // 'bottas': { teamName: 'Audi', teamColor: '#FF2D00' },
+  'zhou': { teamName: 'Audi', teamColor: '#FF2D00' },
+
+  // Cadillac F1 (Pérez + Herta + Fornaroli)
+  'pérez': { teamName: 'Cadillac', teamColor: '#A2AAAD' },
+  'perez': { teamName: 'Cadillac', teamColor: '#A2AAAD' },
+  'botta': { teamName: 'Cadillac', teamColor: '#A2AAAD' },
+  's. perez': { teamName: 'Cadillac', teamColor: '#A2AAAD' },
+  'herta': { teamName: 'Cadillac', teamColor: '#A2AAAD' },
+  'fornaroli': { teamName: 'Cadillac', teamColor: '#A2AAAD' },
+};
+
+const resolveF1DriverTeam = (driverName: string): { teamName: string; teamColor: string } => {
+  const clean = (driverName || '').toLowerCase();
+  for (const [key, info] of Object.entries(F1_DRIVER_TEAMS_MAP)) {
+    if (clean.includes(key)) return info;
+  }
+  return { teamName: '', teamColor: '#e10600' };
+};
+
     const rawEvents = data.events || [];
+    const f1LogoFromApi = data.leagues?.[0]?.logos?.[0]?.href || 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/leagues/500/f1.png';
     const events: GameEvent[] = [];
 
     for (const event of rawEvents) {
@@ -203,14 +330,26 @@ export async function fetchScoreboard(
           const tvBroadcasts = comp.broadcasts?.flatMap((b: any) => b.names || []) || [];
           const espnLink = event.links?.find((l: any) => l.rel?.includes('desktop'))?.href || event.links?.[0]?.href || 'https://www.espn.com';
           
-          const parsedCompetitors = (comp.competitors || []).map((c: any) => ({
-            id: c.id,
-            name: c.athlete?.displayName || 'Driver',
-            shortName: c.athlete?.shortName || c.athlete?.displayName || 'DRV',
-            position: c.order || 0,
-            winner: c.winner || false,
-            logo: c.athlete?.flag?.href || 'https://a.espncdn.com/i/teamlogos/f1/500/f1.png'
-          })).sort((a: any, b: any) => a.position - b.position);
+          const circuitLocation = `${event.name} ${event.circuit?.name || ''} ${event.circuit?.address?.country || ''} ${event.circuit?.address?.city || ''}`;
+          const f1HostFlag = resolveF1CountryFlag(circuitLocation);
+
+          const parsedCompetitors = (comp.competitors || []).map((c: any) => {
+            const driverName = c.athlete?.displayName || c.athlete?.fullName || 'Driver';
+            const flagUrl = c.athlete?.flag?.href || '';
+            const teamInfo = resolveF1DriverTeam(driverName);
+
+            return {
+              id: c.id,
+              name: driverName,
+              shortName: c.athlete?.shortName || driverName,
+              position: c.order || 0,
+              winner: c.winner || false,
+              logo: flagUrl || f1HostFlag || f1LogoFromApi,
+              countryFlag: flagUrl || f1HostFlag,
+              teamName: teamInfo.teamName,
+              teamColor: teamInfo.teamColor,
+            };
+          }).sort((a: any, b: any) => a.position - b.position);
 
           const winnerDriver = parsedCompetitors.find((c: any) => c.winner) || parsedCompetitors[0];
 
@@ -231,7 +370,7 @@ export async function fetchScoreboard(
               id: `f1-session`,
               displayName: sessionType,
               abbreviation: sessionType,
-              logo: 'https://a.espncdn.com/i/teamlogos/f1/500/f1.png',
+              logo: f1LogoFromApi,
               color: 'e10600',
               score: winnerDriver ? winnerDriver.shortName : 'F1',
               winner: false,
@@ -240,7 +379,7 @@ export async function fetchScoreboard(
               id: `f1-league`,
               displayName: 'Formula 1',
               abbreviation: 'F1',
-              logo: 'https://a.espncdn.com/i/teamlogos/f1/500/f1.png',
+              logo: f1LogoFromApi,
               color: 'e10600',
               score: '',
               winner: false,
@@ -249,6 +388,7 @@ export async function fetchScoreboard(
             espnLink,
             venue: event.circuit?.name || comp.venue?.fullName,
             f1SessionType: sessionType,
+            f1CountryFlag: f1HostFlag,
             f1Competitors: parsedCompetitors,
           });
         }

@@ -20,6 +20,8 @@ import type { League, Team, GameEvent, FavoritesState, TogglesState } from './ty
 import { fetchScoreboard } from './api';
 import { TEAMS_DIRECTORY, getReadableTeamColor } from './teamsData';
 import { registerTeams, getAllTeamsForLeague } from './teamCache';
+import { TickerBar } from './components/TickerBar';
+import { UpcomingSpotlight } from './components/UpcomingSpotlight';
 
 // Helper to format date for API (YYYYMMDD)
 const formatDateForApi = (date: Date): string => {
@@ -282,6 +284,20 @@ export default function App() {
   const [modalSearchQuery, setModalSearchQuery] = useState<string>('');
   const [minimizedModalConferences, setMinimizedModalConferences] = useState<Record<string, boolean>>({});
   const [showHiddenGames, setShowHiddenGames] = useState<boolean>(false);
+
+  // Upcoming Spotlight Position state ('header' vs 'feed')
+  const [spotlightPosition, setSpotlightPosition] = useState<'header' | 'feed'>(() => {
+    const saved = localStorage.getItem('sportscal_spotlight_position');
+    return (saved as 'header' | 'feed') || 'header';
+  });
+
+  const handleToggleSpotlightPosition = () => {
+    setSpotlightPosition(prev => {
+      const next = prev === 'header' ? 'feed' : 'header';
+      localStorage.setItem('sportscal_spotlight_position', next);
+      return next;
+    });
+  };
 
   // Persistence Effects
   useEffect(() => {
@@ -1725,6 +1741,41 @@ export default function App() {
           </div>
         </header>
 
+        {/* Live / Today's Games Stock Ticker */}
+        <TickerBar
+          events={events}
+          toggles={toggles}
+          favorites={favorites}
+          getTeamById={getTeamById}
+          onSelectEvent={setSelectedEvent}
+        />
+
+        {/* Position A: Spotlight block at Top of Page */}
+        {spotlightPosition === 'header' && (
+          <UpcomingSpotlight
+            events={events}
+            toggles={toggles}
+            favorites={favorites}
+            getTeamById={getTeamById}
+            onSelectEvent={setSelectedEvent}
+            position="header"
+            onTogglePosition={handleToggleSpotlightPosition}
+          />
+        )}
+
+        {/* Position B: Spotlight block above Feed */}
+        {spotlightPosition === 'feed' && (
+          <UpcomingSpotlight
+            events={events}
+            toggles={toggles}
+            favorites={favorites}
+            getTeamById={getTeamById}
+            onSelectEvent={setSelectedEvent}
+            position="feed"
+            onTogglePosition={handleToggleSpotlightPosition}
+          />
+        )}
+
         {/* Calendar View Area */}
         <section className="calendar-view">
           <div className="weekdays-header">
@@ -1813,7 +1864,8 @@ export default function App() {
 
                         let eventTeamsDisplay = '';
                         if (event.league === 'f1') {
-                          eventTeamsDisplay = `F1: ${event.shortName.replace(' Grand Prix', ' GP')}`;
+                          const session = event.f1SessionType || (event.homeTeam.displayName !== 'F1' ? event.homeTeam.displayName : 'Race');
+                          eventTeamsDisplay = `F1: ${session}`;
                         } else if (event.league === 'ufc') {
                           eventTeamsDisplay = `UFC: ${event.awayTeam.abbreviation} vs ${event.homeTeam.abbreviation}`;
                         } else {
@@ -1915,12 +1967,33 @@ export default function App() {
                             <span style={{ fontSize: '13px', fontWeight: 800, color: driver.winner ? 'var(--primary)' : 'var(--text-muted)', width: '20px' }}>
                               {driver.position}
                             </span>
-                            {driver.logo && (
-                              <img src={driver.logo} alt="" style={{ width: '20px', height: '14px', objectFit: 'cover', borderRadius: '2px' }} />
+                            {(driver.countryFlag || driver.logo) && (
+                              <img 
+                                src={driver.countryFlag || driver.logo} 
+                                alt="Country Flag" 
+                                style={{ width: '20px', height: '14px', objectFit: 'cover', borderRadius: '2px' }} 
+                                title="Driver Nationality"
+                              />
                             )}
                             <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>
                               {driver.name}
                             </span>
+                            {driver.teamName && (
+                              <span 
+                                style={{ 
+                                  fontSize: '10px', 
+                                  fontWeight: 800, 
+                                  padding: '2px 7px', 
+                                  borderRadius: '6px', 
+                                  backgroundColor: driver.teamColor || '#e10600', 
+                                  color: '#fff', 
+                                  letterSpacing: '0.4px',
+                                  textTransform: 'uppercase'
+                                }}
+                              >
+                                {driver.teamName}
+                              </span>
+                            )}
                           </div>
                           {driver.winner && (
                             <span style={{ fontSize: '11px', fontWeight: 700, color: '#e10600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>

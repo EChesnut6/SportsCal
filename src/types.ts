@@ -26,7 +26,10 @@ export interface F1Competitor {
   shortName: string;
   position: number;
   winner: boolean;
-  logo?: string;
+  logo?: string; // Country flag URL
+  teamName?: string; // Constructor Team Name (e.g. "Ferrari", "Red Bull")
+  teamColor?: string; // Constructor Hex Color (e.g. "#DC0000", "#FF8700")
+  countryFlag?: string;
 }
 
 export interface UFCFight {
@@ -74,6 +77,7 @@ export interface GameEvent {
   venue?: string;
   // F1 and UFC optional extensions
   f1SessionType?: string;
+  f1CountryFlag?: string;
   f1Competitors?: F1Competitor[];
   ufcFights?: UFCFight[];
 }
