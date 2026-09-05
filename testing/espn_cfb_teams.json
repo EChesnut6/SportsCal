@@ -3132,6 +3132,77 @@
     "uid": "s:20~l:23~t:129469"
   },
   {
+    "abbreviation": "AND",
+    "displayName": "Andrew Fighting Tigers",
+    "id": "134002",
+    "isActive": true,
+    "isAllStar": false,
+    "links": [
+      {
+        "href": "https://www.espn.com/college-football/team/_/id/134002/andrew-fighting-tigers",
+        "isExternal": false,
+        "isHidden": false,
+        "isPremium": false,
+        "language": "en-US",
+        "rel": [
+          "clubhouse",
+          "desktop",
+          "team"
+        ],
+        "shortText": "Clubhouse",
+        "text": "Clubhouse"
+      },
+      {
+        "href": "https://www.espn.com/college-football/team/roster/_/id/134002",
+        "isExternal": false,
+        "isHidden": false,
+        "isPremium": false,
+        "language": "en-US",
+        "rel": [
+          "roster",
+          "desktop",
+          "team"
+        ],
+        "shortText": "Roster",
+        "text": "Roster"
+      },
+      {
+        "href": "https://www.espn.com/college-football/team/stats/_/id/134002",
+        "isExternal": false,
+        "isHidden": false,
+        "isPremium": false,
+        "language": "en-US",
+        "rel": [
+          "stats",
+          "desktop",
+          "team"
+        ],
+        "shortText": "Statistics",
+        "text": "Statistics"
+      },
+      {
+        "href": "https://www.espn.com/college-football/team/schedule/_/id/134002",
+        "isExternal": false,
+        "isHidden": false,
+        "isPremium": false,
+        "language": "en-US",
+        "rel": [
+          "schedule",
+          "desktop",
+          "team"
+        ],
+        "shortText": "Schedule",
+        "text": "Schedule"
+      }
+    ],
+    "location": "Andrew",
+    "name": "Fighting Tigers",
+    "nickname": "Andrew",
+    "shortDisplayName": "Andrew",
+    "slug": "andrew-fighting-tigers",
+    "uid": "s:20~l:23~t:134002"
+  },
+  {
     "abbreviation": "AGSU",
     "color": "000000",
     "displayName": "Angelo State Rams",
@@ -5328,13 +5399,13 @@
   {
     "abbreviation": "AUSD",
     "color": "000000",
-    "displayName": "Augustana University (SD) Vikings",
+    "displayName": "Augustana (SD) Vikings",
     "id": "2043",
     "isActive": true,
     "isAllStar": false,
     "links": [
       {
-        "href": "https://www.espn.com/college-football/team/_/id/2043/augustana-university-sd-vikings",
+        "href": "https://www.espn.com/college-football/team/_/id/2043/augustana-sd-vikings",
         "isExternal": false,
         "isHidden": false,
         "isPremium": false,
@@ -5390,7 +5461,7 @@
         "text": "Schedule"
       }
     ],
-    "location": "Augustana University (SD)",
+    "location": "Augustana (SD)",
     "logos": [
       {
         "alt": "",
@@ -5416,7 +5487,7 @@
     "name": "Vikings",
     "nickname": "Augustana (SD)",
     "shortDisplayName": "Augustana (SD)",
-    "slug": "augustana-university-sd-vikings",
+    "slug": "augustana-sd-vikings",
     "uid": "s:20~l:23~t:2043"
   },
   {
@@ -11884,7 +11955,7 @@
     "uid": "s:20~l:23~t:2085"
   },
   {
-    "abbreviation": "BUT",
+    "abbreviation": "BTLR",
     "alternateColor": "00a3e0",
     "color": "0d1361",
     "displayName": "Butler Bulldogs",
@@ -11995,7 +12066,7 @@
   {
     "abbreviation": "CSUP",
     "color": "000000",
-    "displayName": "CSU Pueblo Thunderwolves",
+    "displayName": "CSU Pueblo ThunderWolves",
     "id": "2570",
     "isActive": true,
     "isAllStar": false,
@@ -12200,7 +12271,7 @@
         "width": 4096
       }
     ],
-    "name": "Thunderwolves",
+    "name": "ThunderWolves",
     "nickname": "CSU Pueblo",
     "shortDisplayName": "CSU Pueblo",
     "slug": "csu-pueblo-thunderwolves",
@@ -17547,13 +17618,13 @@
     "abbreviation": "CMS",
     "alternateColor": "feba15",
     "color": "981a31",
-    "displayName": "Claremont Mudd Scripps Stags/Athenas",
+    "displayName": "Claremont Mudd Scripps Stags",
     "id": "17",
     "isActive": true,
     "isAllStar": false,
     "links": [
       {
-        "href": "https://www.espn.com/college-football/team/_/id/17/claremont-mudd-scripps-stagsathenas",
+        "href": "https://www.espn.com/college-football/team/_/id/17/claremont-mudd-scripps-stags",
         "isExternal": false,
         "isHidden": false,
         "isPremium": false,
@@ -17752,10 +17823,10 @@
         "width": 4096
       }
     ],
-    "name": "Stags/Athenas",
+    "name": "Stags",
     "nickname": "Claremont-M-S",
     "shortDisplayName": "Claremont-M-S",
-    "slug": "claremont-mudd-scripps-stagsathenas",
+    "slug": "claremont-mudd-scripps-stags",
     "uid": "s:20~l:23~t:17"
   },
   {
@@ -25445,8 +25516,8 @@
       }
     ],
     "name": "Lions",
-    "nickname": "E Texas A&M",
-    "shortDisplayName": "E Texas A&M",
+    "nickname": "East Texas A&M",
+    "shortDisplayName": "East Texas A&M",
     "slug": "east-texas-am-lions",
     "uid": "s:20~l:23~t:2837"
   },
@@ -32820,14 +32891,14 @@
     "uid": "s:20~l:23~t:2244"
   },
   {
-    "abbreviation": "GTOWNCOLL",
-    "displayName": "Georgetown College Kentucky Tigers",
+    "abbreviation": "GTKY",
+    "displayName": "Georgetown (KY) Tigers",
     "id": "2245",
     "isActive": true,
     "isAllStar": false,
     "links": [
       {
-        "href": "https://www.espn.com/college-football/team/_/id/2245/georgetown-college-kentucky-tigers",
+        "href": "https://www.espn.com/college-football/team/_/id/2245/georgetown-ky-tigers",
         "isExternal": false,
         "isHidden": false,
         "isPremium": false,
@@ -32883,7 +32954,7 @@
         "text": "Schedule"
       }
     ],
-    "location": "Georgetown College Kentucky",
+    "location": "Georgetown (KY)",
     "logos": [
       {
         "alt": "",
@@ -33027,9 +33098,9 @@
       }
     ],
     "name": "Tigers",
-    "nickname": "G'Town Col",
-    "shortDisplayName": "G'Town Col",
-    "slug": "georgetown-college-kentucky-tigers",
+    "nickname": "Georgetown KY",
+    "shortDisplayName": "Georgetown KY",
+    "slug": "georgetown-ky-tigers",
     "uid": "s:20~l:23~t:2245"
   },
   {
@@ -37835,13 +37906,13 @@
   {
     "abbreviation": "HBRT",
     "color": "000000",
-    "displayName": "Hobart College Statesmen",
+    "displayName": "Hobart Statesmen",
     "id": "174",
     "isActive": true,
     "isAllStar": false,
     "links": [
       {
-        "href": "https://www.espn.com/college-football/team/_/id/174/hobart-college-statesmen",
+        "href": "https://www.espn.com/college-football/team/_/id/174/hobart-statesmen",
         "isExternal": false,
         "isHidden": false,
         "isPremium": false,
@@ -37897,7 +37968,7 @@
         "text": "Schedule"
       }
     ],
-    "location": "Hobart College",
+    "location": "Hobart",
     "logos": [
       {
         "alt": "",
@@ -37923,7 +37994,7 @@
     "name": "Statesmen",
     "nickname": "Hobart",
     "shortDisplayName": "Hobart",
-    "slug": "hobart-college-statesmen",
+    "slug": "hobart-statesmen",
     "uid": "s:20~l:23~t:174"
   },
   {
@@ -42388,13 +42459,13 @@
   {
     "abbreviation": "JHU",
     "color": "000000",
-    "displayName": "Johns Hopkins University Blue Jays",
+    "displayName": "Johns Hopkins Blue Jays",
     "id": "118",
     "isActive": true,
     "isAllStar": false,
     "links": [
       {
-        "href": "https://www.espn.com/college-football/team/_/id/118/johns-hopkins-university-blue-jays",
+        "href": "https://www.espn.com/college-football/team/_/id/118/johns-hopkins-blue-jays",
         "isExternal": false,
         "isHidden": false,
         "isPremium": false,
@@ -42450,7 +42521,7 @@
         "text": "Schedule"
       }
     ],
-    "location": "Johns Hopkins University",
+    "location": "Johns Hopkins",
     "logos": [
       {
         "alt": "",
@@ -42476,7 +42547,7 @@
     "name": "Blue Jays",
     "nickname": "Johns Hopkins",
     "shortDisplayName": "Johns Hopkins",
-    "slug": "johns-hopkins-university-blue-jays",
+    "slug": "johns-hopkins-blue-jays",
     "uid": "s:20~l:23~t:118"
   },
   {
@@ -47855,13 +47926,13 @@
   {
     "abbreviation": "LHU",
     "color": "000000",
-    "displayName": "Lock Haven University Bald Eagles",
+    "displayName": "Lock Haven Bald Eagles",
     "id": "209",
     "isActive": true,
     "isAllStar": false,
     "links": [
       {
-        "href": "https://www.espn.com/college-football/team/_/id/209/lock-haven-university-bald-eagles",
+        "href": "https://www.espn.com/college-football/team/_/id/209/lock-haven-bald-eagles",
         "isExternal": false,
         "isHidden": false,
         "isPremium": false,
@@ -47917,7 +47988,7 @@
         "text": "Schedule"
       }
     ],
-    "location": "Lock Haven University",
+    "location": "Lock Haven",
     "logos": [
       {
         "alt": "",
@@ -47943,7 +48014,7 @@
     "name": "Bald Eagles",
     "nickname": "Lock Haven",
     "shortDisplayName": "Lock Haven",
-    "slug": "lock-haven-university-bald-eagles",
+    "slug": "lock-haven-bald-eagles",
     "uid": "s:20~l:23~t:209"
   },
   {
@@ -57872,6 +57943,77 @@
     "shortDisplayName": "Monmouth",
     "slug": "monmouth-hawks",
     "uid": "s:20~l:23~t:2405"
+  },
+  {
+    "abbreviation": "MON",
+    "displayName": "Monroe Mustangs",
+    "id": "134001",
+    "isActive": true,
+    "isAllStar": false,
+    "links": [
+      {
+        "href": "https://www.espn.com/college-football/team/_/id/134001/monroe-mustangs",
+        "isExternal": false,
+        "isHidden": false,
+        "isPremium": false,
+        "language": "en-US",
+        "rel": [
+          "clubhouse",
+          "desktop",
+          "team"
+        ],
+        "shortText": "Clubhouse",
+        "text": "Clubhouse"
+      },
+      {
+        "href": "https://www.espn.com/college-football/team/roster/_/id/134001",
+        "isExternal": false,
+        "isHidden": false,
+        "isPremium": false,
+        "language": "en-US",
+        "rel": [
+          "roster",
+          "desktop",
+          "team"
+        ],
+        "shortText": "Roster",
+        "text": "Roster"
+      },
+      {
+        "href": "https://www.espn.com/college-football/team/stats/_/id/134001",
+        "isExternal": false,
+        "isHidden": false,
+        "isPremium": false,
+        "language": "en-US",
+        "rel": [
+          "stats",
+          "desktop",
+          "team"
+        ],
+        "shortText": "Statistics",
+        "text": "Statistics"
+      },
+      {
+        "href": "https://www.espn.com/college-football/team/schedule/_/id/134001",
+        "isExternal": false,
+        "isHidden": false,
+        "isPremium": false,
+        "language": "en-US",
+        "rel": [
+          "schedule",
+          "desktop",
+          "team"
+        ],
+        "shortText": "Schedule",
+        "text": "Schedule"
+      }
+    ],
+    "location": "Monroe",
+    "name": "Mustangs",
+    "nickname": "Monroe",
+    "shortDisplayName": "Monroe",
+    "slug": "monroe-mustangs",
+    "uid": "s:20~l:23~t:134001"
   },
   {
     "abbreviation": "MONT",
@@ -68094,6 +68236,100 @@
     "shortDisplayName": "Ohio",
     "slug": "ohio-bobcats",
     "uid": "s:20~l:23~t:195"
+  },
+  {
+    "abbreviation": "OHDU",
+    "color": "000000",
+    "displayName": "Ohio Dominican Panthers",
+    "id": "2477",
+    "isActive": true,
+    "isAllStar": false,
+    "links": [
+      {
+        "href": "https://www.espn.com/college-football/team/_/id/2477/ohio-dominican-panthers",
+        "isExternal": false,
+        "isHidden": false,
+        "isPremium": false,
+        "language": "en-US",
+        "rel": [
+          "clubhouse",
+          "desktop",
+          "team"
+        ],
+        "shortText": "Clubhouse",
+        "text": "Clubhouse"
+      },
+      {
+        "href": "https://www.espn.com/college-football/team/roster/_/id/2477",
+        "isExternal": false,
+        "isHidden": false,
+        "isPremium": false,
+        "language": "en-US",
+        "rel": [
+          "roster",
+          "desktop",
+          "team"
+        ],
+        "shortText": "Roster",
+        "text": "Roster"
+      },
+      {
+        "href": "https://www.espn.com/college-football/team/stats/_/id/2477",
+        "isExternal": false,
+        "isHidden": false,
+        "isPremium": false,
+        "language": "en-US",
+        "rel": [
+          "stats",
+          "desktop",
+          "team"
+        ],
+        "shortText": "Statistics",
+        "text": "Statistics"
+      },
+      {
+        "href": "https://www.espn.com/college-football/team/schedule/_/id/2477",
+        "isExternal": false,
+        "isHidden": false,
+        "isPremium": false,
+        "language": "en-US",
+        "rel": [
+          "schedule",
+          "desktop",
+          "team"
+        ],
+        "shortText": "Schedule",
+        "text": "Schedule"
+      }
+    ],
+    "location": "Ohio Dominican",
+    "logos": [
+      {
+        "alt": "",
+        "height": 500,
+        "href": "https://a.espncdn.com/i/teamlogos/ncaa/500/2477.png",
+        "rel": [
+          "full",
+          "default"
+        ],
+        "width": 500
+      },
+      {
+        "alt": "",
+        "height": 500,
+        "href": "https://a.espncdn.com/i/teamlogos/ncaa/500-dark/2477.png",
+        "rel": [
+          "full",
+          "dark"
+        ],
+        "width": 500
+      }
+    ],
+    "name": "Panthers",
+    "nickname": "Ohio Dominican",
+    "shortDisplayName": "Ohio Dominican",
+    "slug": "ohio-dominican-panthers",
+    "uid": "s:20~l:23~t:2477"
   },
   {
     "abbreviation": "OHNU",
@@ -79932,6 +80168,126 @@
           "dark"
         ],
         "width": 500
+      },
+      {
+        "alt": "",
+        "height": 4096,
+        "href": "https://a.espncdn.com/guid/5bb71208-6743-cd11-c8e7-840e95896964/logos/primary_logo_on_white_color.png",
+        "rel": [
+          "full",
+          "primary_logo_on_white_color"
+        ],
+        "width": 4096
+      },
+      {
+        "alt": "",
+        "height": 4096,
+        "href": "https://a.espncdn.com/guid/5bb71208-6743-cd11-c8e7-840e95896964/logos/primary_logo_on_black_color.png",
+        "rel": [
+          "full",
+          "primary_logo_on_black_color"
+        ],
+        "width": 4096
+      },
+      {
+        "alt": "",
+        "height": 4096,
+        "href": "https://a.espncdn.com/guid/5bb71208-6743-cd11-c8e7-840e95896964/logos/primary_logo_on_primary_color.png",
+        "rel": [
+          "full",
+          "primary_logo_on_primary_color"
+        ],
+        "width": 4096
+      },
+      {
+        "alt": "",
+        "height": 4096,
+        "href": "https://a.espncdn.com/guid/5bb71208-6743-cd11-c8e7-840e95896964/logos/primary_logo_on_secondary_color.png",
+        "rel": [
+          "full",
+          "primary_logo_on_secondary_color"
+        ],
+        "width": 4096
+      },
+      {
+        "alt": "",
+        "height": 4096,
+        "href": "https://a.espncdn.com/guid/5bb71208-6743-cd11-c8e7-840e95896964/logos/primary_logo_black.png",
+        "rel": [
+          "full",
+          "primary_logo_black"
+        ],
+        "width": 4096
+      },
+      {
+        "alt": "",
+        "height": 4096,
+        "href": "https://a.espncdn.com/guid/5bb71208-6743-cd11-c8e7-840e95896964/logos/primary_logo_white.png",
+        "rel": [
+          "full",
+          "primary_logo_white"
+        ],
+        "width": 4096
+      },
+      {
+        "alt": "",
+        "height": 4096,
+        "href": "https://a.espncdn.com/guid/5bb71208-6743-cd11-c8e7-840e95896964/logos/secondary_logo_on_white_color.png",
+        "rel": [
+          "full",
+          "secondary_logo_on_white_color"
+        ],
+        "width": 4096
+      },
+      {
+        "alt": "",
+        "height": 4096,
+        "href": "https://a.espncdn.com/guid/5bb71208-6743-cd11-c8e7-840e95896964/logos/secondary_logo_on_black_color.png",
+        "rel": [
+          "full",
+          "secondary_logo_on_black_color"
+        ],
+        "width": 4096
+      },
+      {
+        "alt": "",
+        "height": 4096,
+        "href": "https://a.espncdn.com/guid/5bb71208-6743-cd11-c8e7-840e95896964/logos/secondary_logo_on_primary_color.png",
+        "rel": [
+          "full",
+          "secondary_logo_on_primary_color"
+        ],
+        "width": 4096
+      },
+      {
+        "alt": "",
+        "height": 4096,
+        "href": "https://a.espncdn.com/guid/5bb71208-6743-cd11-c8e7-840e95896964/logos/secondary_logo_on_secondary_color.png",
+        "rel": [
+          "full",
+          "secondary_logo_on_secondary_color"
+        ],
+        "width": 4096
+      },
+      {
+        "alt": "",
+        "height": 4096,
+        "href": "https://a.espncdn.com/guid/5bb71208-6743-cd11-c8e7-840e95896964/logos/secondary_logo_black.png",
+        "rel": [
+          "full",
+          "secondary_logo_black"
+        ],
+        "width": 4096
+      },
+      {
+        "alt": "",
+        "height": 4096,
+        "href": "https://a.espncdn.com/guid/5bb71208-6743-cd11-c8e7-840e95896964/logos/secondary_logo_white.png",
+        "rel": [
+          "full",
+          "secondary_logo_white"
+        ],
+        "width": 4096
       }
     ],
     "name": "Raiders",
@@ -85394,13 +85750,13 @@
   {
     "abbreviation": "STMN",
     "color": "000000",
-    "displayName": "St. Thomas-Minnesota Tommies",
+    "displayName": "St. Thomas Tommies",
     "id": "2900",
     "isActive": true,
     "isAllStar": false,
     "links": [
       {
-        "href": "https://www.espn.com/college-football/team/_/id/2900/st-thomas-minnesota-tommies",
+        "href": "https://www.espn.com/college-football/team/_/id/2900/st-thomas-tommies",
         "isExternal": false,
         "isHidden": false,
         "isPremium": false,
@@ -85470,7 +85826,7 @@
         "text": "Tickets"
       }
     ],
-    "location": "St. Thomas-Minnesota",
+    "location": "St. Thomas",
     "logos": [
       {
         "alt": "",
@@ -85494,9 +85850,9 @@
       }
     ],
     "name": "Tommies",
-    "nickname": "St Thomas (MN)",
-    "shortDisplayName": "St Thomas (MN)",
-    "slug": "st-thomas-minnesota-tommies",
+    "nickname": "St Thomas",
+    "shortDisplayName": "St Thomas",
+    "slug": "st-thomas-tommies",
     "uid": "s:20~l:23~t:2900"
   },
   {
@@ -90550,6 +90906,77 @@
     "uid": "s:20~l:23~t:2646"
   },
   {
+    "abbreviation": "THO",
+    "displayName": "Thomas Night Hawks",
+    "id": "134000",
+    "isActive": true,
+    "isAllStar": false,
+    "links": [
+      {
+        "href": "https://www.espn.com/college-football/team/_/id/134000/thomas-night-hawks",
+        "isExternal": false,
+        "isHidden": false,
+        "isPremium": false,
+        "language": "en-US",
+        "rel": [
+          "clubhouse",
+          "desktop",
+          "team"
+        ],
+        "shortText": "Clubhouse",
+        "text": "Clubhouse"
+      },
+      {
+        "href": "https://www.espn.com/college-football/team/roster/_/id/134000",
+        "isExternal": false,
+        "isHidden": false,
+        "isPremium": false,
+        "language": "en-US",
+        "rel": [
+          "roster",
+          "desktop",
+          "team"
+        ],
+        "shortText": "Roster",
+        "text": "Roster"
+      },
+      {
+        "href": "https://www.espn.com/college-football/team/stats/_/id/134000",
+        "isExternal": false,
+        "isHidden": false,
+        "isPremium": false,
+        "language": "en-US",
+        "rel": [
+          "stats",
+          "desktop",
+          "team"
+        ],
+        "shortText": "Statistics",
+        "text": "Statistics"
+      },
+      {
+        "href": "https://www.espn.com/college-football/team/schedule/_/id/134000",
+        "isExternal": false,
+        "isHidden": false,
+        "isPremium": false,
+        "language": "en-US",
+        "rel": [
+          "schedule",
+          "desktop",
+          "team"
+        ],
+        "shortText": "Schedule",
+        "text": "Schedule"
+      }
+    ],
+    "location": "Thomas",
+    "name": "Night Hawks",
+    "nickname": "Thomas",
+    "shortDisplayName": "Thomas",
+    "slug": "thomas-night-hawks",
+    "uid": "s:20~l:23~t:134000"
+  },
+  {
     "abbreviation": "TIFF",
     "color": "000000",
     "displayName": "Tiffin Dragons",
@@ -94793,6 +95220,26 @@
           "dark"
         ],
         "width": 500
+      },
+      {
+        "alt": "",
+        "height": 4096,
+        "href": "https://a.espncdn.com/guid/35534f15-1701-38b1-b389-d695af032aaa/logos/primary_logo_on_primary_color.png",
+        "rel": [
+          "full",
+          "primary_logo_on_primary_color"
+        ],
+        "width": 4096
+      },
+      {
+        "alt": "",
+        "height": 4096,
+        "href": "https://a.espncdn.com/guid/35534f15-1701-38b1-b389-d695af032aaa/logos/primary_logo_on_secondary_color.png",
+        "rel": [
+          "full",
+          "primary_logo_on_secondary_color"
+        ],
+        "width": 4096
       }
     ],
     "name": "Falcons",
@@ -96465,7 +96912,7 @@
   },
   {
     "abbreviation": "VMI",
-    "alternateColor": "ffd619",
+    "alternateColor": "000000",
     "color": "ae122a",
     "displayName": "VMI Keydets",
     "id": "2678",
@@ -96790,13 +97237,13 @@
   {
     "abbreviation": "VCSU",
     "color": "000000",
-    "displayName": "Valley City State VALLEY CITY ST",
+    "displayName": "Valley City State Vikings",
     "id": "628",
     "isActive": true,
     "isAllStar": false,
     "links": [
       {
-        "href": "https://www.espn.com/college-football/team/_/id/628/valley-city-state-valley-city-st",
+        "href": "https://www.espn.com/college-football/team/_/id/628/valley-city-state-vikings",
         "isExternal": false,
         "isHidden": false,
         "isPremium": false,
@@ -96853,10 +97300,10 @@
       }
     ],
     "location": "Valley City State",
-    "name": "VALLEY CITY ST",
+    "name": "Vikings",
     "nickname": "Valley City St",
     "shortDisplayName": "Valley City St",
-    "slug": "valley-city-state-valley-city-st",
+    "slug": "valley-city-state-vikings",
     "uid": "s:20~l:23~t:628"
   },
   {
@@ -104257,6 +104704,77 @@
     "uid": "s:20~l:23~t:2909"
   },
   {
+    "abbreviation": "WES",
+    "displayName": "Westgate Christian University Ravens",
+    "id": "134087",
+    "isActive": true,
+    "isAllStar": false,
+    "links": [
+      {
+        "href": "https://www.espn.com/college-football/team/_/id/134087/westgate-christian-university-ravens",
+        "isExternal": false,
+        "isHidden": false,
+        "isPremium": false,
+        "language": "en-US",
+        "rel": [
+          "clubhouse",
+          "desktop",
+          "team"
+        ],
+        "shortText": "Clubhouse",
+        "text": "Clubhouse"
+      },
+      {
+        "href": "https://www.espn.com/college-football/team/roster/_/id/134087",
+        "isExternal": false,
+        "isHidden": false,
+        "isPremium": false,
+        "language": "en-US",
+        "rel": [
+          "roster",
+          "desktop",
+          "team"
+        ],
+        "shortText": "Roster",
+        "text": "Roster"
+      },
+      {
+        "href": "https://www.espn.com/college-football/team/stats/_/id/134087",
+        "isExternal": false,
+        "isHidden": false,
+        "isPremium": false,
+        "language": "en-US",
+        "rel": [
+          "stats",
+          "desktop",
+          "team"
+        ],
+        "shortText": "Statistics",
+        "text": "Statistics"
+      },
+      {
+        "href": "https://www.espn.com/college-football/team/schedule/_/id/134087",
+        "isExternal": false,
+        "isHidden": false,
+        "isPremium": false,
+        "language": "en-US",
+        "rel": [
+          "schedule",
+          "desktop",
+          "team"
+        ],
+        "shortText": "Schedule",
+        "text": "Schedule"
+      }
+    ],
+    "location": "Westgate Christian University",
+    "name": "Ravens",
+    "nickname": "Westgate Chris",
+    "shortDisplayName": "Westgate Chris",
+    "slug": "westgate-christian-university-ravens",
+    "uid": "s:20~l:23~t:134087"
+  },
+  {
     "abbreviation": "WCMO",
     "alternateColor": "ffffff",
     "color": "06496f",
@@ -105808,6 +106326,26 @@
       {
         "alt": "",
         "height": 4096,
+        "href": "https://a.espncdn.com/guid/68d3c546-a06a-ac4a-00d8-4a4935e392c1/logos/primary_logo_black.png",
+        "rel": [
+          "full",
+          "primary_logo_black"
+        ],
+        "width": 4096
+      },
+      {
+        "alt": "",
+        "height": 4096,
+        "href": "https://a.espncdn.com/guid/68d3c546-a06a-ac4a-00d8-4a4935e392c1/logos/primary_logo_white.png",
+        "rel": [
+          "full",
+          "primary_logo_white"
+        ],
+        "width": 4096
+      },
+      {
+        "alt": "",
+        "height": 4096,
         "href": "https://a.espncdn.com/guid/68d3c546-a06a-ac4a-00d8-4a4935e392c1/logos/secondary_logo_on_white_color.png",
         "rel": [
           "full",
@@ -105842,6 +106380,26 @@
         "rel": [
           "full",
           "secondary_logo_on_secondary_color"
+        ],
+        "width": 4096
+      },
+      {
+        "alt": "",
+        "height": 4096,
+        "href": "https://a.espncdn.com/guid/68d3c546-a06a-ac4a-00d8-4a4935e392c1/logos/secondary_logo_black.png",
+        "rel": [
+          "full",
+          "secondary_logo_black"
+        ],
+        "width": 4096
+      },
+      {
+        "alt": "",
+        "height": 4096,
+        "href": "https://a.espncdn.com/guid/68d3c546-a06a-ac4a-00d8-4a4935e392c1/logos/secondary_logo_white.png",
+        "rel": [
+          "full",
+          "secondary_logo_white"
         ],
         "width": 4096
       }

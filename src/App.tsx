@@ -22,6 +22,8 @@ import { TEAMS_DIRECTORY, getReadableTeamColor } from './teamsData';
 import { registerTeams, getAllTeamsForLeague } from './teamCache';
 import { TickerBar } from './components/TickerBar';
 import { UpcomingSpotlight } from './components/UpcomingSpotlight';
+import { LeagueColorPicker } from './components/LeagueColorPicker';
+import { applyLeagueColor } from './colorUtils';
 
 // Helper to format date for API (YYYYMMDD)
 const formatDateForApi = (date: Date): string => {
@@ -176,7 +178,7 @@ export default function App() {
       f1: '#d42b24',
       ufc: '#c23c3c',
       worldcup: '#1e6091',
-      olympics: '#dca124',
+      olympics: '#ffc038',
       epl: '#d61a55',
       laliga: '#db3747',
       champions: '#1c52b3',
@@ -202,25 +204,8 @@ export default function App() {
 
   // Dynamic CSS variables injector
   useEffect(() => {
-    const root = document.documentElement;
     Object.entries(leagueColors).forEach(([league, color]) => {
-      root.style.setProperty(`--color-${league}`, color);
-      
-      // Parse Hex to RGBA for Glow
-      let r = 0, g = 0, b = 0;
-      if (color.startsWith('#')) {
-        const hex = color.slice(1);
-        if (hex.length === 3) {
-          r = parseInt(hex[0] + hex[0], 16);
-          g = parseInt(hex[1] + hex[1], 16);
-          b = parseInt(hex[2] + hex[2], 16);
-        } else if (hex.length === 6) {
-          r = parseInt(hex.slice(0, 2), 16);
-          g = parseInt(hex.slice(2, 4), 16);
-          b = parseInt(hex.slice(4, 6), 16);
-        }
-      }
-      root.style.setProperty(`--glow-${league}`, `rgba(${r}, ${g}, ${b}, 0.2)`);
+      applyLeagueColor(league, color);
     });
     // Save to local storage
     localStorage.setItem('sportscal_league_colors', JSON.stringify(leagueColors));
@@ -561,14 +546,55 @@ export default function App() {
     });
   };
 
+  // Helper to look up conference for dynamic/unrecognized teams directly from processed JSON directory
+  const getConferenceForTeam = React.useCallback((name: string, abbrev: string, league: League): string => {
+    if (league !== 'ncaaf' && league !== 'ncaab') return '';
+
+    const list = TEAMS_DIRECTORY[league] || [];
+    const cleanName = (name || '').toLowerCase().trim();
+    const cleanAbbrev = (abbrev || '').toLowerCase().trim();
+
+    // 1. Match by exact displayName or shortDisplayName
+    const exactMatch = list.find(t => 
+      t.displayName.toLowerCase() === cleanName ||
+      t.shortDisplayName.toLowerCase() === cleanName
+    );
+    if (exactMatch && exactMatch.conference) return exactMatch.conference;
+
+    // 2. Abbreviation + name inclusion match
+    const abbrevMatch = list.find(t => 
+      t.abbreviation && t.abbreviation.toLowerCase() === cleanAbbrev &&
+      (t.displayName.toLowerCase().includes(cleanName) || cleanName.includes(t.shortDisplayName.toLowerCase()))
+    );
+    if (abbrevMatch && abbrevMatch.conference) return abbrevMatch.conference;
+
+    // 3. Fallback partial match if name contains full display name or short display name
+    const partialMatch = list.find(t => 
+      cleanName.includes(t.shortDisplayName.toLowerCase()) ||
+      t.displayName.toLowerCase().includes(cleanName)
+    );
+    if (partialMatch && partialMatch.conference) return partialMatch.conference;
+
+    // Default unrecognized dynamic teams
+    return league === 'ncaaf' ? 'FCS' : 'Independent';
+  }, []);
+
   // Helper to get team details by ID
   const getTeamById = React.useCallback((teamId: string) => {
-    // 1. Check all leagues in TEAMS_DIRECTORY
+    // 1. Check dynamic teams registered for each league
+    for (const lg in dynamicTeams) {
+      if (dynamicTeams[lg as League]?.[teamId]) {
+        return dynamicTeams[lg as League][teamId];
+      }
+    }
+
+    // 2. Check all leagues in TEAMS_DIRECTORY
     for (const league in TEAMS_DIRECTORY) {
       const match = TEAMS_DIRECTORY[league as League].find(t => t.id === teamId);
       if (match) return match;
     }
-    // 2. Check ufc/fighters
+
+    // 3. Check ufc/fighters
     if (teamId.startsWith('ufc-')) {
       const fighterId = teamId.replace('ufc-', '');
       const fighter = knownFighters[fighterId];
@@ -584,9 +610,11 @@ export default function App() {
         };
       }
     }
-    // 3. Fallback: check if we can extract from events
+
+    // 4. Fallback: check if we can extract from events
     for (const event of events) {
       if (event.homeTeam.id === teamId) {
+        const teamConf = event.homeTeam.conference || (event.league === 'ncaaf' || event.league === 'ncaab' ? getConferenceForTeam(event.homeTeam.displayName, event.homeTeam.abbreviation, event.league) : undefined);
         return {
           id: teamId,
           displayName: event.homeTeam.displayName,
@@ -594,10 +622,12 @@ export default function App() {
           abbreviation: event.homeTeam.abbreviation,
           color: event.homeTeam.color || '1e293b',
           logo: event.homeTeam.logo,
-          league: event.league
+          league: event.league,
+          conference: teamConf
         };
       }
       if (event.awayTeam.id === teamId) {
+        const teamConf = event.awayTeam.conference || (event.league === 'ncaaf' || event.league === 'ncaab' ? getConferenceForTeam(event.awayTeam.displayName, event.awayTeam.abbreviation, event.league) : undefined);
         return {
           id: teamId,
           displayName: event.awayTeam.displayName,
@@ -605,7 +635,8 @@ export default function App() {
           abbreviation: event.awayTeam.abbreviation,
           color: event.awayTeam.color || '1e293b',
           logo: event.awayTeam.logo,
-          league: event.league
+          league: event.league,
+          conference: teamConf
         };
       }
       // If it's a UFC event, check fighters
@@ -629,7 +660,7 @@ export default function App() {
       }
     }
     return null;
-  }, [knownFighters, events]);
+  }, [knownFighters, events, dynamicTeams, getConferenceForTeam]);
 
   // Filter events based on active filters & toggles
   const filteredEvents = useMemo(() => {
@@ -642,16 +673,31 @@ export default function App() {
         const homeTeamObj = getTeamById(event.homeTeam.id);
         const awayTeamObj = getTeamById(event.awayTeam.id);
 
-        if (homeTeamObj?.conference) {
-          const confId = `${event.league}-${homeTeamObj.conference}`;
+        const homeConf = homeTeamObj?.conference || event.homeTeam.conference || (event.league === 'ncaaf' || event.league === 'ncaab' ? getConferenceForTeam(event.homeTeam.displayName, event.homeTeam.abbreviation, event.league) : undefined);
+        const awayConf = awayTeamObj?.conference || event.awayTeam.conference || (event.league === 'ncaaf' || event.league === 'ncaab' ? getConferenceForTeam(event.awayTeam.displayName, event.awayTeam.abbreviation, event.league) : undefined);
+
+        if (homeConf) {
+          const confId = `${event.league}-${homeConf}`;
+          const isFcs = event.league === 'ncaaf' && homeConf === 'FCS';
+          const isBothFcs = isFcs && awayConf === 'FCS';
+
           if (toggles.conferences?.[confId] === false && toggles.teams[event.homeTeam.id] !== true) {
-            return false;
+            // For college football, FCS conference hidden only affects FCS vs FCS games
+            if (!isFcs || isBothFcs) {
+              return false;
+            }
           }
         }
-        if (awayTeamObj?.conference) {
-          const confId = `${event.league}-${awayTeamObj.conference}`;
+        if (awayConf) {
+          const confId = `${event.league}-${awayConf}`;
+          const isFcs = event.league === 'ncaaf' && awayConf === 'FCS';
+          const isBothFcs = isFcs && homeConf === 'FCS';
+
           if (toggles.conferences?.[confId] === false && toggles.teams[event.awayTeam.id] !== true) {
-            return false;
+            // For college football, FCS conference hidden only affects FCS vs FCS games
+            if (!isFcs || isBothFcs) {
+              return false;
+            }
           }
         }
       }
@@ -672,10 +718,12 @@ export default function App() {
           const homeTeamObj = getTeamById(event.homeTeam.id);
           const awayTeamObj = getTeamById(event.awayTeam.id);
           const confs = favorites.conferences || [];
-          if (homeTeamObj?.conference && confs.includes(`${event.league}-${homeTeamObj.conference}`)) {
+          const homeConf = homeTeamObj?.conference || event.homeTeam.conference || (event.league === 'ncaaf' || event.league === 'ncaab' ? getConferenceForTeam(event.homeTeam.displayName, event.homeTeam.abbreviation, event.league) : undefined);
+          const awayConf = awayTeamObj?.conference || event.awayTeam.conference || (event.league === 'ncaaf' || event.league === 'ncaab' ? getConferenceForTeam(event.awayTeam.displayName, event.awayTeam.abbreviation, event.league) : undefined);
+          if (homeConf && confs.includes(`${event.league}-${homeConf}`)) {
             isConfFav = true;
           }
-          if (awayTeamObj?.conference && confs.includes(`${event.league}-${awayTeamObj.conference}`)) {
+          if (awayConf && confs.includes(`${event.league}-${awayConf}`)) {
             isConfFav = true;
           }
         }
@@ -689,7 +737,7 @@ export default function App() {
 
       return true;
     });
-  }, [events, toggles, favorites, showFavoritesOnly, getTeamById]);
+  }, [events, toggles, favorites, showFavoritesOnly, getTeamById, getConferenceForTeam]);
 
   // Group filtered events by local calendar cell date
   const eventsByDate = useMemo(() => {
@@ -747,39 +795,6 @@ export default function App() {
   const formatMonthName = (date: Date): string => {
     return date.toLocaleString('default', { month: 'long', year: 'numeric' });
   };
-
-  // Helper to look up conference for dynamic/unrecognized teams directly from processed JSON directory
-  const getConferenceForTeam = React.useCallback((name: string, abbrev: string, league: League): string => {
-    if (league !== 'ncaaf' && league !== 'ncaab') return '';
-
-    const list = TEAMS_DIRECTORY[league] || [];
-    const cleanName = (name || '').toLowerCase().trim();
-    const cleanAbbrev = (abbrev || '').toLowerCase().trim();
-
-    // 1. Match by exact displayName or shortDisplayName
-    const exactMatch = list.find(t => 
-      t.displayName.toLowerCase() === cleanName ||
-      t.shortDisplayName.toLowerCase() === cleanName
-    );
-    if (exactMatch && exactMatch.conference) return exactMatch.conference;
-
-    // 2. Abbreviation + name inclusion match
-    const abbrevMatch = list.find(t => 
-      t.abbreviation && t.abbreviation.toLowerCase() === cleanAbbrev &&
-      (t.displayName.toLowerCase().includes(cleanName) || cleanName.includes(t.shortDisplayName.toLowerCase()))
-    );
-    if (abbrevMatch && abbrevMatch.conference) return abbrevMatch.conference;
-
-    // 3. Fallback partial match if name contains full display name or short display name
-    const partialMatch = list.find(t => 
-      cleanName.includes(t.shortDisplayName.toLowerCase()) ||
-      t.displayName.toLowerCase().includes(cleanName)
-    );
-    if (partialMatch && partialMatch.conference) return partialMatch.conference;
-
-    // Default unrecognized dynamic teams
-    return league === 'ncaaf' ? 'FCS' : 'Independent';
-  }, []);
 
   // Persistent auto-registration effect for teams & fighters from live events
   useEffect(() => {
@@ -1098,16 +1113,31 @@ export default function App() {
       const homeTeamObj = getTeamById(event.homeTeam.id);
       const awayTeamObj = getTeamById(event.awayTeam.id);
       
-      if (homeTeamObj?.conference) {
-        const confId = `${event.league}-${homeTeamObj.conference}`;
+      const homeConf = homeTeamObj?.conference || event.homeTeam.conference || (event.league === 'ncaaf' || event.league === 'ncaab' ? getConferenceForTeam(event.homeTeam.displayName, event.homeTeam.abbreviation, event.league) : undefined);
+      const awayConf = awayTeamObj?.conference || event.awayTeam.conference || (event.league === 'ncaaf' || event.league === 'ncaab' ? getConferenceForTeam(event.awayTeam.displayName, event.awayTeam.abbreviation, event.league) : undefined);
+
+      if (homeConf) {
+        const confId = `${event.league}-${homeConf}`;
+        const isFcs = event.league === 'ncaaf' && homeConf === 'FCS';
+        const isBothFcs = isFcs && awayConf === 'FCS';
+
         if (toggles.conferences?.[confId] === false && toggles.teams[event.homeTeam.id] !== true) {
-          return false;
+          // For college football, FCS conference hidden only affects FCS vs FCS games
+          if (!isFcs || isBothFcs) {
+            return false;
+          }
         }
       }
-      if (awayTeamObj?.conference) {
-        const confId = `${event.league}-${awayTeamObj.conference}`;
+      if (awayConf) {
+        const confId = `${event.league}-${awayConf}`;
+        const isFcs = event.league === 'ncaaf' && awayConf === 'FCS';
+        const isBothFcs = isFcs && homeConf === 'FCS';
+
         if (toggles.conferences?.[confId] === false && toggles.teams[event.awayTeam.id] !== true) {
-          return false;
+          // For college football, FCS conference hidden only affects FCS vs FCS games
+          if (!isFcs || isBothFcs) {
+            return false;
+          }
         }
       }
     }
@@ -1127,10 +1157,13 @@ export default function App() {
         const homeTeamObj = getTeamById(event.homeTeam.id);
         const awayTeamObj = getTeamById(event.awayTeam.id);
         const confs = favorites.conferences || [];
-        if (homeTeamObj?.conference && confs.includes(`${event.league}-${homeTeamObj.conference}`)) {
+        const homeConf = homeTeamObj?.conference || event.homeTeam.conference || (event.league === 'ncaaf' || event.league === 'ncaab' ? getConferenceForTeam(event.homeTeam.displayName, event.homeTeam.abbreviation, event.league) : undefined);
+        const awayConf = awayTeamObj?.conference || event.awayTeam.conference || (event.league === 'ncaaf' || event.league === 'ncaab' ? getConferenceForTeam(event.awayTeam.displayName, event.awayTeam.abbreviation, event.league) : undefined);
+
+        if (homeConf && confs.includes(`${event.league}-${homeConf}`)) {
           isConfFav = true;
         }
-        if (awayTeamObj?.conference && confs.includes(`${event.league}-${awayTeamObj.conference}`)) {
+        if (awayConf && confs.includes(`${event.league}-${awayConf}`)) {
           isConfFav = true;
         }
       }
@@ -1285,6 +1318,14 @@ export default function App() {
     };
     setLeagueColors(defaultColors);
   };
+
+  // Handle committing color changes without lag
+  const handleColorCommit = React.useCallback((league: League, newColor: string) => {
+    setLeagueColors(prev => {
+      if (prev[league] === newColor) return prev;
+      return { ...prev, [league]: newColor };
+    });
+  }, []);
 
   return (
     <div className="app-container">
@@ -1492,7 +1533,7 @@ export default function App() {
               const isFav = favorites.leagues.includes(league);
               const isVisible = toggles.leagues[league];
               const isExpanded = expandedLeagues[league];
-              const leagueTeams = getFilteredTeams(league);
+              const leagueTeams = isExpanded && league !== 'ncaaf' && league !== 'ncaab' ? getFilteredTeams(league) : [];
 
               return (
                 <div key={league} className={`league-filter-item ${isExpanded ? 'expanded' : ''}`}>
@@ -1507,11 +1548,10 @@ export default function App() {
                     </div>
                     
                     <div className="league-actions" onClick={e => e.stopPropagation()}>
-                      <input 
-                        type="color" 
-                        value={leagueColors[league]}
-                        onChange={e => setLeagueColors(prev => ({ ...prev, [league]: e.target.value }))}
-                        className="league-color-picker"
+                      <LeagueColorPicker
+                        league={league}
+                        color={leagueColors[league]}
+                        onColorCommit={handleColorCommit}
                         title={`Customize ${LEAGUE_DISPLAY_NAMES[league] || league} color`}
                       />
                       <button 

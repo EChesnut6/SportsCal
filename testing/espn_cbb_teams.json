@@ -7555,7 +7555,7 @@
     "uid": "s:40~l:41~t:2084"
   },
   {
-    "abbreviation": "BUT",
+    "abbreviation": "BTLR",
     "alternateColor": "00a3e0",
     "color": "0d1361",
     "displayName": "Butler Bulldogs",
@@ -17350,8 +17350,8 @@
       }
     ],
     "name": "Lions",
-    "nickname": "E Texas A&M",
-    "shortDisplayName": "E Texas A&M",
+    "nickname": "East Texas A&M",
+    "shortDisplayName": "East Texas A&M",
     "slug": "east-texas-am-lions",
     "uid": "s:40~l:41~t:2837"
   },
@@ -30864,6 +30864,235 @@
     "uid": "s:40~l:41~t:96"
   },
   {
+    "abbreviation": "NOLA",
+    "alternateColor": "fdd023",
+    "color": "461d7c",
+    "displayName": "LSU New Orleans Privateers",
+    "id": "2443",
+    "isActive": true,
+    "isAllStar": false,
+    "links": [
+      {
+        "href": "https://www.espn.com/mens-college-basketball/team/_/id/2443/lsu-new-orleans-privateers",
+        "isExternal": false,
+        "isHidden": false,
+        "isPremium": false,
+        "language": "en-US",
+        "rel": [
+          "clubhouse",
+          "desktop",
+          "team"
+        ],
+        "shortText": "Clubhouse",
+        "text": "Clubhouse"
+      },
+      {
+        "href": "https://www.espn.com/mens-college-basketball/team/roster/_/id/2443",
+        "isExternal": false,
+        "isHidden": false,
+        "isPremium": false,
+        "language": "en-US",
+        "rel": [
+          "roster",
+          "desktop",
+          "team"
+        ],
+        "shortText": "Roster",
+        "text": "Roster"
+      },
+      {
+        "href": "https://www.espn.com/mens-college-basketball/team/stats/_/id/2443",
+        "isExternal": false,
+        "isHidden": false,
+        "isPremium": false,
+        "language": "en-US",
+        "rel": [
+          "stats",
+          "desktop",
+          "team"
+        ],
+        "shortText": "Statistics",
+        "text": "Statistics"
+      },
+      {
+        "href": "https://www.espn.com/mens-college-basketball/team/schedule/_/id/2443",
+        "isExternal": false,
+        "isHidden": false,
+        "isPremium": false,
+        "language": "en-US",
+        "rel": [
+          "schedule",
+          "desktop",
+          "team"
+        ],
+        "shortText": "Schedule",
+        "text": "Schedule"
+      },
+      {
+        "href": "https://www.vividseats.com/new-orleans-privateers-mens-basketball-tickets--sports-ncaa-basketball/performer/28170?wsUser=717",
+        "isExternal": true,
+        "isHidden": false,
+        "isPremium": false,
+        "language": "en-US",
+        "rel": [
+          "tickets",
+          "desktop",
+          "team"
+        ],
+        "shortText": "Tickets",
+        "text": "Tickets"
+      }
+    ],
+    "location": "LSU New Orleans",
+    "logos": [
+      {
+        "alt": "",
+        "height": 500,
+        "href": "https://a.espncdn.com/i/teamlogos/ncaa/500/2443.png",
+        "rel": [
+          "full",
+          "default"
+        ],
+        "width": 500
+      },
+      {
+        "alt": "",
+        "height": 500,
+        "href": "https://a.espncdn.com/i/teamlogos/ncaa/500-dark/2443.png",
+        "rel": [
+          "full",
+          "dark"
+        ],
+        "width": 500
+      },
+      {
+        "alt": "",
+        "height": 4096,
+        "href": "https://a.espncdn.com/guid/0f27398f-25a1-c638-578c-9cf829d8b026/logos/primary_logo_on_white_color.png",
+        "rel": [
+          "full",
+          "primary_logo_on_white_color"
+        ],
+        "width": 4096
+      },
+      {
+        "alt": "",
+        "height": 4096,
+        "href": "https://a.espncdn.com/guid/0f27398f-25a1-c638-578c-9cf829d8b026/logos/primary_logo_on_black_color.png",
+        "rel": [
+          "full",
+          "primary_logo_on_black_color"
+        ],
+        "width": 4096
+      },
+      {
+        "alt": "",
+        "height": 4096,
+        "href": "https://a.espncdn.com/guid/0f27398f-25a1-c638-578c-9cf829d8b026/logos/primary_logo_on_primary_color.png",
+        "rel": [
+          "full",
+          "primary_logo_on_primary_color"
+        ],
+        "width": 4096
+      },
+      {
+        "alt": "",
+        "height": 4096,
+        "href": "https://a.espncdn.com/guid/0f27398f-25a1-c638-578c-9cf829d8b026/logos/primary_logo_on_secondary_color.png",
+        "rel": [
+          "full",
+          "primary_logo_on_secondary_color"
+        ],
+        "width": 4096
+      },
+      {
+        "alt": "",
+        "height": 4096,
+        "href": "https://a.espncdn.com/guid/0f27398f-25a1-c638-578c-9cf829d8b026/logos/primary_logo_black.png",
+        "rel": [
+          "full",
+          "primary_logo_black"
+        ],
+        "width": 4096
+      },
+      {
+        "alt": "",
+        "height": 4096,
+        "href": "https://a.espncdn.com/guid/0f27398f-25a1-c638-578c-9cf829d8b026/logos/primary_logo_white.png",
+        "rel": [
+          "full",
+          "primary_logo_white"
+        ],
+        "width": 4096
+      },
+      {
+        "alt": "",
+        "height": 4096,
+        "href": "https://a.espncdn.com/guid/0f27398f-25a1-c638-578c-9cf829d8b026/logos/secondary_logo_on_white_color.png",
+        "rel": [
+          "full",
+          "secondary_logo_on_white_color"
+        ],
+        "width": 4096
+      },
+      {
+        "alt": "",
+        "height": 4096,
+        "href": "https://a.espncdn.com/guid/0f27398f-25a1-c638-578c-9cf829d8b026/logos/secondary_logo_on_black_color.png",
+        "rel": [
+          "full",
+          "secondary_logo_on_black_color"
+        ],
+        "width": 4096
+      },
+      {
+        "alt": "",
+        "height": 4096,
+        "href": "https://a.espncdn.com/guid/0f27398f-25a1-c638-578c-9cf829d8b026/logos/secondary_logo_on_primary_color.png",
+        "rel": [
+          "full",
+          "secondary_logo_on_primary_color"
+        ],
+        "width": 4096
+      },
+      {
+        "alt": "",
+        "height": 4096,
+        "href": "https://a.espncdn.com/guid/0f27398f-25a1-c638-578c-9cf829d8b026/logos/secondary_logo_on_secondary_color.png",
+        "rel": [
+          "full",
+          "secondary_logo_on_secondary_color"
+        ],
+        "width": 4096
+      },
+      {
+        "alt": "",
+        "height": 4096,
+        "href": "https://a.espncdn.com/guid/0f27398f-25a1-c638-578c-9cf829d8b026/logos/secondary_logo_black.png",
+        "rel": [
+          "full",
+          "secondary_logo_black"
+        ],
+        "width": 4096
+      },
+      {
+        "alt": "",
+        "height": 4096,
+        "href": "https://a.espncdn.com/guid/0f27398f-25a1-c638-578c-9cf829d8b026/logos/secondary_logo_white.png",
+        "rel": [
+          "full",
+          "secondary_logo_white"
+        ],
+        "width": 4096
+      }
+    ],
+    "name": "Privateers",
+    "nickname": "LSU N Orleans",
+    "shortDisplayName": "LSU N Orleans",
+    "slug": "lsu-new-orleans-privateers",
+    "uid": "s:40~l:41~t:2443"
+  },
+  {
     "abbreviation": "LSU",
     "alternateColor": "fdd023",
     "color": "461d76",
@@ -44138,235 +44367,6 @@
     "shortDisplayName": "New Mexico St",
     "slug": "new-mexico-state-aggies",
     "uid": "s:40~l:41~t:166"
-  },
-  {
-    "abbreviation": "UNO",
-    "alternateColor": "a2a9ae",
-    "color": "005da6",
-    "displayName": "New Orleans Privateers",
-    "id": "2443",
-    "isActive": true,
-    "isAllStar": false,
-    "links": [
-      {
-        "href": "https://www.espn.com/mens-college-basketball/team/_/id/2443/new-orleans-privateers",
-        "isExternal": false,
-        "isHidden": false,
-        "isPremium": false,
-        "language": "en-US",
-        "rel": [
-          "clubhouse",
-          "desktop",
-          "team"
-        ],
-        "shortText": "Clubhouse",
-        "text": "Clubhouse"
-      },
-      {
-        "href": "https://www.espn.com/mens-college-basketball/team/roster/_/id/2443",
-        "isExternal": false,
-        "isHidden": false,
-        "isPremium": false,
-        "language": "en-US",
-        "rel": [
-          "roster",
-          "desktop",
-          "team"
-        ],
-        "shortText": "Roster",
-        "text": "Roster"
-      },
-      {
-        "href": "https://www.espn.com/mens-college-basketball/team/stats/_/id/2443",
-        "isExternal": false,
-        "isHidden": false,
-        "isPremium": false,
-        "language": "en-US",
-        "rel": [
-          "stats",
-          "desktop",
-          "team"
-        ],
-        "shortText": "Statistics",
-        "text": "Statistics"
-      },
-      {
-        "href": "https://www.espn.com/mens-college-basketball/team/schedule/_/id/2443",
-        "isExternal": false,
-        "isHidden": false,
-        "isPremium": false,
-        "language": "en-US",
-        "rel": [
-          "schedule",
-          "desktop",
-          "team"
-        ],
-        "shortText": "Schedule",
-        "text": "Schedule"
-      },
-      {
-        "href": "https://www.vividseats.com/new-orleans-privateers-mens-basketball-tickets--sports-ncaa-basketball/performer/28170?wsUser=717",
-        "isExternal": true,
-        "isHidden": false,
-        "isPremium": false,
-        "language": "en-US",
-        "rel": [
-          "tickets",
-          "desktop",
-          "team"
-        ],
-        "shortText": "Tickets",
-        "text": "Tickets"
-      }
-    ],
-    "location": "New Orleans",
-    "logos": [
-      {
-        "alt": "",
-        "height": 500,
-        "href": "https://a.espncdn.com/i/teamlogos/ncaa/500/2443.png",
-        "rel": [
-          "full",
-          "default"
-        ],
-        "width": 500
-      },
-      {
-        "alt": "",
-        "height": 500,
-        "href": "https://a.espncdn.com/i/teamlogos/ncaa/500-dark/2443.png",
-        "rel": [
-          "full",
-          "dark"
-        ],
-        "width": 500
-      },
-      {
-        "alt": "",
-        "height": 4096,
-        "href": "https://a.espncdn.com/guid/0f27398f-25a1-c638-578c-9cf829d8b026/logos/primary_logo_on_white_color.png",
-        "rel": [
-          "full",
-          "primary_logo_on_white_color"
-        ],
-        "width": 4096
-      },
-      {
-        "alt": "",
-        "height": 4096,
-        "href": "https://a.espncdn.com/guid/0f27398f-25a1-c638-578c-9cf829d8b026/logos/primary_logo_on_black_color.png",
-        "rel": [
-          "full",
-          "primary_logo_on_black_color"
-        ],
-        "width": 4096
-      },
-      {
-        "alt": "",
-        "height": 4096,
-        "href": "https://a.espncdn.com/guid/0f27398f-25a1-c638-578c-9cf829d8b026/logos/primary_logo_on_primary_color.png",
-        "rel": [
-          "full",
-          "primary_logo_on_primary_color"
-        ],
-        "width": 4096
-      },
-      {
-        "alt": "",
-        "height": 4096,
-        "href": "https://a.espncdn.com/guid/0f27398f-25a1-c638-578c-9cf829d8b026/logos/primary_logo_on_secondary_color.png",
-        "rel": [
-          "full",
-          "primary_logo_on_secondary_color"
-        ],
-        "width": 4096
-      },
-      {
-        "alt": "",
-        "height": 4096,
-        "href": "https://a.espncdn.com/guid/0f27398f-25a1-c638-578c-9cf829d8b026/logos/primary_logo_black.png",
-        "rel": [
-          "full",
-          "primary_logo_black"
-        ],
-        "width": 4096
-      },
-      {
-        "alt": "",
-        "height": 4096,
-        "href": "https://a.espncdn.com/guid/0f27398f-25a1-c638-578c-9cf829d8b026/logos/primary_logo_white.png",
-        "rel": [
-          "full",
-          "primary_logo_white"
-        ],
-        "width": 4096
-      },
-      {
-        "alt": "",
-        "height": 4096,
-        "href": "https://a.espncdn.com/guid/0f27398f-25a1-c638-578c-9cf829d8b026/logos/secondary_logo_on_white_color.png",
-        "rel": [
-          "full",
-          "secondary_logo_on_white_color"
-        ],
-        "width": 4096
-      },
-      {
-        "alt": "",
-        "height": 4096,
-        "href": "https://a.espncdn.com/guid/0f27398f-25a1-c638-578c-9cf829d8b026/logos/secondary_logo_on_black_color.png",
-        "rel": [
-          "full",
-          "secondary_logo_on_black_color"
-        ],
-        "width": 4096
-      },
-      {
-        "alt": "",
-        "height": 4096,
-        "href": "https://a.espncdn.com/guid/0f27398f-25a1-c638-578c-9cf829d8b026/logos/secondary_logo_on_primary_color.png",
-        "rel": [
-          "full",
-          "secondary_logo_on_primary_color"
-        ],
-        "width": 4096
-      },
-      {
-        "alt": "",
-        "height": 4096,
-        "href": "https://a.espncdn.com/guid/0f27398f-25a1-c638-578c-9cf829d8b026/logos/secondary_logo_on_secondary_color.png",
-        "rel": [
-          "full",
-          "secondary_logo_on_secondary_color"
-        ],
-        "width": 4096
-      },
-      {
-        "alt": "",
-        "height": 4096,
-        "href": "https://a.espncdn.com/guid/0f27398f-25a1-c638-578c-9cf829d8b026/logos/secondary_logo_black.png",
-        "rel": [
-          "full",
-          "secondary_logo_black"
-        ],
-        "width": 4096
-      },
-      {
-        "alt": "",
-        "height": 4096,
-        "href": "https://a.espncdn.com/guid/0f27398f-25a1-c638-578c-9cf829d8b026/logos/secondary_logo_white.png",
-        "rel": [
-          "full",
-          "secondary_logo_white"
-        ],
-        "width": 4096
-      }
-    ],
-    "name": "Privateers",
-    "nickname": "New Orleans",
-    "shortDisplayName": "New Orleans",
-    "slug": "new-orleans-privateers",
-    "uid": "s:40~l:41~t:2443"
   },
   {
     "abbreviation": "NIA",
@@ -63832,13 +63832,13 @@
   {
     "abbreviation": "STMN",
     "color": "000000",
-    "displayName": "St. Thomas-Minnesota Tommies",
+    "displayName": "St. Thomas Tommies",
     "id": "2900",
     "isActive": true,
     "isAllStar": false,
     "links": [
       {
-        "href": "https://www.espn.com/mens-college-basketball/team/_/id/2900/st-thomas-minnesota-tommies",
+        "href": "https://www.espn.com/mens-college-basketball/team/_/id/2900/st-thomas-tommies",
         "isExternal": false,
         "isHidden": false,
         "isPremium": false,
@@ -63908,7 +63908,7 @@
         "text": "Tickets"
       }
     ],
-    "location": "St. Thomas-Minnesota",
+    "location": "St. Thomas",
     "logos": [
       {
         "alt": "",
@@ -64052,9 +64052,9 @@
       }
     ],
     "name": "Tommies",
-    "nickname": "St Thomas (MN)",
-    "shortDisplayName": "St Thomas (MN)",
-    "slug": "st-thomas-minnesota-tommies",
+    "nickname": "St Thomas",
+    "shortDisplayName": "St Thomas",
+    "slug": "st-thomas-tommies",
     "uid": "s:40~l:41~t:2900"
   },
   {
@@ -76150,7 +76150,7 @@
   },
   {
     "abbreviation": "VMI",
-    "alternateColor": "ffd619",
+    "alternateColor": "000000",
     "color": "ae122a",
     "displayName": "VMI Keydets",
     "id": "2678",
@@ -78976,6 +78976,48 @@
       }
     ],
     "location": "West Florida",
+    "logos": [
+      {
+        "alt": "",
+        "height": 500,
+        "href": "https://a.espncdn.com/i/teamlogos/ncaa/500/2697.png",
+        "rel": [
+          "full",
+          "default"
+        ],
+        "width": 500
+      },
+      {
+        "alt": "",
+        "height": 500,
+        "href": "https://a.espncdn.com/i/teamlogos/ncaa/500-dark/2697.png",
+        "rel": [
+          "full",
+          "dark"
+        ],
+        "width": 500
+      },
+      {
+        "alt": "",
+        "height": 4096,
+        "href": "https://a.espncdn.com/guid/41f0ce0c-3b4b-3210-b83a-c303c036a543/logos/primary_logo_on_primary_color.png",
+        "rel": [
+          "full",
+          "primary_logo_on_primary_color"
+        ],
+        "width": 4096
+      },
+      {
+        "alt": "",
+        "height": 4096,
+        "href": "https://a.espncdn.com/guid/41f0ce0c-3b4b-3210-b83a-c303c036a543/logos/primary_logo_on_secondary_color.png",
+        "rel": [
+          "full",
+          "primary_logo_on_secondary_color"
+        ],
+        "width": 4096
+      }
+    ],
     "name": "Argonauts",
     "nickname": "West Florida",
     "shortDisplayName": "West Florida",
@@ -80730,6 +80772,26 @@
       {
         "alt": "",
         "height": 4096,
+        "href": "https://a.espncdn.com/guid/6f59df33-6634-2cb4-d9eb-ccced88b2471/logos/primary_logo_black.png",
+        "rel": [
+          "full",
+          "primary_logo_black"
+        ],
+        "width": 4096
+      },
+      {
+        "alt": "",
+        "height": 4096,
+        "href": "https://a.espncdn.com/guid/6f59df33-6634-2cb4-d9eb-ccced88b2471/logos/primary_logo_white.png",
+        "rel": [
+          "full",
+          "primary_logo_white"
+        ],
+        "width": 4096
+      },
+      {
+        "alt": "",
+        "height": 4096,
         "href": "https://a.espncdn.com/guid/6f59df33-6634-2cb4-d9eb-ccced88b2471/logos/secondary_logo_on_white_color.png",
         "rel": [
           "full",
@@ -80764,6 +80826,26 @@
         "rel": [
           "full",
           "secondary_logo_on_secondary_color"
+        ],
+        "width": 4096
+      },
+      {
+        "alt": "",
+        "height": 4096,
+        "href": "https://a.espncdn.com/guid/6f59df33-6634-2cb4-d9eb-ccced88b2471/logos/secondary_logo_black.png",
+        "rel": [
+          "full",
+          "secondary_logo_black"
+        ],
+        "width": 4096
+      },
+      {
+        "alt": "",
+        "height": 4096,
+        "href": "https://a.espncdn.com/guid/6f59df33-6634-2cb4-d9eb-ccced88b2471/logos/secondary_logo_white.png",
+        "rel": [
+          "full",
+          "secondary_logo_white"
         ],
         "width": 4096
       }
@@ -82905,13 +82987,13 @@
     ],
     "nextEvent": [
       {
-        "id": "401806510",
-        "date": "2026-02-28T21:00Z",
-        "name": "Southern Indiana Screaming Eagles at Little Rock Trojans",
-        "shortName": "USI @ LR",
+        "id": "401906868",
+        "date": "2026-11-22T05:00Z",
+        "name": "Southern Indiana Screaming Eagles at Texas Longhorns",
+        "shortName": "USI @ TEX",
         "season": {
-          "year": 2026,
-          "displayName": "2025-26"
+          "year": 2027,
+          "displayName": "2026-27"
         },
         "seasonType": {
           "id": "2",
@@ -82920,14 +83002,14 @@
           "abbreviation": "reg"
         },
         "week": {
-          "number": 17,
-          "text": "Week 17"
+          "number": 3,
+          "text": "Week 3"
         },
-        "timeValid": true,
+        "timeValid": false,
         "competitions": [
           {
-            "id": "401806510",
-            "date": "2026-02-28T21:00Z",
+            "id": "401906868",
+            "date": "2026-11-22T05:00Z",
             "attendance": 0,
             "type": {
               "id": "1",
@@ -82936,34 +83018,33 @@
               "slug": "standard",
               "type": "standard"
             },
-            "timeValid": true,
+            "timeValid": false,
             "neutralSite": false,
-            "boxscoreAvailable": true,
-            "ticketsAvailable": false,
+            "boxscoreAvailable": false,
+            "ticketsAvailable": true,
             "venue": {
-              "fullName": "Jack Stephens Center",
+              "fullName": "Moody Center",
               "address": {
-                "city": "Little Rock",
-                "state": "AR"
+                "city": "Austin",
+                "state": "TX"
               }
             },
             "competitors": [
               {
-                "id": "2031",
+                "id": "251",
                 "type": "team",
                 "order": 0,
                 "homeAway": "home",
-                "winner": true,
                 "team": {
-                  "id": "2031",
-                  "location": "Little Rock",
-                  "nickname": "Little Rock",
-                  "abbreviation": "LR",
-                  "displayName": "Little Rock Trojans",
-                  "shortDisplayName": "Little Rock",
+                  "id": "251",
+                  "location": "Texas",
+                  "nickname": "Texas",
+                  "abbreviation": "TEX",
+                  "displayName": "Texas Longhorns",
+                  "shortDisplayName": "Texas",
                   "logos": [
                     {
-                      "href": "https://a.espncdn.com/i/teamlogos/ncaa/500/2031.png",
+                      "href": "https://a.espncdn.com/i/teamlogos/ncaa/500/251.png",
                       "width": 500,
                       "height": 500,
                       "alt": "",
@@ -82971,10 +83052,10 @@
                         "full",
                         "default"
                       ],
-                      "lastUpdated": "2026-07-01T04:35Z"
+                      "lastUpdated": "2025-12-19T23:48Z"
                     },
                     {
-                      "href": "https://a.espncdn.com/i/teamlogos/ncaa/500-dark/2031.png",
+                      "href": "https://a.espncdn.com/i/teamlogos/ncaa/500-dark/251.png",
                       "width": 500,
                       "height": 500,
                       "alt": "",
@@ -82982,10 +83063,10 @@
                         "full",
                         "dark"
                       ],
-                      "lastUpdated": "2026-07-16T17:09Z"
+                      "lastUpdated": "2025-12-19T23:47Z"
                     },
                     {
-                      "href": "https://a.espncdn.com/guid/441e2a8b-e553-2550-0b23-ced7996449d8/logos/primary_logo_on_white_color.png",
+                      "href": "https://a.espncdn.com/guid/9e2e541a-57cd-03c5-d157-257c7032aae8/logos/primary_logo_on_white_color.png",
                       "width": 4096,
                       "height": 4096,
                       "alt": "",
@@ -82993,10 +83074,10 @@
                         "full",
                         "primary_logo_on_white_color"
                       ],
-                      "lastUpdated": "2026-07-23T17:31Z"
+                      "lastUpdated": "2026-07-23T17:44Z"
                     },
                     {
-                      "href": "https://a.espncdn.com/guid/441e2a8b-e553-2550-0b23-ced7996449d8/logos/primary_logo_on_black_color.png",
+                      "href": "https://a.espncdn.com/guid/9e2e541a-57cd-03c5-d157-257c7032aae8/logos/primary_logo_on_black_color.png",
                       "width": 4096,
                       "height": 4096,
                       "alt": "",
@@ -83004,10 +83085,10 @@
                         "full",
                         "primary_logo_on_black_color"
                       ],
-                      "lastUpdated": "2026-07-23T17:31Z"
+                      "lastUpdated": "2026-07-23T17:44Z"
                     },
                     {
-                      "href": "https://a.espncdn.com/guid/441e2a8b-e553-2550-0b23-ced7996449d8/logos/primary_logo_on_primary_color.png",
+                      "href": "https://a.espncdn.com/guid/9e2e541a-57cd-03c5-d157-257c7032aae8/logos/primary_logo_on_primary_color.png",
                       "width": 4096,
                       "height": 4096,
                       "alt": "",
@@ -83015,10 +83096,10 @@
                         "full",
                         "primary_logo_on_primary_color"
                       ],
-                      "lastUpdated": "2026-07-23T17:31Z"
+                      "lastUpdated": "2026-07-23T17:44Z"
                     },
                     {
-                      "href": "https://a.espncdn.com/guid/441e2a8b-e553-2550-0b23-ced7996449d8/logos/primary_logo_on_secondary_color.png",
+                      "href": "https://a.espncdn.com/guid/9e2e541a-57cd-03c5-d157-257c7032aae8/logos/primary_logo_on_secondary_color.png",
                       "width": 4096,
                       "height": 4096,
                       "alt": "",
@@ -83026,10 +83107,10 @@
                         "full",
                         "primary_logo_on_secondary_color"
                       ],
-                      "lastUpdated": "2026-07-23T17:31Z"
+                      "lastUpdated": "2026-07-23T17:44Z"
                     },
                     {
-                      "href": "https://a.espncdn.com/guid/441e2a8b-e553-2550-0b23-ced7996449d8/logos/primary_logo_black.png",
+                      "href": "https://a.espncdn.com/guid/9e2e541a-57cd-03c5-d157-257c7032aae8/logos/primary_logo_black.png",
                       "width": 4096,
                       "height": 4096,
                       "alt": "",
@@ -83037,10 +83118,10 @@
                         "full",
                         "primary_logo_black"
                       ],
-                      "lastUpdated": "2026-07-23T17:31Z"
+                      "lastUpdated": "2026-07-23T17:44Z"
                     },
                     {
-                      "href": "https://a.espncdn.com/guid/441e2a8b-e553-2550-0b23-ced7996449d8/logos/primary_logo_white.png",
+                      "href": "https://a.espncdn.com/guid/9e2e541a-57cd-03c5-d157-257c7032aae8/logos/primary_logo_white.png",
                       "width": 4096,
                       "height": 4096,
                       "alt": "",
@@ -83048,10 +83129,10 @@
                         "full",
                         "primary_logo_white"
                       ],
-                      "lastUpdated": "2026-07-23T17:31Z"
+                      "lastUpdated": "2026-07-23T17:44Z"
                     },
                     {
-                      "href": "https://a.espncdn.com/guid/441e2a8b-e553-2550-0b23-ced7996449d8/logos/secondary_logo_on_white_color.png",
+                      "href": "https://a.espncdn.com/guid/9e2e541a-57cd-03c5-d157-257c7032aae8/logos/secondary_logo_on_white_color.png",
                       "width": 4096,
                       "height": 4096,
                       "alt": "",
@@ -83059,10 +83140,10 @@
                         "full",
                         "secondary_logo_on_white_color"
                       ],
-                      "lastUpdated": "2026-07-23T17:31Z"
+                      "lastUpdated": "2026-07-23T17:44Z"
                     },
                     {
-                      "href": "https://a.espncdn.com/guid/441e2a8b-e553-2550-0b23-ced7996449d8/logos/secondary_logo_on_black_color.png",
+                      "href": "https://a.espncdn.com/guid/9e2e541a-57cd-03c5-d157-257c7032aae8/logos/secondary_logo_on_black_color.png",
                       "width": 4096,
                       "height": 4096,
                       "alt": "",
@@ -83070,10 +83151,10 @@
                         "full",
                         "secondary_logo_on_black_color"
                       ],
-                      "lastUpdated": "2026-07-23T17:31Z"
+                      "lastUpdated": "2026-07-23T17:44Z"
                     },
                     {
-                      "href": "https://a.espncdn.com/guid/441e2a8b-e553-2550-0b23-ced7996449d8/logos/secondary_logo_on_primary_color.png",
+                      "href": "https://a.espncdn.com/guid/9e2e541a-57cd-03c5-d157-257c7032aae8/logos/secondary_logo_on_primary_color.png",
                       "width": 4096,
                       "height": 4096,
                       "alt": "",
@@ -83081,10 +83162,10 @@
                         "full",
                         "secondary_logo_on_primary_color"
                       ],
-                      "lastUpdated": "2026-07-23T17:31Z"
+                      "lastUpdated": "2026-07-23T17:44Z"
                     },
                     {
-                      "href": "https://a.espncdn.com/guid/441e2a8b-e553-2550-0b23-ced7996449d8/logos/secondary_logo_on_secondary_color.png",
+                      "href": "https://a.espncdn.com/guid/9e2e541a-57cd-03c5-d157-257c7032aae8/logos/secondary_logo_on_secondary_color.png",
                       "width": 4096,
                       "height": 4096,
                       "alt": "",
@@ -83092,10 +83173,10 @@
                         "full",
                         "secondary_logo_on_secondary_color"
                       ],
-                      "lastUpdated": "2026-07-23T17:31Z"
+                      "lastUpdated": "2026-07-23T17:44Z"
                     },
                     {
-                      "href": "https://a.espncdn.com/guid/441e2a8b-e553-2550-0b23-ced7996449d8/logos/secondary_logo_black.png",
+                      "href": "https://a.espncdn.com/guid/9e2e541a-57cd-03c5-d157-257c7032aae8/logos/secondary_logo_black.png",
                       "width": 4096,
                       "height": 4096,
                       "alt": "",
@@ -83103,10 +83184,10 @@
                         "full",
                         "secondary_logo_black"
                       ],
-                      "lastUpdated": "2026-07-23T17:31Z"
+                      "lastUpdated": "2026-07-23T17:44Z"
                     },
                     {
-                      "href": "https://a.espncdn.com/guid/441e2a8b-e553-2550-0b23-ced7996449d8/logos/secondary_logo_white.png",
+                      "href": "https://a.espncdn.com/guid/9e2e541a-57cd-03c5-d157-257c7032aae8/logos/secondary_logo_white.png",
                       "width": 4096,
                       "height": 4096,
                       "alt": "",
@@ -83114,7 +83195,7 @@
                         "full",
                         "secondary_logo_white"
                       ],
-                      "lastUpdated": "2026-07-23T17:31Z"
+                      "lastUpdated": "2026-07-23T17:44Z"
                     }
                   ],
                   "links": [
@@ -83124,7 +83205,7 @@
                         "desktop",
                         "team"
                       ],
-                      "href": "https://www.espn.com/mens-college-basketball/team/_/id/2031/little-rock-trojans",
+                      "href": "https://www.espn.com/mens-college-basketball/team/_/id/251/texas-longhorns",
                       "text": "Clubhouse"
                     },
                     {
@@ -83133,7 +83214,7 @@
                         "desktop",
                         "team"
                       ],
-                      "href": "https://www.espn.com/mens-college-basketball/team/roster/_/id/2031",
+                      "href": "https://www.espn.com/mens-college-basketball/team/roster/_/id/251",
                       "text": "Roster"
                     },
                     {
@@ -83143,7 +83224,7 @@
                         "app",
                         "team"
                       ],
-                      "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~t:2031&section=roster",
+                      "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~t:251&section=roster",
                       "text": "Roster"
                     },
                     {
@@ -83152,7 +83233,7 @@
                         "desktop",
                         "team"
                       ],
-                      "href": "https://www.espn.com/mens-college-basketball/team/stats/_/id/2031",
+                      "href": "https://www.espn.com/mens-college-basketball/team/stats/_/id/251",
                       "text": "Statistics"
                     },
                     {
@@ -83162,7 +83243,7 @@
                         "app",
                         "team"
                       ],
-                      "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~t:2031&section=stats",
+                      "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~t:251&section=stats",
                       "text": "Statistics"
                     },
                     {
@@ -83171,7 +83252,7 @@
                         "desktop",
                         "team"
                       ],
-                      "href": "https://www.espn.com/mens-college-basketball/team/schedule/_/id/2031",
+                      "href": "https://www.espn.com/mens-college-basketball/team/schedule/_/id/251",
                       "text": "Schedule"
                     },
                     {
@@ -83181,7 +83262,7 @@
                         "app",
                         "team"
                       ],
-                      "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~t:2031&section=scores",
+                      "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~t:251&section=scores",
                       "text": "Schedule"
                     },
                     {
@@ -83190,7 +83271,7 @@
                         "desktop",
                         "team"
                       ],
-                      "href": "https://www.espn.com/mens-college-basketball/team/photos/_/id/2031",
+                      "href": "https://www.espn.com/mens-college-basketball/team/photos/_/id/251",
                       "text": "photos"
                     },
                     {
@@ -83199,50 +83280,11 @@
                         "desktop",
                         "team"
                       ],
-                      "href": "https://www.vividseats.com/arkansas-little-rock-trojans-mens-basketball-tickets--sports-ncaa-basketball/performer/5902?wsUser=717",
+                      "href": "https://www.vividseats.com/texas-longhorns-mens-basketball-tickets--sports-ncaa-basketball/performer/3345?wsUser=717",
                       "text": "Tickets"
                     }
                   ]
                 },
-                "score": {
-                  "value": 89,
-                  "displayValue": "89"
-                },
-                "record": [
-                  {
-                    "id": "1",
-                    "abbreviation": "Game",
-                    "displayName": "Record Year To Date",
-                    "shortDisplayName": "YTD",
-                    "description": "Overall Record",
-                    "type": "total",
-                    "displayValue": "12-19"
-                  },
-                  {
-                    "id": "9002",
-                    "displayName": "Home",
-                    "shortDisplayName": "HOME",
-                    "description": "Home Record",
-                    "type": "home",
-                    "displayValue": "7-6"
-                  },
-                  {
-                    "id": "9003",
-                    "displayName": "Road",
-                    "shortDisplayName": "AWAY",
-                    "description": "Away Record",
-                    "type": "road",
-                    "displayValue": "5-13"
-                  },
-                  {
-                    "id": "9009",
-                    "displayName": "CONF",
-                    "shortDisplayName": "CONF",
-                    "description": "Conference Record",
-                    "type": "vsconf",
-                    "displayValue": "9-11"
-                  }
-                ],
                 "curatedRank": {
                   "current": 99
                 }
@@ -83252,7 +83294,6 @@
                 "type": "team",
                 "order": 1,
                 "homeAway": "away",
-                "winner": false,
                 "team": {
                   "id": "88",
                   "location": "Southern Indiana",
@@ -83503,803 +83544,54 @@
                     }
                   ]
                 },
-                "score": {
-                  "value": 70,
-                  "displayValue": "70"
-                },
-                "leaders": [
-                  {
-                    "name": "points",
-                    "displayName": "Points",
-                    "abbreviation": "Pts",
-                    "leaders": [
-                      {
-                        "displayValue": "16",
-                        "value": 16,
-                        "athlete": {
-                          "id": "5314342",
-                          "lastName": "Brown",
-                          "displayName": "Amaree Brown",
-                          "shortName": "A. Brown",
-                          "links": [
-                            {
-                              "rel": [
-                                "playercard",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/_/id/5314342/amaree-brown"
-                            },
-                            {
-                              "rel": [
-                                "stats",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/stats/_/id/5314342/amaree-brown"
-                            },
-                            {
-                              "rel": [
-                                "stats",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5314342&section=stats"
-                            },
-                            {
-                              "rel": [
-                                "splits",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/splits/_/id/5314342/amaree-brown"
-                            },
-                            {
-                              "rel": [
-                                "gamelog",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/gamelog/_/id/5314342/amaree-brown"
-                            },
-                            {
-                              "rel": [
-                                "gamelog",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5314342&section=gamelog"
-                            },
-                            {
-                              "rel": [
-                                "news",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/news/_/id/5314342/amaree-brown"
-                            },
-                            {
-                              "rel": [
-                                "news",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5314342&section=news"
-                            },
-                            {
-                              "rel": [
-                                "bio",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/bio/_/id/5314342/amaree-brown"
-                            },
-                            {
-                              "rel": [
-                                "bio",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5314342&section=bio"
-                            },
-                            {
-                              "rel": [
-                                "overview",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/_/id/5314342/amaree-brown"
-                            },
-                            {
-                              "rel": [
-                                "overview",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5314342"
-                            }
-                          ]
-                        }
-                      }
-                    ]
-                  },
-                  {
-                    "name": "assists",
-                    "displayName": "Assists",
-                    "abbreviation": "Ast",
-                    "leaders": [
-                      {
-                        "displayValue": "3",
-                        "value": 3,
-                        "athlete": {
-                          "id": "5176388",
-                          "lastName": "Sharp",
-                          "displayName": "Sheridan Sharp",
-                          "shortName": "S. Sharp",
-                          "links": [
-                            {
-                              "rel": [
-                                "playercard",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/_/id/5176388/sheridan-sharp"
-                            },
-                            {
-                              "rel": [
-                                "stats",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/stats/_/id/5176388/sheridan-sharp"
-                            },
-                            {
-                              "rel": [
-                                "stats",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5176388&section=stats"
-                            },
-                            {
-                              "rel": [
-                                "splits",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/splits/_/id/5176388/sheridan-sharp"
-                            },
-                            {
-                              "rel": [
-                                "gamelog",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/gamelog/_/id/5176388/sheridan-sharp"
-                            },
-                            {
-                              "rel": [
-                                "gamelog",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5176388&section=gamelog"
-                            },
-                            {
-                              "rel": [
-                                "news",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/news/_/id/5176388/sheridan-sharp"
-                            },
-                            {
-                              "rel": [
-                                "news",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5176388&section=news"
-                            },
-                            {
-                              "rel": [
-                                "bio",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/bio/_/id/5176388/sheridan-sharp"
-                            },
-                            {
-                              "rel": [
-                                "bio",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5176388&section=bio"
-                            },
-                            {
-                              "rel": [
-                                "overview",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/_/id/5176388/sheridan-sharp"
-                            },
-                            {
-                              "rel": [
-                                "overview",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5176388"
-                            }
-                          ]
-                        }
-                      }
-                    ]
-                  },
-                  {
-                    "name": "rebounds",
-                    "displayName": "Rebounds",
-                    "abbreviation": "Reb",
-                    "leaders": [
-                      {
-                        "displayValue": "12",
-                        "value": 12,
-                        "athlete": {
-                          "id": "5314340",
-                          "lastName": "Samuels",
-                          "displayName": "Tolu Samuels",
-                          "shortName": "T. Samuels",
-                          "links": [
-                            {
-                              "rel": [
-                                "playercard",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/_/id/5314340/tolu-samuels"
-                            },
-                            {
-                              "rel": [
-                                "stats",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/stats/_/id/5314340/tolu-samuels"
-                            },
-                            {
-                              "rel": [
-                                "stats",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5314340&section=stats"
-                            },
-                            {
-                              "rel": [
-                                "splits",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/splits/_/id/5314340/tolu-samuels"
-                            },
-                            {
-                              "rel": [
-                                "gamelog",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/gamelog/_/id/5314340/tolu-samuels"
-                            },
-                            {
-                              "rel": [
-                                "gamelog",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5314340&section=gamelog"
-                            },
-                            {
-                              "rel": [
-                                "news",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/news/_/id/5314340/tolu-samuels"
-                            },
-                            {
-                              "rel": [
-                                "news",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5314340&section=news"
-                            },
-                            {
-                              "rel": [
-                                "bio",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/bio/_/id/5314340/tolu-samuels"
-                            },
-                            {
-                              "rel": [
-                                "bio",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5314340&section=bio"
-                            },
-                            {
-                              "rel": [
-                                "overview",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/_/id/5314340/tolu-samuels"
-                            },
-                            {
-                              "rel": [
-                                "overview",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5314340"
-                            }
-                          ]
-                        }
-                      }
-                    ]
-                  },
-                  {
-                    "name": "blocks",
-                    "displayName": "Blocks",
-                    "abbreviation": "Blk",
-                    "leaders": [
-                      {
-                        "displayValue": "1",
-                        "value": 1,
-                        "athlete": {
-                          "id": "5108043",
-                          "lastName": "Ajiboye",
-                          "displayName": "Ola Ajiboye",
-                          "shortName": "O. Ajiboye",
-                          "links": [
-                            {
-                              "rel": [
-                                "playercard",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/_/id/5108043/ola-ajiboye"
-                            },
-                            {
-                              "rel": [
-                                "stats",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/stats/_/id/5108043/ola-ajiboye"
-                            },
-                            {
-                              "rel": [
-                                "stats",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5108043&section=stats"
-                            },
-                            {
-                              "rel": [
-                                "splits",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/splits/_/id/5108043/ola-ajiboye"
-                            },
-                            {
-                              "rel": [
-                                "gamelog",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/gamelog/_/id/5108043/ola-ajiboye"
-                            },
-                            {
-                              "rel": [
-                                "gamelog",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5108043&section=gamelog"
-                            },
-                            {
-                              "rel": [
-                                "news",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/news/_/id/5108043/ola-ajiboye"
-                            },
-                            {
-                              "rel": [
-                                "news",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5108043&section=news"
-                            },
-                            {
-                              "rel": [
-                                "bio",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/bio/_/id/5108043/ola-ajiboye"
-                            },
-                            {
-                              "rel": [
-                                "bio",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5108043&section=bio"
-                            },
-                            {
-                              "rel": [
-                                "overview",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/_/id/5108043/ola-ajiboye"
-                            },
-                            {
-                              "rel": [
-                                "overview",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5108043"
-                            }
-                          ]
-                        }
-                      }
-                    ]
-                  },
-                  {
-                    "name": "steals",
-                    "displayName": "Steals",
-                    "abbreviation": "Stl",
-                    "leaders": [
-                      {
-                        "displayValue": "3",
-                        "value": 3,
-                        "athlete": {
-                          "id": "5176388",
-                          "lastName": "Sharp",
-                          "displayName": "Sheridan Sharp",
-                          "shortName": "S. Sharp",
-                          "links": [
-                            {
-                              "rel": [
-                                "playercard",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/_/id/5176388/sheridan-sharp"
-                            },
-                            {
-                              "rel": [
-                                "stats",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/stats/_/id/5176388/sheridan-sharp"
-                            },
-                            {
-                              "rel": [
-                                "stats",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5176388&section=stats"
-                            },
-                            {
-                              "rel": [
-                                "splits",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/splits/_/id/5176388/sheridan-sharp"
-                            },
-                            {
-                              "rel": [
-                                "gamelog",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/gamelog/_/id/5176388/sheridan-sharp"
-                            },
-                            {
-                              "rel": [
-                                "gamelog",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5176388&section=gamelog"
-                            },
-                            {
-                              "rel": [
-                                "news",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/news/_/id/5176388/sheridan-sharp"
-                            },
-                            {
-                              "rel": [
-                                "news",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5176388&section=news"
-                            },
-                            {
-                              "rel": [
-                                "bio",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/bio/_/id/5176388/sheridan-sharp"
-                            },
-                            {
-                              "rel": [
-                                "bio",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5176388&section=bio"
-                            },
-                            {
-                              "rel": [
-                                "overview",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/_/id/5176388/sheridan-sharp"
-                            },
-                            {
-                              "rel": [
-                                "overview",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5176388"
-                            }
-                          ]
-                        }
-                      }
-                    ]
-                  },
-                  {
-                    "name": "rating",
-                    "displayName": "Rating",
-                    "abbreviation": "RAT",
-                    "leaders": [
-                      {
-                        "displayValue": "11 PTS, 12 REB",
-                        "value": 23.950000762939453,
-                        "athlete": {
-                          "id": "5314340",
-                          "lastName": "Samuels",
-                          "displayName": "Tolu Samuels",
-                          "shortName": "T. Samuels",
-                          "links": [
-                            {
-                              "rel": [
-                                "playercard",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/_/id/5314340/tolu-samuels"
-                            },
-                            {
-                              "rel": [
-                                "stats",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/stats/_/id/5314340/tolu-samuels"
-                            },
-                            {
-                              "rel": [
-                                "stats",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5314340&section=stats"
-                            },
-                            {
-                              "rel": [
-                                "splits",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/splits/_/id/5314340/tolu-samuels"
-                            },
-                            {
-                              "rel": [
-                                "gamelog",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/gamelog/_/id/5314340/tolu-samuels"
-                            },
-                            {
-                              "rel": [
-                                "gamelog",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5314340&section=gamelog"
-                            },
-                            {
-                              "rel": [
-                                "news",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/news/_/id/5314340/tolu-samuels"
-                            },
-                            {
-                              "rel": [
-                                "news",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5314340&section=news"
-                            },
-                            {
-                              "rel": [
-                                "bio",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/bio/_/id/5314340/tolu-samuels"
-                            },
-                            {
-                              "rel": [
-                                "bio",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5314340&section=bio"
-                            },
-                            {
-                              "rel": [
-                                "overview",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/_/id/5314340/tolu-samuels"
-                            },
-                            {
-                              "rel": [
-                                "overview",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5314340"
-                            }
-                          ]
-                        }
-                      }
-                    ]
-                  }
-                ],
-                "record": [
-                  {
-                    "id": "1",
-                    "abbreviation": "Game",
-                    "displayName": "Record Year To Date",
-                    "shortDisplayName": "YTD",
-                    "description": "Overall Record",
-                    "type": "total",
-                    "displayValue": "7-23"
-                  },
-                  {
-                    "id": "9002",
-                    "displayName": "Home",
-                    "shortDisplayName": "HOME",
-                    "description": "Home Record",
-                    "type": "home",
-                    "displayValue": "3-10"
-                  },
-                  {
-                    "id": "9003",
-                    "displayName": "Road",
-                    "shortDisplayName": "AWAY",
-                    "description": "Away Record",
-                    "type": "road",
-                    "displayValue": "4-11"
-                  },
-                  {
-                    "id": "9009",
-                    "displayName": "CONF",
-                    "shortDisplayName": "CONF",
-                    "description": "Conference Record",
-                    "type": "vsconf",
-                    "displayValue": "4-16"
-                  }
-                ],
                 "curatedRank": {
                   "current": 99
                 }
               }
             ],
             "notes": [],
-            "broadcasts": [
+            "broadcasts": [],
+            "tickets": [
               {
-                "type": {
-                  "id": "4",
-                  "shortName": "Streaming"
-                },
-                "market": {
-                  "id": "1",
-                  "type": "National"
-                },
-                "media": {
-                  "shortName": "ESPN+"
-                },
-                "lang": "en",
-                "region": "us",
-                "partnered": false
+                "id": "7383696",
+                "summary": "Tickets as low as $14",
+                "description": "Southern Indiana Screaming Eagles at Texas Longhorns Mens Basketball",
+                "maxPrice": 461,
+                "startingPrice": 14,
+                "numberAvailable": 48,
+                "totalPostings": 13,
+                "links": [
+                  {
+                    "rel": [
+                      "tickets",
+                      "desktop",
+                      "event"
+                    ],
+                    "href": "https://www.vividseats.com/texas-longhorns-mens-basketball-tickets-moody-center-atx-11-22-2026--sports-ncaa-basketball/production/7383696?wsUser=717"
+                  },
+                  {
+                    "rel": [
+                      "tickets",
+                      "desktop",
+                      "venue"
+                    ],
+                    "href": "https://www.vividseats.com/venues/moody-center-atx-tickets.html?wsUser=717"
+                  }
+                ]
               }
             ],
             "status": {
               "clock": 0,
               "displayClock": "0:00",
-              "period": 2,
+              "period": 0,
               "type": {
-                "id": "3",
-                "name": "STATUS_FINAL",
-                "state": "post",
-                "completed": true,
-                "description": "Final",
-                "detail": "Final",
-                "shortDetail": "Final"
+                "id": "1",
+                "name": "STATUS_SCHEDULED",
+                "state": "pre",
+                "completed": false,
+                "description": "Scheduled",
+                "detail": "11/22 - TBD",
+                "shortDetail": "TBD"
               }
             }
           }
@@ -84312,7 +83604,7 @@
               "desktop",
               "event"
             ],
-            "href": "https://www.espn.com/mens-college-basketball/game/_/gameId/401806510/s-indiana-little-rock",
+            "href": "https://www.espn.com/mens-college-basketball/game/_/gameId/401906868/s-indiana-texas",
             "text": "Gamecast",
             "shortText": "Summary",
             "isExternal": false,
@@ -84326,141 +83618,9 @@
               "app",
               "event"
             ],
-            "href": "sportscenter://x-callback-url/showGame?sportName=basketball&leagueAbbrev=mens-college-basketball&gameId=401806510",
+            "href": "sportscenter://x-callback-url/showGame?sportName=basketball&leagueAbbrev=mens-college-basketball&gameId=401906868",
             "text": "Gamecast",
             "shortText": "Summary",
-            "isExternal": false,
-            "isPremium": false
-          },
-          {
-            "language": "en-US",
-            "rel": [
-              "teamstats",
-              "desktop",
-              "event"
-            ],
-            "href": "https://www.espn.com/mens-college-basketball/matchup?gameId=401806510",
-            "text": "Team Stats",
-            "shortText": "Team Stats",
-            "isExternal": false,
-            "isPremium": false
-          },
-          {
-            "language": "en-US",
-            "rel": [
-              "boxscore",
-              "desktop",
-              "event"
-            ],
-            "href": "https://www.espn.com/mens-college-basketball/boxscore/_/gameId/401806510",
-            "text": "Box Score",
-            "shortText": "Box Score",
-            "isExternal": false,
-            "isPremium": false
-          },
-          {
-            "language": "en-US",
-            "rel": [
-              "boxscore",
-              "sportscenter",
-              "app",
-              "event"
-            ],
-            "href": "sportscenter://x-callback-url/showGame?sportName=basketball&leagueAbbrev=mens-college-basketball&gameId=401806510",
-            "text": "Box Score",
-            "shortText": "Box Score",
-            "isExternal": false,
-            "isPremium": false
-          },
-          {
-            "language": "en-US",
-            "rel": [
-              "gamecast",
-              "desktop",
-              "event"
-            ],
-            "href": "https://www.espn.com/mens-college-basketball/game/_/gameId/401806510",
-            "text": "Gamecast",
-            "shortText": "Gamecast",
-            "isExternal": false,
-            "isPremium": false
-          },
-          {
-            "language": "en-US",
-            "rel": [
-              "gamecast",
-              "mobile",
-              "event"
-            ],
-            "href": "https://m.espn.com/ncb/gamecast?gameId=401806510&action=summary",
-            "text": "Gamecast",
-            "shortText": "Gamecast",
-            "isExternal": false,
-            "isPremium": false
-          },
-          {
-            "language": "en-US",
-            "rel": [
-              "gamecast",
-              "sportscenter",
-              "app",
-              "event"
-            ],
-            "href": "sportscenter://x-callback-url/showGame?sportName=basketball&leagueAbbrev=mens-college-basketball&gameId=401806510",
-            "text": "Gamecast",
-            "shortText": "Gamecast",
-            "isExternal": false,
-            "isPremium": false
-          },
-          {
-            "language": "en-US",
-            "rel": [
-              "pbp",
-              "desktop",
-              "event"
-            ],
-            "href": "https://www.espn.com/mens-college-basketball/playbyplay/_/gameId/401806510",
-            "text": "Play-by-Play",
-            "shortText": "Play-by-Play",
-            "isExternal": false,
-            "isPremium": false
-          },
-          {
-            "language": "en-US",
-            "rel": [
-              "videos",
-              "desktop",
-              "event"
-            ],
-            "href": "https://www.espn.com/mens-college-basketball/video?gameId=401806510",
-            "text": "Videos",
-            "shortText": "Videos",
-            "isExternal": false,
-            "isPremium": false
-          },
-          {
-            "language": "en-US",
-            "rel": [
-              "watchespn",
-              "desktop",
-              "event"
-            ],
-            "href": "https://www.espn.com/watchespn/index?gameId=401806510&sourceLang=en",
-            "text": "WatchESPN",
-            "shortText": "WatchESPN",
-            "isExternal": false,
-            "isPremium": false
-          },
-          {
-            "language": "en-US",
-            "rel": [
-              "watchespn",
-              "app",
-              "event"
-            ],
-            "href": "watchespn://showEvent?gameId=401806510&sourceLang=en",
-            "text": "WatchESPN",
-            "shortText": "WatchESPN",
             "isExternal": false,
             "isPremium": false
           }
@@ -84770,10 +83930,10 @@
     ],
     "nextEvent": [
       {
-        "id": "401905405",
-        "date": "2027-01-09T05:00Z",
-        "name": "Queens University Royals at West Florida Argonauts",
-        "shortName": "QUC @ WFL",
+        "id": "401911397",
+        "date": "2026-12-05T05:00Z",
+        "name": "Queens University Royals at Gardner-Webb Runnin' Bulldogs",
+        "shortName": "QUC @ GWEB",
         "season": {
           "year": 2027,
           "displayName": "2026-27"
@@ -84785,14 +83945,14 @@
           "abbreviation": "reg"
         },
         "week": {
-          "number": 10,
-          "text": "Week 10"
+          "number": 5,
+          "text": "Week 5"
         },
         "timeValid": false,
         "competitions": [
           {
-            "id": "401905405",
-            "date": "2027-01-09T05:00Z",
+            "id": "401911397",
+            "date": "2026-12-05T05:00Z",
             "attendance": 0,
             "type": {
               "id": "1",
@@ -84804,30 +83964,30 @@
             "timeValid": false,
             "neutralSite": false,
             "boxscoreAvailable": false,
-            "ticketsAvailable": false,
+            "ticketsAvailable": true,
             "venue": {
-              "fullName": "UWF Field House",
+              "fullName": "Paul Porter Arena",
               "address": {
-                "city": "Pensacola",
-                "state": "FL"
+                "city": "Boiling Springs",
+                "state": "NC"
               }
             },
             "competitors": [
               {
-                "id": "2697",
+                "id": "2241",
                 "type": "team",
                 "order": 0,
                 "homeAway": "home",
                 "team": {
-                  "id": "2697",
-                  "location": "West Florida",
-                  "nickname": "West Florida",
-                  "abbreviation": "WFL",
-                  "displayName": "West Florida Argonauts",
-                  "shortDisplayName": "West Florida",
+                  "id": "2241",
+                  "location": "Gardner-Webb",
+                  "nickname": "Gardner-Webb",
+                  "abbreviation": "GWEB",
+                  "displayName": "Gardner-Webb Runnin' Bulldogs",
+                  "shortDisplayName": "Gardner-Webb",
                   "logos": [
                     {
-                      "href": "https://a.espncdn.com/i/teamlogos/ncaa/500/2697.png",
+                      "href": "https://a.espncdn.com/i/teamlogos/ncaa/500/2241.png",
                       "width": 500,
                       "height": 500,
                       "alt": "",
@@ -84835,10 +83995,10 @@
                         "full",
                         "default"
                       ],
-                      "lastUpdated": "2026-07-31T16:42Z"
+                      "lastUpdated": "2026-07-01T04:35Z"
                     },
                     {
-                      "href": "https://a.espncdn.com/i/teamlogos/ncaa/500-dark/2697.png",
+                      "href": "https://a.espncdn.com/i/teamlogos/ncaa/500-dark/2241.png",
                       "width": 500,
                       "height": 500,
                       "alt": "",
@@ -84846,7 +84006,139 @@
                         "full",
                         "dark"
                       ],
-                      "lastUpdated": "2026-07-31T16:42Z"
+                      "lastUpdated": "2026-07-01T04:34Z"
+                    },
+                    {
+                      "href": "https://a.espncdn.com/guid/4b7bdcff-f95e-1477-f9e6-1b15443230ee/logos/primary_logo_on_white_color.png",
+                      "width": 4096,
+                      "height": 4096,
+                      "alt": "",
+                      "rel": [
+                        "full",
+                        "primary_logo_on_white_color"
+                      ],
+                      "lastUpdated": "2026-07-23T17:26Z"
+                    },
+                    {
+                      "href": "https://a.espncdn.com/guid/4b7bdcff-f95e-1477-f9e6-1b15443230ee/logos/primary_logo_on_black_color.png",
+                      "width": 4096,
+                      "height": 4096,
+                      "alt": "",
+                      "rel": [
+                        "full",
+                        "primary_logo_on_black_color"
+                      ],
+                      "lastUpdated": "2026-07-23T17:26Z"
+                    },
+                    {
+                      "href": "https://a.espncdn.com/guid/4b7bdcff-f95e-1477-f9e6-1b15443230ee/logos/primary_logo_on_primary_color.png",
+                      "width": 4096,
+                      "height": 4096,
+                      "alt": "",
+                      "rel": [
+                        "full",
+                        "primary_logo_on_primary_color"
+                      ],
+                      "lastUpdated": "2026-07-23T17:26Z"
+                    },
+                    {
+                      "href": "https://a.espncdn.com/guid/4b7bdcff-f95e-1477-f9e6-1b15443230ee/logos/primary_logo_on_secondary_color.png",
+                      "width": 4096,
+                      "height": 4096,
+                      "alt": "",
+                      "rel": [
+                        "full",
+                        "primary_logo_on_secondary_color"
+                      ],
+                      "lastUpdated": "2026-07-23T17:26Z"
+                    },
+                    {
+                      "href": "https://a.espncdn.com/guid/4b7bdcff-f95e-1477-f9e6-1b15443230ee/logos/primary_logo_black.png",
+                      "width": 4096,
+                      "height": 4096,
+                      "alt": "",
+                      "rel": [
+                        "full",
+                        "primary_logo_black"
+                      ],
+                      "lastUpdated": "2026-07-23T17:26Z"
+                    },
+                    {
+                      "href": "https://a.espncdn.com/guid/4b7bdcff-f95e-1477-f9e6-1b15443230ee/logos/primary_logo_white.png",
+                      "width": 4096,
+                      "height": 4096,
+                      "alt": "",
+                      "rel": [
+                        "full",
+                        "primary_logo_white"
+                      ],
+                      "lastUpdated": "2026-07-23T17:26Z"
+                    },
+                    {
+                      "href": "https://a.espncdn.com/guid/4b7bdcff-f95e-1477-f9e6-1b15443230ee/logos/secondary_logo_on_white_color.png",
+                      "width": 4096,
+                      "height": 4096,
+                      "alt": "",
+                      "rel": [
+                        "full",
+                        "secondary_logo_on_white_color"
+                      ],
+                      "lastUpdated": "2026-07-23T17:26Z"
+                    },
+                    {
+                      "href": "https://a.espncdn.com/guid/4b7bdcff-f95e-1477-f9e6-1b15443230ee/logos/secondary_logo_on_black_color.png",
+                      "width": 4096,
+                      "height": 4096,
+                      "alt": "",
+                      "rel": [
+                        "full",
+                        "secondary_logo_on_black_color"
+                      ],
+                      "lastUpdated": "2026-07-23T17:26Z"
+                    },
+                    {
+                      "href": "https://a.espncdn.com/guid/4b7bdcff-f95e-1477-f9e6-1b15443230ee/logos/secondary_logo_on_primary_color.png",
+                      "width": 4096,
+                      "height": 4096,
+                      "alt": "",
+                      "rel": [
+                        "full",
+                        "secondary_logo_on_primary_color"
+                      ],
+                      "lastUpdated": "2026-07-23T17:26Z"
+                    },
+                    {
+                      "href": "https://a.espncdn.com/guid/4b7bdcff-f95e-1477-f9e6-1b15443230ee/logos/secondary_logo_on_secondary_color.png",
+                      "width": 4096,
+                      "height": 4096,
+                      "alt": "",
+                      "rel": [
+                        "full",
+                        "secondary_logo_on_secondary_color"
+                      ],
+                      "lastUpdated": "2026-07-23T17:26Z"
+                    },
+                    {
+                      "href": "https://a.espncdn.com/guid/4b7bdcff-f95e-1477-f9e6-1b15443230ee/logos/secondary_logo_black.png",
+                      "width": 4096,
+                      "height": 4096,
+                      "alt": "",
+                      "rel": [
+                        "full",
+                        "secondary_logo_black"
+                      ],
+                      "lastUpdated": "2026-07-23T17:26Z"
+                    },
+                    {
+                      "href": "https://a.espncdn.com/guid/4b7bdcff-f95e-1477-f9e6-1b15443230ee/logos/secondary_logo_white.png",
+                      "width": 4096,
+                      "height": 4096,
+                      "alt": "",
+                      "rel": [
+                        "full",
+                        "secondary_logo_white"
+                      ],
+                      "lastUpdated": "2026-07-23T17:26Z"
                     }
                   ],
                   "links": [
@@ -84856,7 +84148,7 @@
                         "desktop",
                         "team"
                       ],
-                      "href": "https://www.espn.com/mens-college-basketball/team/_/id/2697/west-florida-argonauts",
+                      "href": "https://www.espn.com/mens-college-basketball/team/_/id/2241/gardner-webb-runnin-bulldogs",
                       "text": "Clubhouse"
                     },
                     {
@@ -84865,7 +84157,7 @@
                         "desktop",
                         "team"
                       ],
-                      "href": "https://www.espn.com/mens-college-basketball/team/roster/_/id/2697",
+                      "href": "https://www.espn.com/mens-college-basketball/team/roster/_/id/2241",
                       "text": "Roster"
                     },
                     {
@@ -84875,7 +84167,7 @@
                         "app",
                         "team"
                       ],
-                      "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~t:2697&section=roster",
+                      "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~t:2241&section=roster",
                       "text": "Roster"
                     },
                     {
@@ -84884,7 +84176,7 @@
                         "desktop",
                         "team"
                       ],
-                      "href": "https://www.espn.com/mens-college-basketball/team/stats/_/id/2697",
+                      "href": "https://www.espn.com/mens-college-basketball/team/stats/_/id/2241",
                       "text": "Statistics"
                     },
                     {
@@ -84894,7 +84186,7 @@
                         "app",
                         "team"
                       ],
-                      "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~t:2697&section=stats",
+                      "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~t:2241&section=stats",
                       "text": "Statistics"
                     },
                     {
@@ -84903,7 +84195,7 @@
                         "desktop",
                         "team"
                       ],
-                      "href": "https://www.espn.com/mens-college-basketball/team/schedule/_/id/2697",
+                      "href": "https://www.espn.com/mens-college-basketball/team/schedule/_/id/2241",
                       "text": "Schedule"
                     },
                     {
@@ -84913,7 +84205,7 @@
                         "app",
                         "team"
                       ],
-                      "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~t:2697&section=scores",
+                      "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~t:2241&section=scores",
                       "text": "Schedule"
                     },
                     {
@@ -84922,7 +84214,7 @@
                         "desktop",
                         "team"
                       ],
-                      "href": "https://www.espn.com/mens-college-basketball/team/photos/_/id/2697",
+                      "href": "https://www.espn.com/mens-college-basketball/team/photos/_/id/2241",
                       "text": "photos"
                     },
                     {
@@ -84931,7 +84223,7 @@
                         "desktop",
                         "team"
                       ],
-                      "href": "https://www.vividseats.com/west-florida-argonauts-mens-basketball-tickets--sports-basketball/performer/93096?wsUser=717",
+                      "href": "https://www.vividseats.com/gardner-webb-bulldogs-mens-basketball-tickets--sports-ncaa-basketball/performer/5959?wsUser=717",
                       "text": "Tickets"
                     }
                   ]
@@ -85202,6 +84494,35 @@
             ],
             "notes": [],
             "broadcasts": [],
+            "tickets": [
+              {
+                "id": "7341840",
+                "summary": "Tickets as low as $47",
+                "description": "Queens Royals at Gardner Webb Bulldogs Mens Basketball",
+                "maxPrice": 47,
+                "startingPrice": 47,
+                "numberAvailable": 8,
+                "totalPostings": 1,
+                "links": [
+                  {
+                    "rel": [
+                      "tickets",
+                      "desktop",
+                      "event"
+                    ],
+                    "href": "https://www.vividseats.com/gardner-webb-bulldogs-mens-basketball-tickets-paul-porter-arena-12-5-2026--sports-ncaa-basketball/production/7341840?wsUser=717"
+                  },
+                  {
+                    "rel": [
+                      "tickets",
+                      "desktop",
+                      "venue"
+                    ],
+                    "href": "https://www.vividseats.com/venues/paul-porter-arena-tickets.html?wsUser=717"
+                  }
+                ]
+              }
+            ],
             "status": {
               "clock": 0,
               "displayClock": "0:00",
@@ -85212,7 +84533,7 @@
                 "state": "pre",
                 "completed": false,
                 "description": "Scheduled",
-                "detail": "1/9 - TBD",
+                "detail": "12/5 - TBD",
                 "shortDetail": "TBD"
               }
             }
@@ -85226,7 +84547,7 @@
               "desktop",
               "event"
             ],
-            "href": "https://www.espn.com/mens-college-basketball/game/_/gameId/401905405/queens-west-florida",
+            "href": "https://www.espn.com/mens-college-basketball/game/_/gameId/401911397/queens-gardner-webb",
             "text": "Gamecast",
             "shortText": "Summary",
             "isExternal": false,
@@ -85240,7 +84561,7 @@
               "app",
               "event"
             ],
-            "href": "sportscenter://x-callback-url/showGame?sportName=basketball&leagueAbbrev=mens-college-basketball&gameId=401905405",
+            "href": "sportscenter://x-callback-url/showGame?sportName=basketball&leagueAbbrev=mens-college-basketball&gameId=401911397",
             "text": "Gamecast",
             "shortText": "Summary",
             "isExternal": false,
@@ -87225,13 +86546,13 @@
     ],
     "nextEvent": [
       {
-        "id": "401851528",
-        "date": "2026-03-06T02:30Z",
-        "name": "Lindenwood Lions at Southeast Missouri State Redhawks",
-        "shortName": "LIN VS SEMO",
+        "id": "401909805",
+        "date": "2026-12-21T05:00Z",
+        "name": "Lindenwood Lions at Kansas State Wildcats",
+        "shortName": "LIN @ KSU",
         "season": {
-          "year": 2026,
-          "displayName": "2025-26"
+          "year": 2027,
+          "displayName": "2026-27"
         },
         "seasonType": {
           "id": "2",
@@ -87240,50 +86561,49 @@
           "abbreviation": "reg"
         },
         "week": {
-          "number": 18,
-          "text": "Week 18"
+          "number": 8,
+          "text": "Week 8"
         },
-        "timeValid": true,
+        "timeValid": false,
         "competitions": [
           {
-            "id": "401851528",
-            "date": "2026-03-06T02:30Z",
-            "attendance": 1101,
+            "id": "401909805",
+            "date": "2026-12-21T05:00Z",
+            "attendance": 0,
             "type": {
-              "id": "6",
-              "text": "Tournament",
-              "abbreviation": "TRNMNT",
-              "slug": "tournament",
-              "type": "tournament"
+              "id": "1",
+              "text": "Standard",
+              "abbreviation": "STD",
+              "slug": "standard",
+              "type": "standard"
             },
-            "timeValid": true,
-            "neutralSite": true,
-            "boxscoreAvailable": true,
-            "ticketsAvailable": false,
+            "timeValid": false,
+            "neutralSite": false,
+            "boxscoreAvailable": false,
+            "ticketsAvailable": true,
             "venue": {
-              "fullName": "Ford Center",
+              "fullName": "Bramlage Coliseum",
               "address": {
-                "city": "Evansville",
-                "state": "IN"
+                "city": "Manhattan",
+                "state": "KS"
               }
             },
             "competitors": [
               {
-                "id": "2546",
+                "id": "2306",
                 "type": "team",
                 "order": 0,
                 "homeAway": "home",
-                "winner": true,
                 "team": {
-                  "id": "2546",
-                  "location": "Southeast Missouri State",
-                  "nickname": "SE Missouri",
-                  "abbreviation": "SEMO",
-                  "displayName": "Southeast Missouri State Redhawks",
-                  "shortDisplayName": "SE Missouri",
+                  "id": "2306",
+                  "location": "Kansas State",
+                  "nickname": "Kansas St",
+                  "abbreviation": "KSU",
+                  "displayName": "Kansas State Wildcats",
+                  "shortDisplayName": "Kansas St",
                   "logos": [
                     {
-                      "href": "https://a.espncdn.com/i/teamlogos/ncaa/500/2546.png",
+                      "href": "https://a.espncdn.com/i/teamlogos/ncaa/500/2306.png",
                       "width": 500,
                       "height": 500,
                       "alt": "",
@@ -87291,10 +86611,10 @@
                         "full",
                         "default"
                       ],
-                      "lastUpdated": "2023-12-13T21:29Z"
+                      "lastUpdated": "2025-12-23T01:44Z"
                     },
                     {
-                      "href": "https://a.espncdn.com/i/teamlogos/ncaa/500-dark/2546.png",
+                      "href": "https://a.espncdn.com/i/teamlogos/ncaa/500-dark/2306.png",
                       "width": 500,
                       "height": 500,
                       "alt": "",
@@ -87302,10 +86622,10 @@
                         "full",
                         "dark"
                       ],
-                      "lastUpdated": "2023-12-13T21:30Z"
+                      "lastUpdated": "2025-12-23T01:44Z"
                     },
                     {
-                      "href": "https://a.espncdn.com/guid/31a74b05-cd0e-66f2-43b0-ddc40c3a026b/logos/primary_logo_on_white_color.png",
+                      "href": "https://a.espncdn.com/guid/da81113c-3fc8-0928-6791-5709eeaf2a9a/logos/primary_logo_on_white_color.png",
                       "width": 4096,
                       "height": 4096,
                       "alt": "",
@@ -87313,10 +86633,10 @@
                         "full",
                         "primary_logo_on_white_color"
                       ],
-                      "lastUpdated": "2026-07-23T17:42Z"
+                      "lastUpdated": "2026-07-23T17:30Z"
                     },
                     {
-                      "href": "https://a.espncdn.com/guid/31a74b05-cd0e-66f2-43b0-ddc40c3a026b/logos/primary_logo_on_black_color.png",
+                      "href": "https://a.espncdn.com/guid/da81113c-3fc8-0928-6791-5709eeaf2a9a/logos/primary_logo_on_black_color.png",
                       "width": 4096,
                       "height": 4096,
                       "alt": "",
@@ -87324,10 +86644,10 @@
                         "full",
                         "primary_logo_on_black_color"
                       ],
-                      "lastUpdated": "2026-07-23T17:42Z"
+                      "lastUpdated": "2026-07-23T17:30Z"
                     },
                     {
-                      "href": "https://a.espncdn.com/guid/31a74b05-cd0e-66f2-43b0-ddc40c3a026b/logos/primary_logo_on_primary_color.png",
+                      "href": "https://a.espncdn.com/guid/da81113c-3fc8-0928-6791-5709eeaf2a9a/logos/primary_logo_on_primary_color.png",
                       "width": 4096,
                       "height": 4096,
                       "alt": "",
@@ -87335,10 +86655,10 @@
                         "full",
                         "primary_logo_on_primary_color"
                       ],
-                      "lastUpdated": "2026-07-23T17:42Z"
+                      "lastUpdated": "2026-07-23T17:30Z"
                     },
                     {
-                      "href": "https://a.espncdn.com/guid/31a74b05-cd0e-66f2-43b0-ddc40c3a026b/logos/primary_logo_on_secondary_color.png",
+                      "href": "https://a.espncdn.com/guid/da81113c-3fc8-0928-6791-5709eeaf2a9a/logos/primary_logo_on_secondary_color.png",
                       "width": 4096,
                       "height": 4096,
                       "alt": "",
@@ -87346,10 +86666,10 @@
                         "full",
                         "primary_logo_on_secondary_color"
                       ],
-                      "lastUpdated": "2026-07-23T17:42Z"
+                      "lastUpdated": "2026-07-23T17:30Z"
                     },
                     {
-                      "href": "https://a.espncdn.com/guid/31a74b05-cd0e-66f2-43b0-ddc40c3a026b/logos/primary_logo_black.png",
+                      "href": "https://a.espncdn.com/guid/da81113c-3fc8-0928-6791-5709eeaf2a9a/logos/primary_logo_black.png",
                       "width": 4096,
                       "height": 4096,
                       "alt": "",
@@ -87357,10 +86677,10 @@
                         "full",
                         "primary_logo_black"
                       ],
-                      "lastUpdated": "2026-07-23T17:42Z"
+                      "lastUpdated": "2026-07-23T17:30Z"
                     },
                     {
-                      "href": "https://a.espncdn.com/guid/31a74b05-cd0e-66f2-43b0-ddc40c3a026b/logos/primary_logo_white.png",
+                      "href": "https://a.espncdn.com/guid/da81113c-3fc8-0928-6791-5709eeaf2a9a/logos/primary_logo_white.png",
                       "width": 4096,
                       "height": 4096,
                       "alt": "",
@@ -87368,10 +86688,10 @@
                         "full",
                         "primary_logo_white"
                       ],
-                      "lastUpdated": "2026-07-23T17:42Z"
+                      "lastUpdated": "2026-07-23T17:30Z"
                     },
                     {
-                      "href": "https://a.espncdn.com/guid/31a74b05-cd0e-66f2-43b0-ddc40c3a026b/logos/secondary_logo_on_white_color.png",
+                      "href": "https://a.espncdn.com/guid/da81113c-3fc8-0928-6791-5709eeaf2a9a/logos/secondary_logo_on_white_color.png",
                       "width": 4096,
                       "height": 4096,
                       "alt": "",
@@ -87379,10 +86699,10 @@
                         "full",
                         "secondary_logo_on_white_color"
                       ],
-                      "lastUpdated": "2026-07-23T17:42Z"
+                      "lastUpdated": "2026-07-23T17:30Z"
                     },
                     {
-                      "href": "https://a.espncdn.com/guid/31a74b05-cd0e-66f2-43b0-ddc40c3a026b/logos/secondary_logo_on_black_color.png",
+                      "href": "https://a.espncdn.com/guid/da81113c-3fc8-0928-6791-5709eeaf2a9a/logos/secondary_logo_on_black_color.png",
                       "width": 4096,
                       "height": 4096,
                       "alt": "",
@@ -87390,10 +86710,10 @@
                         "full",
                         "secondary_logo_on_black_color"
                       ],
-                      "lastUpdated": "2026-07-23T17:42Z"
+                      "lastUpdated": "2026-07-23T17:30Z"
                     },
                     {
-                      "href": "https://a.espncdn.com/guid/31a74b05-cd0e-66f2-43b0-ddc40c3a026b/logos/secondary_logo_on_primary_color.png",
+                      "href": "https://a.espncdn.com/guid/da81113c-3fc8-0928-6791-5709eeaf2a9a/logos/secondary_logo_on_primary_color.png",
                       "width": 4096,
                       "height": 4096,
                       "alt": "",
@@ -87401,10 +86721,10 @@
                         "full",
                         "secondary_logo_on_primary_color"
                       ],
-                      "lastUpdated": "2026-07-23T17:42Z"
+                      "lastUpdated": "2026-07-23T17:30Z"
                     },
                     {
-                      "href": "https://a.espncdn.com/guid/31a74b05-cd0e-66f2-43b0-ddc40c3a026b/logos/secondary_logo_on_secondary_color.png",
+                      "href": "https://a.espncdn.com/guid/da81113c-3fc8-0928-6791-5709eeaf2a9a/logos/secondary_logo_on_secondary_color.png",
                       "width": 4096,
                       "height": 4096,
                       "alt": "",
@@ -87412,10 +86732,10 @@
                         "full",
                         "secondary_logo_on_secondary_color"
                       ],
-                      "lastUpdated": "2026-07-23T17:42Z"
+                      "lastUpdated": "2026-07-23T17:30Z"
                     },
                     {
-                      "href": "https://a.espncdn.com/guid/31a74b05-cd0e-66f2-43b0-ddc40c3a026b/logos/secondary_logo_black.png",
+                      "href": "https://a.espncdn.com/guid/da81113c-3fc8-0928-6791-5709eeaf2a9a/logos/secondary_logo_black.png",
                       "width": 4096,
                       "height": 4096,
                       "alt": "",
@@ -87423,10 +86743,10 @@
                         "full",
                         "secondary_logo_black"
                       ],
-                      "lastUpdated": "2026-07-23T17:42Z"
+                      "lastUpdated": "2026-07-23T17:30Z"
                     },
                     {
-                      "href": "https://a.espncdn.com/guid/31a74b05-cd0e-66f2-43b0-ddc40c3a026b/logos/secondary_logo_white.png",
+                      "href": "https://a.espncdn.com/guid/da81113c-3fc8-0928-6791-5709eeaf2a9a/logos/secondary_logo_white.png",
                       "width": 4096,
                       "height": 4096,
                       "alt": "",
@@ -87434,7 +86754,7 @@
                         "full",
                         "secondary_logo_white"
                       ],
-                      "lastUpdated": "2026-07-23T17:42Z"
+                      "lastUpdated": "2026-07-23T17:30Z"
                     }
                   ],
                   "links": [
@@ -87444,7 +86764,7 @@
                         "desktop",
                         "team"
                       ],
-                      "href": "https://www.espn.com/mens-college-basketball/team/_/id/2546/southeast-missouri-state-redhawks",
+                      "href": "https://www.espn.com/mens-college-basketball/team/_/id/2306/kansas-state-wildcats",
                       "text": "Clubhouse"
                     },
                     {
@@ -87453,7 +86773,7 @@
                         "desktop",
                         "team"
                       ],
-                      "href": "https://www.espn.com/mens-college-basketball/team/roster/_/id/2546",
+                      "href": "https://www.espn.com/mens-college-basketball/team/roster/_/id/2306",
                       "text": "Roster"
                     },
                     {
@@ -87463,7 +86783,7 @@
                         "app",
                         "team"
                       ],
-                      "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~t:2546&section=roster",
+                      "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~t:2306&section=roster",
                       "text": "Roster"
                     },
                     {
@@ -87472,7 +86792,7 @@
                         "desktop",
                         "team"
                       ],
-                      "href": "https://www.espn.com/mens-college-basketball/team/stats/_/id/2546",
+                      "href": "https://www.espn.com/mens-college-basketball/team/stats/_/id/2306",
                       "text": "Statistics"
                     },
                     {
@@ -87482,7 +86802,7 @@
                         "app",
                         "team"
                       ],
-                      "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~t:2546&section=stats",
+                      "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~t:2306&section=stats",
                       "text": "Statistics"
                     },
                     {
@@ -87491,7 +86811,7 @@
                         "desktop",
                         "team"
                       ],
-                      "href": "https://www.espn.com/mens-college-basketball/team/schedule/_/id/2546",
+                      "href": "https://www.espn.com/mens-college-basketball/team/schedule/_/id/2306",
                       "text": "Schedule"
                     },
                     {
@@ -87501,7 +86821,7 @@
                         "app",
                         "team"
                       ],
-                      "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~t:2546&section=scores",
+                      "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~t:2306&section=scores",
                       "text": "Schedule"
                     },
                     {
@@ -87510,7 +86830,7 @@
                         "desktop",
                         "team"
                       ],
-                      "href": "https://www.espn.com/mens-college-basketball/team/photos/_/id/2546",
+                      "href": "https://www.espn.com/mens-college-basketball/team/photos/_/id/2306",
                       "text": "photos"
                     },
                     {
@@ -87519,50 +86839,11 @@
                         "desktop",
                         "team"
                       ],
-                      "href": "https://www.vividseats.com/southeast-missouri-state-redhawks-mens-basketball-tickets--sports-ncaa-basketball/performer/4983?wsUser=717",
+                      "href": "https://www.vividseats.com/kansas-state-wildcats-mens-basketball-tickets--sports-ncaa-basketball/performer/3217?wsUser=717",
                       "text": "Tickets"
                     }
                   ]
                 },
-                "score": {
-                  "value": 68,
-                  "displayValue": "68"
-                },
-                "record": [
-                  {
-                    "id": "1",
-                    "abbreviation": "Game",
-                    "displayName": "Record Year To Date",
-                    "shortDisplayName": "YTD",
-                    "description": "Overall Record",
-                    "type": "total",
-                    "displayValue": "20-12"
-                  },
-                  {
-                    "id": "9002",
-                    "displayName": "Home",
-                    "shortDisplayName": "HOME",
-                    "description": "Home Record",
-                    "type": "home",
-                    "displayValue": "10-5"
-                  },
-                  {
-                    "id": "9003",
-                    "displayName": "Road",
-                    "shortDisplayName": "AWAY",
-                    "description": "Away Record",
-                    "type": "road",
-                    "displayValue": "8-7"
-                  },
-                  {
-                    "id": "9009",
-                    "displayName": "CONF",
-                    "shortDisplayName": "CONF",
-                    "description": "Conference Record",
-                    "type": "vsconf",
-                    "displayValue": "14-6"
-                  }
-                ],
                 "curatedRank": {
                   "current": 99
                 }
@@ -87572,7 +86853,6 @@
                 "type": "team",
                 "order": 1,
                 "homeAway": "away",
-                "winner": false,
                 "team": {
                   "id": "2815",
                   "location": "Lindenwood",
@@ -87823,808 +87103,54 @@
                     }
                   ]
                 },
-                "score": {
-                  "value": 66,
-                  "displayValue": "66"
-                },
-                "leaders": [
-                  {
-                    "name": "points",
-                    "displayName": "Points",
-                    "abbreviation": "Pts",
-                    "leaders": [
-                      {
-                        "displayValue": "17",
-                        "value": 17,
-                        "athlete": {
-                          "id": "5242437",
-                          "lastName": "Futrell",
-                          "displayName": "Anias Futrell",
-                          "shortName": "A. Futrell",
-                          "links": [
-                            {
-                              "rel": [
-                                "playercard",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/_/id/5242437/anias-futrell"
-                            },
-                            {
-                              "rel": [
-                                "stats",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/stats/_/id/5242437/anias-futrell"
-                            },
-                            {
-                              "rel": [
-                                "stats",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5242437&section=stats"
-                            },
-                            {
-                              "rel": [
-                                "splits",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/splits/_/id/5242437/anias-futrell"
-                            },
-                            {
-                              "rel": [
-                                "gamelog",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/gamelog/_/id/5242437/anias-futrell"
-                            },
-                            {
-                              "rel": [
-                                "gamelog",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5242437&section=gamelog"
-                            },
-                            {
-                              "rel": [
-                                "news",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/news/_/id/5242437/anias-futrell"
-                            },
-                            {
-                              "rel": [
-                                "news",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5242437&section=news"
-                            },
-                            {
-                              "rel": [
-                                "bio",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/bio/_/id/5242437/anias-futrell"
-                            },
-                            {
-                              "rel": [
-                                "bio",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5242437&section=bio"
-                            },
-                            {
-                              "rel": [
-                                "overview",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/_/id/5242437/anias-futrell"
-                            },
-                            {
-                              "rel": [
-                                "overview",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5242437"
-                            }
-                          ]
-                        }
-                      }
-                    ]
-                  },
-                  {
-                    "name": "assists",
-                    "displayName": "Assists",
-                    "abbreviation": "Ast",
-                    "leaders": [
-                      {
-                        "displayValue": "2",
-                        "value": 2,
-                        "athlete": {
-                          "id": "4873146",
-                          "lastName": "Jones",
-                          "displayName": "Jadis Jones",
-                          "shortName": "J. Jones",
-                          "links": [
-                            {
-                              "rel": [
-                                "playercard",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/_/id/4873146/jadis-jones"
-                            },
-                            {
-                              "rel": [
-                                "stats",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/stats/_/id/4873146/jadis-jones"
-                            },
-                            {
-                              "rel": [
-                                "stats",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:4873146&section=stats"
-                            },
-                            {
-                              "rel": [
-                                "splits",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/splits/_/id/4873146/jadis-jones"
-                            },
-                            {
-                              "rel": [
-                                "gamelog",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/gamelog/_/id/4873146/jadis-jones"
-                            },
-                            {
-                              "rel": [
-                                "gamelog",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:4873146&section=gamelog"
-                            },
-                            {
-                              "rel": [
-                                "news",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/news/_/id/4873146/jadis-jones"
-                            },
-                            {
-                              "rel": [
-                                "news",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:4873146&section=news"
-                            },
-                            {
-                              "rel": [
-                                "bio",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/bio/_/id/4873146/jadis-jones"
-                            },
-                            {
-                              "rel": [
-                                "bio",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:4873146&section=bio"
-                            },
-                            {
-                              "rel": [
-                                "overview",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/_/id/4873146/jadis-jones"
-                            },
-                            {
-                              "rel": [
-                                "overview",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:4873146"
-                            }
-                          ]
-                        }
-                      }
-                    ]
-                  },
-                  {
-                    "name": "rebounds",
-                    "displayName": "Rebounds",
-                    "abbreviation": "Reb",
-                    "leaders": [
-                      {
-                        "displayValue": "9",
-                        "value": 9,
-                        "athlete": {
-                          "id": "5241311",
-                          "lastName": "Williams",
-                          "displayName": "Dontrez Williams",
-                          "shortName": "D. Williams",
-                          "links": [
-                            {
-                              "rel": [
-                                "playercard",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/_/id/5241311/dontrez-williams"
-                            },
-                            {
-                              "rel": [
-                                "stats",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/stats/_/id/5241311/dontrez-williams"
-                            },
-                            {
-                              "rel": [
-                                "stats",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5241311&section=stats"
-                            },
-                            {
-                              "rel": [
-                                "splits",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/splits/_/id/5241311/dontrez-williams"
-                            },
-                            {
-                              "rel": [
-                                "gamelog",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/gamelog/_/id/5241311/dontrez-williams"
-                            },
-                            {
-                              "rel": [
-                                "gamelog",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5241311&section=gamelog"
-                            },
-                            {
-                              "rel": [
-                                "news",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/news/_/id/5241311/dontrez-williams"
-                            },
-                            {
-                              "rel": [
-                                "news",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5241311&section=news"
-                            },
-                            {
-                              "rel": [
-                                "bio",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/bio/_/id/5241311/dontrez-williams"
-                            },
-                            {
-                              "rel": [
-                                "bio",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5241311&section=bio"
-                            },
-                            {
-                              "rel": [
-                                "overview",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/_/id/5241311/dontrez-williams"
-                            },
-                            {
-                              "rel": [
-                                "overview",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5241311"
-                            }
-                          ]
-                        }
-                      }
-                    ]
-                  },
-                  {
-                    "name": "blocks",
-                    "displayName": "Blocks",
-                    "abbreviation": "Blk",
-                    "leaders": [
-                      {
-                        "displayValue": "2",
-                        "value": 2,
-                        "athlete": {
-                          "id": "5241311",
-                          "lastName": "Williams",
-                          "displayName": "Dontrez Williams",
-                          "shortName": "D. Williams",
-                          "links": [
-                            {
-                              "rel": [
-                                "playercard",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/_/id/5241311/dontrez-williams"
-                            },
-                            {
-                              "rel": [
-                                "stats",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/stats/_/id/5241311/dontrez-williams"
-                            },
-                            {
-                              "rel": [
-                                "stats",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5241311&section=stats"
-                            },
-                            {
-                              "rel": [
-                                "splits",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/splits/_/id/5241311/dontrez-williams"
-                            },
-                            {
-                              "rel": [
-                                "gamelog",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/gamelog/_/id/5241311/dontrez-williams"
-                            },
-                            {
-                              "rel": [
-                                "gamelog",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5241311&section=gamelog"
-                            },
-                            {
-                              "rel": [
-                                "news",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/news/_/id/5241311/dontrez-williams"
-                            },
-                            {
-                              "rel": [
-                                "news",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5241311&section=news"
-                            },
-                            {
-                              "rel": [
-                                "bio",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/bio/_/id/5241311/dontrez-williams"
-                            },
-                            {
-                              "rel": [
-                                "bio",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5241311&section=bio"
-                            },
-                            {
-                              "rel": [
-                                "overview",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/_/id/5241311/dontrez-williams"
-                            },
-                            {
-                              "rel": [
-                                "overview",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:5241311"
-                            }
-                          ]
-                        }
-                      }
-                    ]
-                  },
-                  {
-                    "name": "steals",
-                    "displayName": "Steals",
-                    "abbreviation": "Stl",
-                    "leaders": [
-                      {
-                        "displayValue": "2",
-                        "value": 2,
-                        "athlete": {
-                          "id": "4873146",
-                          "lastName": "Jones",
-                          "displayName": "Jadis Jones",
-                          "shortName": "J. Jones",
-                          "links": [
-                            {
-                              "rel": [
-                                "playercard",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/_/id/4873146/jadis-jones"
-                            },
-                            {
-                              "rel": [
-                                "stats",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/stats/_/id/4873146/jadis-jones"
-                            },
-                            {
-                              "rel": [
-                                "stats",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:4873146&section=stats"
-                            },
-                            {
-                              "rel": [
-                                "splits",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/splits/_/id/4873146/jadis-jones"
-                            },
-                            {
-                              "rel": [
-                                "gamelog",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/gamelog/_/id/4873146/jadis-jones"
-                            },
-                            {
-                              "rel": [
-                                "gamelog",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:4873146&section=gamelog"
-                            },
-                            {
-                              "rel": [
-                                "news",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/news/_/id/4873146/jadis-jones"
-                            },
-                            {
-                              "rel": [
-                                "news",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:4873146&section=news"
-                            },
-                            {
-                              "rel": [
-                                "bio",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/bio/_/id/4873146/jadis-jones"
-                            },
-                            {
-                              "rel": [
-                                "bio",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:4873146&section=bio"
-                            },
-                            {
-                              "rel": [
-                                "overview",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/_/id/4873146/jadis-jones"
-                            },
-                            {
-                              "rel": [
-                                "overview",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:4873146"
-                            }
-                          ]
-                        }
-                      }
-                    ]
-                  },
-                  {
-                    "name": "rating",
-                    "displayName": "Rating",
-                    "abbreviation": "RAT",
-                    "leaders": [
-                      {
-                        "displayValue": "14 PTS, 6 REB",
-                        "value": 24.5,
-                        "athlete": {
-                          "id": "4873146",
-                          "lastName": "Jones",
-                          "displayName": "Jadis Jones",
-                          "shortName": "J. Jones",
-                          "links": [
-                            {
-                              "rel": [
-                                "playercard",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/_/id/4873146/jadis-jones"
-                            },
-                            {
-                              "rel": [
-                                "stats",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/stats/_/id/4873146/jadis-jones"
-                            },
-                            {
-                              "rel": [
-                                "stats",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:4873146&section=stats"
-                            },
-                            {
-                              "rel": [
-                                "splits",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/splits/_/id/4873146/jadis-jones"
-                            },
-                            {
-                              "rel": [
-                                "gamelog",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/gamelog/_/id/4873146/jadis-jones"
-                            },
-                            {
-                              "rel": [
-                                "gamelog",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:4873146&section=gamelog"
-                            },
-                            {
-                              "rel": [
-                                "news",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/news/_/id/4873146/jadis-jones"
-                            },
-                            {
-                              "rel": [
-                                "news",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:4873146&section=news"
-                            },
-                            {
-                              "rel": [
-                                "bio",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/bio/_/id/4873146/jadis-jones"
-                            },
-                            {
-                              "rel": [
-                                "bio",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:4873146&section=bio"
-                            },
-                            {
-                              "rel": [
-                                "overview",
-                                "desktop",
-                                "athlete"
-                              ],
-                              "href": "https://www.espn.com/mens-college-basketball/player/_/id/4873146/jadis-jones"
-                            },
-                            {
-                              "rel": [
-                                "overview",
-                                "sportscenter",
-                                "app",
-                                "athlete"
-                              ],
-                              "href": "sportscenter://x-callback-url/showClubhouse?uid=s:40~l:41~a:4873146"
-                            }
-                          ]
-                        }
-                      }
-                    ]
-                  }
-                ],
-                "record": [
-                  {
-                    "id": "1",
-                    "abbreviation": "Game",
-                    "displayName": "Record Year To Date",
-                    "shortDisplayName": "YTD",
-                    "description": "Overall Record",
-                    "type": "total",
-                    "displayValue": "18-15"
-                  },
-                  {
-                    "id": "9002",
-                    "displayName": "Home",
-                    "shortDisplayName": "HOME",
-                    "description": "Home Record",
-                    "type": "home",
-                    "displayValue": "9-5"
-                  },
-                  {
-                    "id": "9003",
-                    "displayName": "Road",
-                    "shortDisplayName": "AWAY",
-                    "description": "Away Record",
-                    "type": "road",
-                    "displayValue": "7-9"
-                  },
-                  {
-                    "id": "9009",
-                    "displayName": "CONF",
-                    "shortDisplayName": "CONF",
-                    "description": "Conference Record",
-                    "type": "vsconf",
-                    "displayValue": "11-9"
-                  }
-                ],
                 "curatedRank": {
                   "current": 99
                 }
               }
             ],
-            "notes": [
+            "notes": [],
+            "broadcasts": [],
+            "tickets": [
               {
-                "type": "event",
-                "headline": "OVC Championship - Quarterfinal"
-              }
-            ],
-            "broadcasts": [
-              {
-                "type": {
-                  "id": "4",
-                  "shortName": "Streaming"
-                },
-                "market": {
-                  "id": "1",
-                  "type": "National"
-                },
-                "media": {
-                  "shortName": "ESPN+"
-                },
-                "lang": "en",
-                "region": "us",
-                "partnered": false
+                "id": "7355616",
+                "summary": "Tickets as low as $37",
+                "description": "Lindenwood Lions at Kansas State Wildcats Mens Basketball",
+                "maxPrice": 47,
+                "startingPrice": 37,
+                "numberAvailable": 12,
+                "totalPostings": 2,
+                "links": [
+                  {
+                    "rel": [
+                      "tickets",
+                      "desktop",
+                      "event"
+                    ],
+                    "href": "https://www.vividseats.com/kansas-state-wildcats-mens-basketball-tickets-bramlage-coliseum-12-21-2026--sports-ncaa-basketball/production/7355616?wsUser=717"
+                  },
+                  {
+                    "rel": [
+                      "tickets",
+                      "desktop",
+                      "venue"
+                    ],
+                    "href": "https://www.vividseats.com/venues/bramlage-coliseum-tickets.html?wsUser=717"
+                  }
+                ]
               }
             ],
             "status": {
               "clock": 0,
               "displayClock": "0:00",
-              "period": 2,
+              "period": 0,
               "type": {
-                "id": "3",
-                "name": "STATUS_FINAL",
-                "state": "post",
-                "completed": true,
-                "description": "Final",
-                "detail": "Final",
-                "shortDetail": "Final"
+                "id": "1",
+                "name": "STATUS_SCHEDULED",
+                "state": "pre",
+                "completed": false,
+                "description": "Scheduled",
+                "detail": "12/21 - TBD",
+                "shortDetail": "TBD"
               }
             }
           }
@@ -88637,7 +87163,7 @@
               "desktop",
               "event"
             ],
-            "href": "https://www.espn.com/mens-college-basketball/game/_/gameId/401851528/lindenwood-se-missouri",
+            "href": "https://www.espn.com/mens-college-basketball/game/_/gameId/401909805/lindenwood-kansas-st",
             "text": "Gamecast",
             "shortText": "Summary",
             "isExternal": false,
@@ -88651,154 +87177,9 @@
               "app",
               "event"
             ],
-            "href": "sportscenter://x-callback-url/showGame?sportName=basketball&leagueAbbrev=mens-college-basketball&gameId=401851528",
+            "href": "sportscenter://x-callback-url/showGame?sportName=basketball&leagueAbbrev=mens-college-basketball&gameId=401909805",
             "text": "Gamecast",
             "shortText": "Summary",
-            "isExternal": false,
-            "isPremium": false
-          },
-          {
-            "language": "en-US",
-            "rel": [
-              "teamstats",
-              "desktop",
-              "event"
-            ],
-            "href": "https://www.espn.com/mens-college-basketball/matchup?gameId=401851528",
-            "text": "Team Stats",
-            "shortText": "Team Stats",
-            "isExternal": false,
-            "isPremium": false
-          },
-          {
-            "language": "en-US",
-            "rel": [
-              "boxscore",
-              "desktop",
-              "event"
-            ],
-            "href": "https://www.espn.com/mens-college-basketball/boxscore/_/gameId/401851528",
-            "text": "Box Score",
-            "shortText": "Box Score",
-            "isExternal": false,
-            "isPremium": false
-          },
-          {
-            "language": "en-US",
-            "rel": [
-              "boxscore",
-              "sportscenter",
-              "app",
-              "event"
-            ],
-            "href": "sportscenter://x-callback-url/showGame?sportName=basketball&leagueAbbrev=mens-college-basketball&gameId=401851528",
-            "text": "Box Score",
-            "shortText": "Box Score",
-            "isExternal": false,
-            "isPremium": false
-          },
-          {
-            "language": "en-US",
-            "rel": [
-              "gamecast",
-              "desktop",
-              "event"
-            ],
-            "href": "https://www.espn.com/mens-college-basketball/game/_/gameId/401851528",
-            "text": "Gamecast",
-            "shortText": "Gamecast",
-            "isExternal": false,
-            "isPremium": false
-          },
-          {
-            "language": "en-US",
-            "rel": [
-              "gamecast",
-              "mobile",
-              "event"
-            ],
-            "href": "https://m.espn.com/ncb/gamecast?gameId=401851528&action=summary",
-            "text": "Gamecast",
-            "shortText": "Gamecast",
-            "isExternal": false,
-            "isPremium": false
-          },
-          {
-            "language": "en-US",
-            "rel": [
-              "gamecast",
-              "sportscenter",
-              "app",
-              "event"
-            ],
-            "href": "sportscenter://x-callback-url/showGame?sportName=basketball&leagueAbbrev=mens-college-basketball&gameId=401851528",
-            "text": "Gamecast",
-            "shortText": "Gamecast",
-            "isExternal": false,
-            "isPremium": false
-          },
-          {
-            "language": "en-US",
-            "rel": [
-              "recap",
-              "desktop",
-              "event"
-            ],
-            "href": "https://www.espn.com/mens-college-basketball/recap?gameId=401851528",
-            "text": "Recap",
-            "shortText": "Recap",
-            "isExternal": false,
-            "isPremium": false
-          },
-          {
-            "language": "en-US",
-            "rel": [
-              "pbp",
-              "desktop",
-              "event"
-            ],
-            "href": "https://www.espn.com/mens-college-basketball/playbyplay/_/gameId/401851528",
-            "text": "Play-by-Play",
-            "shortText": "Play-by-Play",
-            "isExternal": false,
-            "isPremium": false
-          },
-          {
-            "language": "en-US",
-            "rel": [
-              "videos",
-              "desktop",
-              "event"
-            ],
-            "href": "https://www.espn.com/mens-college-basketball/video?gameId=401851528",
-            "text": "Videos",
-            "shortText": "Videos",
-            "isExternal": false,
-            "isPremium": false
-          },
-          {
-            "language": "en-US",
-            "rel": [
-              "watchespn",
-              "desktop",
-              "event"
-            ],
-            "href": "https://www.espn.com/watchespn/index?gameId=401851528&sourceLang=en",
-            "text": "WatchESPN",
-            "shortText": "WatchESPN",
-            "isExternal": false,
-            "isPremium": false
-          },
-          {
-            "language": "en-US",
-            "rel": [
-              "watchespn",
-              "app",
-              "event"
-            ],
-            "href": "watchespn://showEvent?gameId=401851528&sourceLang=en",
-            "text": "WatchESPN",
-            "shortText": "WatchESPN",
             "isExternal": false,
             "isPremium": false
           }

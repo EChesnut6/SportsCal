@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Star, Radio, TrendingUp, Sparkles } from 'lucide-react';
 import type { GameEvent, FavoritesState, TogglesState } from '../types';
+import { isCloseLateGame } from '../gameUtils';
 
 interface TickerBarProps {
   events: GameEvent[];
@@ -14,6 +15,42 @@ export type TickerFilterMode = 'all' | 'favorites' | 'live';
 
 const LOCAL_STORAGE_TICKER_FILTER = 'sportscal_ticker_filter';
 
+const getDayTimestamp = (dateInput: Date | string | number): number => {
+  const d = typeof dateInput === 'string' || typeof dateInput === 'number' ? new Date(dateInput) : dateInput;
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+};
+
+const isFavoriteEvent = (
+  event: GameEvent,
+  favorites: FavoritesState,
+  getTeamById: (teamId: string) => any
+): boolean => {
+  const isLeagueFav = favorites.leagues.includes(event.league);
+  const isHomeFav = favorites.teams.includes(event.homeTeam.id);
+  const isAwayFav = favorites.teams.includes(event.awayTeam.id);
+
+  let isConfFav = false;
+  if (event.league === 'ncaaf' || event.league === 'ncaab') {
+    const homeTeamObj = getTeamById(event.homeTeam.id);
+    const awayTeamObj = getTeamById(event.awayTeam.id);
+    const confs = favorites.conferences || [];
+    if (homeTeamObj?.conference && confs.includes(`${event.league}-${homeTeamObj.conference}`)) {
+      isConfFav = true;
+    }
+    if (awayTeamObj?.conference && confs.includes(`${event.league}-${awayTeamObj.conference}`)) {
+      isConfFav = true;
+    }
+  }
+
+  const isUfcCardFav =
+    event.league === 'ufc' &&
+    event.ufcFights?.some(fight =>
+      fight.competitors.some(c => favorites.teams.includes(`ufc-${c.id}`))
+    );
+
+  return isLeagueFav || isHomeFav || isAwayFav || isConfFav || !!isUfcCardFav;
+};
+
 export const TickerBar: React.FC<TickerBarProps> = ({
   events,
   toggles,
@@ -26,111 +63,165 @@ export const TickerBar: React.FC<TickerBarProps> = ({
     return (saved as TickerFilterMode) || 'all';
   });
 
+  const [currentTimestamp, setCurrentTimestamp] = useState<number>(() => Date.now());
+  const [tickerOffset, setTickerOffset] = useState(0);
+  const [isDraggingTicker, setIsDraggingTicker] = useState(false);
+  const dragStartRef = useRef({ pointerId: 0, clientX: 0, offset: 0 });
+  const hasDraggedRef = useRef(false);
+
   useEffect(() => {
     localStorage.setItem(LOCAL_STORAGE_TICKER_FILTER, filterMode);
   }, [filterMode]);
 
-  // Filter today's games matching visibility & active ticker filter
-  const tickerEvents = useMemo(() => {
-    const today = new Date();
-    const todayStr = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
+  // Periodic timer to detect local day transitions (e.g. crossing midnight)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTimestamp(Date.now());
+    }, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
+  // Filter enabled events based on leagues & team toggles
+  const enabledEvents = useMemo(() => {
     return events.filter(event => {
-      // 1. Exclude games from blocked/hidden leagues
       if (toggles.leagues[event.league] === false) return false;
-
-      // 2. Exclude games from blocked teams
       if (toggles.teams[event.homeTeam.id] === false) return false;
       if (toggles.teams[event.awayTeam.id] === false) return false;
+      return true;
+    });
+  }, [events, toggles]);
 
-      // 3. Must be scheduled for Today
-      const localDate = new Date(event.date);
-      const eventDateStr = `${localDate.getFullYear()}-${localDate.getMonth()}-${localDate.getDate()}`;
-      if (eventDateStr !== todayStr) return false;
+  // Determine target day: today if games exist today; otherwise next day with games on
+  const { targetDayStart, isShowingToday, nextDayWithGames } = useMemo(() => {
+    const today = new Date(currentTimestamp);
+    const todayStart = getDayTimestamp(today);
 
-      // 4. Apply Ticker Filter Mode
+    let hasTodayGames = false;
+    let earliestFutureDay: number | null = null;
+
+    for (const event of enabledEvents) {
+      const dayStart = getDayTimestamp(event.date);
+      if (dayStart === todayStart) {
+        hasTodayGames = true;
+      } else if (dayStart > todayStart) {
+        if (earliestFutureDay === null || dayStart < earliestFutureDay) {
+          earliestFutureDay = dayStart;
+        }
+      }
+    }
+
+    if (hasTodayGames) {
+      return {
+        targetDayStart: todayStart,
+        isShowingToday: true,
+        nextDayWithGames: earliestFutureDay,
+      };
+    }
+
+    if (earliestFutureDay !== null) {
+      return {
+        targetDayStart: earliestFutureDay,
+        isShowingToday: false,
+        nextDayWithGames: earliestFutureDay,
+      };
+    }
+
+    return {
+      targetDayStart: todayStart,
+      isShowingToday: false,
+      nextDayWithGames: null,
+    };
+  }, [enabledEvents, currentTimestamp]);
+
+  // Filter games on target day matching visibility & active ticker filter
+  const tickerEvents = useMemo(() => {
+    const dayEvents = enabledEvents.filter(event => {
+      const eventDayStart = getDayTimestamp(event.date);
+      if (eventDayStart !== targetDayStart) return false;
+
       if (filterMode === 'live') {
         return event.status.state === 'in';
       }
 
       if (filterMode === 'favorites') {
-        const isLeagueFav = favorites.leagues.includes(event.league);
-        const isHomeFav = favorites.teams.includes(event.homeTeam.id);
-        const isAwayFav = favorites.teams.includes(event.awayTeam.id);
-
-        let isConfFav = false;
-        if (event.league === 'ncaaf' || event.league === 'ncaab') {
-          const homeTeamObj = getTeamById(event.homeTeam.id);
-          const awayTeamObj = getTeamById(event.awayTeam.id);
-          const confs = favorites.conferences || [];
-          if (homeTeamObj?.conference && confs.includes(`${event.league}-${homeTeamObj.conference}`)) {
-            isConfFav = true;
-          }
-          if (awayTeamObj?.conference && confs.includes(`${event.league}-${awayTeamObj.conference}`)) {
-            isConfFav = true;
-          }
-        }
-
-        const isUfcCardFav = event.league === 'ufc' && event.ufcFights?.some(fight =>
-          fight.competitors.some(c => favorites.teams.includes(`ufc-${c.id}`))
-        );
-
-        return isLeagueFav || isHomeFav || isAwayFav || isConfFav || isUfcCardFav;
+        return isFavoriteEvent(event, favorites, getTeamById);
       }
 
       return true;
     });
-  }, [events, toggles, favorites, filterMode, getTeamById]);
 
-  // Counts for filter pills
+    // Sort: live games first, then pre games chronologically, then post (final)
+    return dayEvents.sort((a, b) => {
+      const order = (st: string) => (st === 'in' ? 0 : st === 'pre' ? 1 : 2);
+      const diff = order(a.status.state) - order(b.status.state);
+      if (diff !== 0) return diff;
+      return new Date(a.date).getTime() - new Date(b.date).getTime();
+    });
+  }, [enabledEvents, targetDayStart, filterMode, favorites, getTeamById]);
+
+  // Counts for target day filter pills
   const counts = useMemo(() => {
-    const today = new Date();
-    const todayStr = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
-
     let allCount = 0;
     let favCount = 0;
     let liveCount = 0;
 
-    events.forEach(event => {
-      if (toggles.leagues[event.league] === false) return;
-      if (toggles.teams[event.homeTeam.id] === false) return;
-      if (toggles.teams[event.awayTeam.id] === false) return;
-
-      const localDate = new Date(event.date);
-      const eventDateStr = `${localDate.getFullYear()}-${localDate.getMonth()}-${localDate.getDate()}`;
-      if (eventDateStr !== todayStr) return;
+    enabledEvents.forEach(event => {
+      const dayStart = getDayTimestamp(event.date);
+      if (dayStart !== targetDayStart) return;
 
       allCount++;
       if (event.status.state === 'in') liveCount++;
-
-      const isLeagueFav = favorites.leagues.includes(event.league);
-      const isHomeFav = favorites.teams.includes(event.homeTeam.id);
-      const isAwayFav = favorites.teams.includes(event.awayTeam.id);
-
-      let isConfFav = false;
-      if (event.league === 'ncaaf' || event.league === 'ncaab') {
-        const homeTeamObj = getTeamById(event.homeTeam.id);
-        const awayTeamObj = getTeamById(event.awayTeam.id);
-        const confs = favorites.conferences || [];
-        if (homeTeamObj?.conference && confs.includes(`${event.league}-${homeTeamObj.conference}`)) {
-          isConfFav = true;
-        }
-        if (awayTeamObj?.conference && confs.includes(`${event.league}-${awayTeamObj.conference}`)) {
-          isConfFav = true;
-        }
-      }
-
-      const isUfcFav = event.league === 'ufc' && event.ufcFights?.some(fight =>
-        fight.competitors.some(c => favorites.teams.includes(`ufc-${c.id}`))
-      );
-
-      if (isLeagueFav || isHomeFav || isAwayFav || isConfFav || isUfcFav) {
+      if (isFavoriteEvent(event, favorites, getTeamById)) {
         favCount++;
       }
     });
 
     return { all: allCount, favorites: favCount, live: liveCount };
-  }, [events, toggles, favorites, getTeamById]);
+  }, [enabledEvents, targetDayStart, favorites, getTeamById]);
+
+  // Labels for header & pills
+  const dateLabels = useMemo(() => {
+    if (isShowingToday) {
+      return {
+        title: "TODAY'S TICKER",
+        pillAll: 'All Today',
+        badge: null,
+        fullDateStr: 'Today',
+      };
+    }
+
+    if (!nextDayWithGames) {
+      return {
+        title: "TODAY'S TICKER",
+        pillAll: 'All Today',
+        badge: null,
+        fullDateStr: 'Today',
+      };
+    }
+
+    const today = new Date(currentTimestamp);
+    const todayStart = getDayTimestamp(today);
+    const targetDate = new Date(targetDayStart);
+    const daysDiff = Math.round((targetDayStart - todayStart) / (24 * 60 * 60 * 1000));
+
+    const weekday = targetDate.toLocaleDateString([], { weekday: 'short' });
+    const monthDay = targetDate.toLocaleDateString([], { month: 'short', day: 'numeric' });
+
+    let badgeText = `${weekday}, ${monthDay}`;
+    let pillText = `All (${weekday})`;
+
+    if (daysDiff === 1) {
+      badgeText = `Tomorrow, ${monthDay}`;
+      pillText = 'All (Tomorrow)';
+    }
+
+    return {
+      title: 'NEXT UP TICKER',
+      pillAll: pillText,
+      badge: badgeText,
+      fullDateStr: badgeText,
+    };
+  }, [isShowingToday, nextDayWithGames, targetDayStart, currentTimestamp]);
 
   // Duplicate items array to achieve continuous seamless loop
   const displayItems = useMemo(() => {
@@ -143,9 +234,14 @@ export const TickerBar: React.FC<TickerBarProps> = ({
   }, [tickerEvents]);
 
   // Helper to format start time in local time
-  const formatTime = (isoString: string) => {
+  const formatTime = (isoString: string, showDay: boolean = false) => {
     const d = new Date(isoString);
-    return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    const timeStr = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    if (showDay) {
+      const weekday = d.toLocaleDateString([], { weekday: 'short' });
+      return `${weekday} ${timeStr}`;
+    }
+    return timeStr;
   };
 
   // Calculate dynamic animation duration based on item count to maintain constant scroll speed (px/sec)
@@ -158,12 +254,41 @@ export const TickerBar: React.FC<TickerBarProps> = ({
     return Math.max(20, Math.round(estimatedWidth / speedPxPerSec));
   }, [tickerEvents.length]);
 
+  const handleTickerPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === 'mouse' && event.button !== 0) return;
+
+    event.currentTarget.setPointerCapture(event.pointerId);
+    dragStartRef.current = { pointerId: event.pointerId, clientX: event.clientX, offset: tickerOffset };
+    hasDraggedRef.current = false;
+    setIsDraggingTicker(true);
+  };
+
+  const handleTickerPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (!isDraggingTicker || event.pointerId !== dragStartRef.current.pointerId) return;
+
+    const distance = event.clientX - dragStartRef.current.clientX;
+    if (Math.abs(distance) > 4) hasDraggedRef.current = true;
+    setTickerOffset(dragStartRef.current.offset + distance);
+  };
+
+  const handleTickerPointerEnd = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (event.pointerId !== dragStartRef.current.pointerId) return;
+
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+    setIsDraggingTicker(false);
+  };
+
   return (
     <div className="ticker-wrapper">
       <div className="ticker-header-bar">
         <div className="ticker-title-group">
           <TrendingUp className="ticker-icon" size={16} />
-          <span className="ticker-title">TODAY'S TICKER</span>
+          <span className="ticker-title">{dateLabels.title}</span>
+          {dateLabels.badge && (
+            <span className="ticker-badge ticker-date-badge">{dateLabels.badge}</span>
+          )}
           <span className="ticker-badge">{counts.all} Games</span>
         </div>
 
@@ -171,9 +296,9 @@ export const TickerBar: React.FC<TickerBarProps> = ({
           <button
             className={`ticker-filter-pill ${filterMode === 'all' ? 'active' : ''}`}
             onClick={() => setFilterMode('all')}
-            title="Show all enabled games for today"
+            title={isShowingToday ? 'Show all enabled games for today' : `Show all enabled games for ${dateLabels.fullDateStr}`}
           >
-            <span>All Today</span>
+            <span>{dateLabels.pillAll}</span>
             <span className="pill-count">{counts.all}</span>
           </button>
           
@@ -199,24 +324,45 @@ export const TickerBar: React.FC<TickerBarProps> = ({
         </div>
       </div>
 
-      <div className="ticker-container" title="Hover to pause ticker scroll">
+      <div
+        className={`ticker-container ${isDraggingTicker ? 'is-dragging' : ''}`}
+        title="Drag left or right to browse the ticker"
+        onPointerDown={handleTickerPointerDown}
+        onPointerMove={handleTickerPointerMove}
+        onPointerUp={handleTickerPointerEnd}
+        onPointerCancel={handleTickerPointerEnd}
+      >
         {tickerEvents.length === 0 ? (
           <div className="ticker-empty">
             <Sparkles size={14} className="text-muted" />
-            <span>No games today matching ticker filter ({filterMode}).</span>
+            <span>
+              {isShowingToday
+                ? `No games today matching ticker filter (${filterMode}).`
+                : nextDayWithGames
+                ? `No games on ${dateLabels.fullDateStr} matching ticker filter (${filterMode}).`
+                : `No upcoming games found matching ticker filter (${filterMode}).`}
+            </span>
           </div>
         ) : (
-          <div className="ticker-track" style={{ '--ticker-duration': `${tickerDuration}s` } as React.CSSProperties}>
-            {displayItems.map((event, idx) => {
+          <div className="ticker-drag-layer" style={{ transform: `translateX(${tickerOffset}px)` }}>
+            <div className="ticker-track" style={{ '--ticker-duration': `${tickerDuration}s` } as React.CSSProperties}>
+              {displayItems.map((event, idx) => {
               const isLive = event.status.state === 'in';
               const isPost = event.status.state === 'post';
+              const isCloseLate = isCloseLateGame(event);
               const broadcast = event.tvBroadcasts?.[0];
 
               return (
                 <div
                   key={`${event.id}-${idx}`}
-                  className={`ticker-item ${isLive ? 'is-live' : ''} ${isPost ? 'is-post' : ''}`}
-                  onClick={() => onSelectEvent(event)}
+                  className={`ticker-item ${isLive ? 'is-live' : ''} ${isCloseLate ? 'is-close-late' : ''} ${isPost ? 'is-post' : ''}`}
+                  onClick={() => {
+                    if (hasDraggedRef.current) {
+                      hasDraggedRef.current = false;
+                      return;
+                    }
+                    onSelectEvent(event);
+                  }}
                   style={{ '--league-accent': `var(--color-${event.league})` } as React.CSSProperties}
                 >
                   <span className="ticker-item-league" style={{ backgroundColor: `var(--color-${event.league})` }}>
@@ -292,14 +438,15 @@ export const TickerBar: React.FC<TickerBarProps> = ({
                       <span className="ticker-post-badge">FINAL</span>
                     ) : (
                       <div className="ticker-pre-badge">
-                        <span className="ticker-time">{formatTime(event.date)}</span>
+                        <span className="ticker-time">{formatTime(event.date, !isShowingToday)}</span>
                         {broadcast && <span className="ticker-channel">{broadcast}</span>}
                       </div>
                     )}
                   </div>
                 </div>
               );
-            })}
+              })}
+            </div>
           </div>
         )}
       </div>

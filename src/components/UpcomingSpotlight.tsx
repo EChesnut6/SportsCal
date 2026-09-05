@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Sparkles, Star, Tv, MoveVertical, Flame, Calendar } from 'lucide-react';
 import type { GameEvent, FavoritesState, TogglesState } from '../types';
+import { isCloseLateGame } from '../gameUtils';
 
 interface UpcomingSpotlightProps {
   events: GameEvent[];
@@ -16,6 +17,7 @@ interface SpotlightItem {
   event: GameEvent;
   favoriteLabel?: string;
   extraCount: number; // additional upcoming matches for this team/league
+  isCloseGame?: boolean;
 }
 
 export const UpcomingSpotlight: React.FC<UpcomingSpotlightProps> = ({
@@ -104,6 +106,30 @@ export const UpcomingSpotlight: React.FC<UpcomingSpotlightProps> = ({
 
       return null;
     };
+
+    // Close late games take the top spotlight slots before upcoming matches.
+    // They are selected from validEvents, so hidden leagues and teams stay hidden.
+    for (const event of validEvents) {
+      if (pickedItems.length >= 3 || !isCloseLateGame(event)) continue;
+
+      const favInfo = getFavoriteReason(event);
+      const homeKey = `team-${event.homeTeam.id}`;
+      const awayKey = `team-${event.awayTeam.id}`;
+      const leagueKey = `league-${event.league}`;
+
+      usedEventIds.add(event.id);
+      usedEntityKeys.add(homeKey);
+      usedEntityKeys.add(awayKey);
+      usedEntityKeys.add(leagueKey);
+      if (favInfo) usedEntityKeys.add(favInfo.entityKey);
+
+      pickedItems.push({
+        event,
+        favoriteLabel: favInfo?.label,
+        extraCount: 0,
+        isCloseGame: true,
+      });
+    }
 
     // Pick 1 game per favorite entity
     for (const event of validEvents) {
@@ -212,7 +238,7 @@ export const UpcomingSpotlight: React.FC<UpcomingSpotlightProps> = ({
       </div>
 
       <div className="spotlight-grid">
-        {spotlightItems.map(({ event, favoriteLabel, extraCount }) => {
+        {spotlightItems.map(({ event, favoriteLabel, extraCount, isCloseGame }) => {
           const isLive = event.status.state === 'in';
           const countdown = getCountdownString(event.date, event.status.state);
           const broadcast = event.tvBroadcasts?.[0];
@@ -220,7 +246,7 @@ export const UpcomingSpotlight: React.FC<UpcomingSpotlightProps> = ({
           return (
             <div
               key={event.id}
-              className={`spotlight-card ${isLive ? 'is-live' : ''}`}
+              className={`spotlight-card ${isLive ? 'is-live' : ''} ${isCloseGame ? 'is-close-late' : ''}`}
               onClick={() => onSelectEvent(event)}
               style={{ '--league-color': `var(--color-${event.league})` } as React.CSSProperties}
             >
@@ -234,6 +260,11 @@ export const UpcomingSpotlight: React.FC<UpcomingSpotlightProps> = ({
                   <span className="spotlight-fav-tag">
                     <Star size={11} className="fill-star" />
                     <span>{favoriteLabel}</span>
+                  </span>
+                ) : isCloseGame ? (
+                  <span className="spotlight-featured-tag">
+                    <Flame size={11} />
+                    <span>Close Game</span>
                   </span>
                 ) : (
                   <span className="spotlight-featured-tag">

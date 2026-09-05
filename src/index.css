@@ -1756,6 +1756,12 @@ span.desktop-only {
   border: 1px solid var(--border-glass);
 }
 
+.ticker-badge.ticker-date-badge {
+  background: var(--primary-glow);
+  color: var(--primary);
+  border-color: rgba(223, 177, 91, 0.4);
+}
+
 .ticker-filter-pills {
   display: flex;
   align-items: center;
@@ -1816,6 +1822,17 @@ span.desktop-only {
   border-radius: 10px;
   background: rgba(0, 0, 0, 0.2);
   padding: 8px 4px;
+  cursor: grab;
+  touch-action: pan-y;
+}
+
+.ticker-container.is-dragging {
+  cursor: grabbing;
+}
+
+.ticker-drag-layer {
+  width: max-content;
+  will-change: transform;
 }
 
 .ticker-track {
@@ -1829,6 +1846,10 @@ span.desktop-only {
 
 /* Auto-pause marquee on hover! */
 .ticker-container:hover .ticker-track {
+  animation-play-state: paused;
+}
+
+.ticker-container.is-dragging .ticker-track {
   animation-play-state: paused;
 }
 
@@ -1877,6 +1898,29 @@ span.desktop-only {
   background: rgba(239, 68, 68, 0.06);
 }
 
+.ticker-item.is-close-late {
+  border-color: var(--danger);
+  animation: ticker-close-game-pulse 0.65s infinite ease-in-out;
+}
+
+@keyframes ticker-close-game-pulse {
+  0%, 100% {
+    border-color: rgba(239, 68, 68, 0.45);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+  50% {
+    border-color: var(--danger);
+    box-shadow: 0 0 12px 2px rgba(239, 68, 68, 0.7);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticker-item.is-close-late {
+    animation: none;
+    border-color: var(--danger);
+  }
+}
+
 .ticker-item-league {
   font-size: 9px;
   font-weight: 900;
@@ -1921,6 +1965,10 @@ span.desktop-only {
 }
 
 .ticker-team-score.winner {
+  color: var(--primary);
+}
+
+.ticker-item.is-post .ticker-team-score {
   color: var(--primary);
 }
 
@@ -2102,6 +2150,29 @@ span.desktop-only {
 .spotlight-card.is-live {
   border-color: rgba(239, 68, 68, 0.5);
   background: rgba(239, 68, 68, 0.05);
+}
+
+.spotlight-card.is-close-late {
+  border-color: var(--danger);
+  animation: spotlight-close-game-pulse 0.65s infinite ease-in-out;
+}
+
+@keyframes spotlight-close-game-pulse {
+  0%, 100% {
+    border-color: rgba(239, 68, 68, 0.45);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+  50% {
+    border-color: var(--danger);
+    box-shadow: 0 0 14px 2px rgba(239, 68, 68, 0.7);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spotlight-card.is-close-late {
+    animation: none;
+    border-color: var(--danger);
+  }
 }
 
 .spotlight-card-top {
@@ -2401,8 +2472,4 @@ span.desktop-only {
   color: var(--primary);
   margin-top: 4px;
 }
-
-
-
-
 
