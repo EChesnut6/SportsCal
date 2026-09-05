@@ -1152,7 +1152,7 @@ span.desktop-only {
     transition: transform var(--transition-normal) ease;
     opacity: 1;
     margin: 0;
-    background: rgba(10, 15, 28, 0.95);
+    background: rgba(255, 255, 255, 0.03); /*ZXCVrgba(10, 15, 28, 0.95)*/
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
     overflow-y: auto;
